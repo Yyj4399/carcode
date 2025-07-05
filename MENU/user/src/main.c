@@ -21,6 +21,7 @@ int main (void){
 			threshold = Otsu(basic_image);							//获取阈值
 			image_binaryzation(threshold);							//图像二值化
 			find_basic_point(image);										//找到左右边线基点
+			find_line(image);														//寻找边线
 			draw_line();																//画出中线和边线
 			final_mid_line = weight_find_mid_line();		//加权求中线值
 			

@@ -257,8 +257,8 @@ void handle2(int KeyNumber){
 //画边线和中线
 void draw_line(){
 	for(uint8 i=bottom_line;i>find_end_line;i--){
-		ips200_draw_point(left_line[i],i,RGB565_RED);
-		ips200_draw_point(right_line[i],i,RGB565_RED);
+//		ips200_draw_point(left_line[i],i,RGB565_RED);
+//		ips200_draw_point(right_line[i],i,RGB565_RED);
 		ips200_draw_point(mid_line[i],i,RGB565_RED);
 	}
 	
