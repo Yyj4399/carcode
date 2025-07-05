@@ -415,6 +415,16 @@
               <FileType>1</FileType>
               <FilePath>..\code\MENU.c</FilePath>
             </File>
+            <File>
+              <FileName>image.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\image.c</FilePath>
+            </File>
+            <File>
+              <FileName>image.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\code\image.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

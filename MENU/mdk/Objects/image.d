@@ -1,4 +1,4 @@
-./objects/menu.o: ../code/MENU.c \
+./objects/image.o: ../code/image.c \
   ../../libraries/zf_common\zf_common_headfile.h \
   D:\ARM\ARMCLANG\Bin\..\include\stdio.h \
   D:\ARM\ARMCLANG\Bin\..\include\stdint.h \
@@ -86,4 +86,4 @@
   ../../libraries/zf_device\zf_device_wifi_uart.h \
   ../../libraries/zf_device\zf_device_wireless_uart.h \
   ../../libraries/components/fatfs/source\ffconf.h \
-  ../../libraries/components/fatfs/source\ff.h ../code/image.h
+  ../../libraries/components/fatfs/source\ff.h
