@@ -225,25 +225,30 @@ uint8 limit_uint8(uint8 a,uint8 b,uint8 c){
 
 
 #define find_end_line 20   						//寻找截止处
-#define l_right_find 10								//左边线向右寻找10个像素
-#define l_left_find 5									//左边线向左寻找5个像素
-#define r_right_find 5								//右边线向右寻找5个像素
-#define r_left_find 10								//右边线向左寻找10个像素
+#define l_right_find 20								//左边线向右寻找20个像素
+#define l_left_find 10								//左边线向左寻找10个像素
+#define r_right_find 10								//右边线向右寻找10个像素
+#define r_left_find 20								//右边线向左寻找20个像素
 uint8 left_line[MT9V03X_H]={0};				//左边线存储
 uint8 right_line[MT9V03X_H]={0};			//右边线存储
 uint8 mid_line[MT9V03X_H]={0};				//中线存储
+uint8 x1,x2,x3,x4,y1,y2,y3,y4;				//拐点坐标
 
 //寻找边线
 void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 	
 	uint8 l = l_point;
 	uint8 r = r_point;
+	uint8 num=0;
+	uint8 position[120]={0};
 	
 	//从下往上开始寻找边线截止到20
-	for(uint8 i=bottom_line-1;i>find_end_line;i--){
+	for(uint8 i=bottom_line;i>find_end_line;i--){
 		
 		uint8 l_find_flag=0;
 		uint8 m_l_find_flag=0;
+		uint8 r_find_flag=0;
+		uint8 m_r_find_flag=0;
 		
 		//向右寻找左边线
 		for(uint8 j=l;j<l+l_right_find;j++){
@@ -272,37 +277,38 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 				else if(j==1){
 					l = 1;
 					m_l_find_flag =1;
+					l_find_flag =0;
 					break;
 				}
 				else if(j==l-l_left_find+1){
 					m_l_find_flag =1;
+					l_find_flag =0;
 					break;
 				}
 			}
 		}
 		
-		//从中间寻找左边线
+		//从3/4处寻找左边线
 		if(m_l_find_flag==1){
-			for(uint8 j=MT9V03X_W/2;j>0;j--){
+			for(uint8 j=MT9V03X_W/4*3;j>0;j--){
 				
 				if(index[i][j-1]==0&&index[i][j]==255&&index[i][j+1]==255){
 					l = j;
+					m_l_find_flag =0;
 					break;
 				}
 				
 				else if(j==1){
 					l = 1;
+					m_l_find_flag =0;
 					break;
 				}
 		
 			}
 		}
 		
-		uint8 r_find_flag=0;
-		uint8 m_r_find_flag=0;
-		
 		//向左寻找右边线
-		for(uint8 j=l;j>l-r_left_find;j--){
+		for(uint8 j=r;j>r-r_left_find;j--){
 			if(index[i][j-1]==255&&index[i][j]==255&&index[i][j+1]==0){
 				r = j;
 				break;
@@ -312,42 +318,46 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 				r_find_flag =1;
 				break;
 			}
-			else if(j==j-r_left_find+1){
+			 if(j<=r-r_left_find+1){
 				r_find_flag =1;
 				break;
 			}
 		}
-		
 		//向右寻找右边线
 		if(r_find_flag==1){
-			for(uint8 j=l;j<l+r_left_find;j++){
+			for(uint8 j=r;j<r+r_right_find;j++){
 				if(index[i][j-1]==255&&index[i][j]==255&&index[i][j+1]==0){
 					r = j;
+					r_find_flag = 0;
 					break;
 				}
 				else if(j==MT9V03X_W-2){
 					r = MT9V03X_W-2;
 					m_r_find_flag =1;
+					r_find_flag = 0;
 					break;
 				}
-				else if(j==l+r_right_find-1){
+				else if(j==r+r_right_find-1){
 					m_r_find_flag =1;
+					r_find_flag = 0;
 					break;
 				}
 			}
 		}
 		
-		//从中间寻找右边线
+		//从1/4处寻找右边线
 		if(m_r_find_flag==1){
-			for(uint8 j=MT9V03X_W/2;j<MT9V03X_W-1;j++){
+			for(uint8 j=MT9V03X_W/4;j<MT9V03X_W-1;j++){
 				
 				if(index[i][j-1]==255&&index[i][j]==255&&index[i][j+1]==0){
 					r = j;
+					m_r_find_flag = 0;
 					break;
 				}
 				
 				else if(j==MT9V03X_W-2){
 					r = MT9V03X_W-2;
+					m_r_find_flag = 0;
 					break;
 				}
 		
@@ -359,13 +369,122 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 		right_line[i] = limit_uint8(1,r,MT9V03X_W-2);
 		mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
 	}
+	
+	uint8 yl[10]={0},yr[10]={0};
+	uint8 yl_sum=0,yr_sum=0;
+	uint8 yl_av=0,yr_av=0;
+	uint8 xl[10]={0},xr[10]={0};
+	uint8 xl_sum=0,xr_sum=0;
+	uint8 xl_av=0,xr_av=0;
+	uint8 vl_power_sum=0,vl_product_sum=0,vr_power_sum=0,vr_product_sum=0;
+	int kl,kr;
+	
+	//十字补线
+	for(uint8 i=bottom_line;i>find_end_line;i--){
+		
+		//计算丢线数量
+		if(left_line[i]==1&&right_line[i]==MT9V03X_W-2){
+			
+			position[i]=1;
+			num++;
+			
+		}
+		
+	}
+	
+	//判断丢线数量若大于20则判断进入十字
+	if(num>=50){
+		for(uint8 i=bottom_line;i>find_end_line;i--){
+			//记录左下拐点
+			if(left_line[i]-left_line[i+1]>=1&&left_line[i]-left_line[i-1]>=1){
+				x1=left_line[i];
+				y1=i;
+			}
+			//记录左上拐点
+			else if(left_line[i]-left_line[i-1]>=5&&left_line[i+1]-left_line[i]<=2){
+				x3=left_line[i];
+				y3=i;
+			}
+			//记录右下拐点
+			else if(right_line[i+1]-right_line[i]>=1&&right_line[i-1]-right_line[i]>=1){
+				x2=right_line[i];
+				y2=i;
+			}
+			//记录右上拐点
+			else if(right_line[i-1]-right_line[i]>=5&&right_line[i]-right_line[i+1]<=2){
+				x4=right_line[i];
+				y4=i;
+			}
+			num=0;
+		}
+		kl=(int)(y3-y1)/(x3-x1);
+		kr=(int)(y4-y2)/(x4-x2);
+//		//最小二乘法线性拟合
+//		for(uint8 i=0;i<5;i++){
+//			
+//			//采集数据
+//			xl[i]=left_line[y1-i];
+//			xl[i+5]=left_line[y3+i];
+//			
+//			yl[i]=y1-i;
+//			yl[i+5]=y3+i;
+//			
+//			xr[i]=right_line[y2-i];
+//			xr[i+5]=right_line[y4+i];
+//			
+//			yr[i]=y2-i;
+//			yr[i+5]=y4+i;
+//			
+//			//左右X和Y求和
+//			yl_sum+=yl[i]+yl[i+5];
+//			yr_sum+=yr[i]+yr[i+5];
+//			xl_sum+=xl[i]+xl[i+5];
+//			xr_sum+=xr[i]+xr[i+5];
+//			
+//		}
+//		
+//		//求左右X和Y平均
+//		xl_av=xl_sum/10;
+//		xr_av=xr_sum/10;
+//		yl_av=yl_sum/10;
+//		yr_av=yr_sum/10;
+//		
+//		//带入线性拟合的K值公式
+//		for(uint8 i=0;i<10;i++){
+//			vl_power_sum+=xl[i]*xl[i]-10*xl_av*xl_av;
+//			vl_product_sum+=xl[i]*yl[i]-10*xl_av*yl_av;
+//			
+//			vr_power_sum+=xr[i]*xr[i]-10*xr_av*xr_av;
+//			vr_product_sum+=xr[i]*yr[i]-10*xr_av*yr_av;
+//			
+//		}
+//		
+//		//计算左右斜率
+//		kl=(int)(vl_product_sum/vl_power_sum);
+//		kr=(int)(vr_product_sum/vr_power_sum);
+//		
+		//进行补线
+		for(uint8 i=bottom_line;i>find_end_line;i--){
+			
+			if(position[i]==1){
+				
+				left_line[i]=x3+(i-y1)/kl;
+				right_line[i]=x4+(i-y2)/kr;
+				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
+				
+			}
+						
+		}
+		
+	}
+	
 }
 
 //中线权重
 //权重越往上转弯越早
 uint8 mid_weight[120]={
-	1,1,1,1,1,1,1,1,1,1,
-	1,1,1,1,1,1,1,1,1,1,
+	0,0,0,0,0,0,0,0,0,0,
+	0,0,0,0,0,0,0,0,0,0,
 	1,1,1,1,1,1,1,1,1,1,
 	1,1,1,1,1,1,1,1,1,1,
 	1,1,1,1,1,1,1,1,1,1,
@@ -373,34 +492,33 @@ uint8 mid_weight[120]={
 	7,8,9,10,11,12,13,14,15,16,
 	17,18,19,20,20,20,20,19,18,17,
 	16,15,14,13,12,11,10,9,8,7,
-	6,6,6,6,6,6,6,6,6,6,	
+	6,6,6,6,6,6,6,6,6,6,
 	1,1,1,1,1,1,1,1,1,1,
-	1,1,1,1,1,1,1,1,1,1	
+	1,1,1,1,1,1,1,1,1,1,	
 };
 
-uint8 final_mid_line = MT9V03X_H/2;				//最终中线值
-uint8 last_mid_line = MT9V03X_H/2;				//上一次的中线值
-
+uint8 final_mid_value = MT9V03X_H/2;			//最终中线值
 
 //加权求中线值
-uint8 weight_find_mid_line(){
+uint8 weight_find_mid_value(){
 	
-	uint8 mid_value = MT9V03X_H/2;					//最终中线值
+	uint8 last_mid_line = MT9V03X_H/2;			//上一次的中线值
+	uint8 mid_v = MT9V03X_H/2;							//最终中线值
 	uint8 now_mid_line = MT9V03X_H/2;				//当下中线值
 	uint32 weight_mid_line_sum;							//中线权重和
 	uint32 weight_sum;											//总权重
 	
-	for(uint8 i=bottom_line;i>find_end_line;i--){
+	for(uint8 i=bottom_line;i>find_end_line-1;i--){
 		
-		weight_mid_line_sum +=mid_line[i] *mid_weight[i];
+		weight_mid_line_sum += mid_line[i] *mid_weight[i];
 		weight_sum += mid_weight[i];
 		
 	}
 	
 	now_mid_line = (uint8)(weight_mid_line_sum/weight_sum);
-	mid_value = now_mid_line*0.7+last_mid_line*0.3;			//互补滤波
+	mid_v = now_mid_line*0.8+last_mid_line*0.2;			//互补滤波
 	last_mid_line =now_mid_line;
 	
-	return mid_value;
+	return mid_v;
 }
 

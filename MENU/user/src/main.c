@@ -22,11 +22,10 @@ int main (void){
 			image_binaryzation(threshold);							//图像二值化
 			find_basic_point(image);										//找到左右边线基点
 			find_line(image);														//寻找边线
-			draw_line();																//画出中线和边线
-			final_mid_line = weight_find_mid_line();		//加权求中线值
+			final_mid_value = weight_find_mid_value();	//加权求中线值	
 			
 			KeyNumber = KeyNum();												//获取按键信息
-			handle2(KeyNumber);													//操作二
+			handle2(KeyNumber);													//操作
 			handle1(KeyNumber);													//操作一
 			print_menu();																//显示菜单
 			

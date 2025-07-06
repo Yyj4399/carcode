@@ -425,6 +425,16 @@
               <FileType>5</FileType>
               <FilePath>..\code\image.h</FilePath>
             </File>
+            <File>
+              <FileName>MOTOR.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\code\MOTOR.c</FilePath>
+            </File>
+            <File>
+              <FileName>MOTOR.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\code\MOTOR.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

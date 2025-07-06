@@ -70,6 +70,17 @@ void rest_cursor(){
 	last_cursor_position=1;
 }
 
+//画边线和中线
+void draw_line(){
+	for(uint8 i=bottom_line;i>find_end_line;i--){
+		ips200_draw_point(left_line[i],i,RGB565_RED);
+		ips200_draw_point(left_line[i]+1,i,RGB565_BLUE);
+		ips200_draw_point(right_line[i],i,RGB565_RED);
+		ips200_draw_point(right_line[i]+1,i,RGB565_PINK);
+		ips200_draw_point(mid_line[i],i,RGB565_GREEN);
+	}
+	
+}
 
 //显示菜单
 void print_menu(){
@@ -129,28 +140,42 @@ void print_menu(){
 		ips200_show_uint(8*10,128+16,l_point,3);
 		ips200_show_string(0,128+16*2,"r_point");
 		ips200_show_uint(8*10,128+16*2,r_point,3);
+//		ips200_show_string(0,128+16*3,"m_point");
+//		ips200_show_uint(8*10,128+16*3,(r_point+l_point)/2,3);
 		
+//		ips200_draw_point(x1,y1,RGB565_RED);
+//		ips200_draw_point(x2,y2,RGB565_RED);
+//		ips200_draw_point(x3,y3,RGB565_RED);
+//		ips200_draw_point(x4,y4,RGB565_RED);
+		
+//		ips200_show_uint(0,128+16*4,x1,3);
+//		ips200_show_uint(8*5,128+16*4,y1,3);
+//		ips200_show_uint(8*10,128+16*4,x2,3);
+//		ips200_show_uint(8*15,128+16*4,y2,3);
+//		ips200_show_uint(8*20,128+16*4,x3,3);
+//		ips200_show_uint(8*25,128+16*4,y3,3);
+//		ips200_show_uint(0,128+16*5,x4,3);
+//		ips200_show_uint(8*5,128+16*5,y4,3);
+		
+		//画边线
+		draw_line();
+//		
 		//最终中值显示
 		ips200_show_string(0,128+16*3,"m_value");
-		ips200_show_uint(8*10,128+16*3,final_mid_line,3);
+		ips200_show_uint(8*10,128+16*3,final_mid_value,3);
 		
-//		ips200_show_string(0,128+16,"l_line");
-//		ips200_show_string(0,128+16*2,"r_line");
-
-		//左右基点寻找起始位判断
-//		ips200_show_string(0,128+16*3,"flag1_2");
-//		ips200_show_int(8*10,128+16*3,flag1_2,2);
-//		ips200_show_string(0,128+16*4,"flag1_4");
-//		ips200_show_int(8*10,128+16*4,flag1_4,2);
-//		ips200_show_string(0,128+16*5,"flag3_4");
-//		ips200_show_int(8*10,128+16*5,flag3_4,2);
+//		ips200_show_uint(0,128+16*4,mid_line[110],3);
+//		ips200_show_uint(8*5,128+16*4,mid_line[90],3);
+//		ips200_show_uint(8*10,128+16*4,mid_line[70],3);
+//		ips200_show_uint(8*15,128+16*4,mid_line[50],3);
+		
+//		ips200_show_uint(0,128+16*5,right_line[110],3);
+//		ips200_show_uint(8*5,128+16*5,right_line[90],3);
+//		ips200_show_uint(8*10,128+16*5,right_line[70],3);
+//		ips200_show_uint(8*15,128+16*5,right_line[50],3);		
 
 	}
 	
-	
-//	ips200_show_int(0,32,last_cursor_position,2);
-//	ips200_show_int(0,48,cursor_position,2);
-//	ips200_show_int(0,64,menu_position,2);
 }
 
 //操作一
@@ -254,12 +279,4 @@ void handle2(int KeyNumber){
 }
 
 
-//画边线和中线
-void draw_line(){
-	for(uint8 i=bottom_line;i>find_end_line;i--){
-//		ips200_draw_point(left_line[i],i,RGB565_RED);
-//		ips200_draw_point(right_line[i],i,RGB565_RED);
-		ips200_draw_point(mid_line[i],i,RGB565_RED);
-	}
-	
-}
+
