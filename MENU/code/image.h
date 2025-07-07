@@ -22,6 +22,7 @@ extern uint8 mid_line[MT9V03X_H];																//中线存储
 extern uint8 mid_weight[120];																		//中线权重
 extern uint8 final_mid_value;																		//最终中线值
 extern uint8 x1,x2,x3,x4,y1,y2,y3,y4;														//拐点坐标
+extern float kl,kr;																							//十字补线斜率
 
 #define find_end_line 20																				//边线寻找截止处
 #define bottom_line 119																					//底线位置

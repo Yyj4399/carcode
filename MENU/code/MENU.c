@@ -132,9 +132,6 @@ void print_menu(){
 		ips200_show_string(0,128,"threshold");
 		ips200_show_uint(8*10,128,threshold,3);
 		
-//		memcpy(base_image, mt9v03x_image, MT9V03X_H*MT9V03X_W);
-//		ips200_show_gray_image(0, 0,(const uint8*)base_image, MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
-		
 		//左右基点显示
 		ips200_show_string(0,128+16,"l_point");
 		ips200_show_uint(8*10,128+16,l_point,3);
@@ -156,10 +153,14 @@ void print_menu(){
 //		ips200_show_uint(8*25,128+16*4,y3,3);
 //		ips200_show_uint(0,128+16*5,x4,3);
 //		ips200_show_uint(8*5,128+16*5,y4,3);
-		
+//		ips200_show_float(0,128+16*6,kl,2,2);
+//		ips200_show_float(8*5,128+16*6,kr,2,2);
+//		ips200_draw_line(x1,y1,x3,y3,RGB565_RED);
+//		ips200_draw_line(x2,y2,x4,y4,RGB565_RED);
+
 		//画边线
 		draw_line();
-//		
+	
 		//最终中值显示
 		ips200_show_string(0,128+16*3,"m_value");
 		ips200_show_uint(8*10,128+16*3,final_mid_value,3);
