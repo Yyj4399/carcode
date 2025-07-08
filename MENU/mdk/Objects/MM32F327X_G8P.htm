@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\MM32F327X_G8P.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\MM32F327X_G8P.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6070001: Last Updated: Mon Jul  7 17:11:26 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6070001: Last Updated: Tue Jul  8 13:12:46 2025
 <BR><P>
 <H3>Maximum Stack Usage =        728 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -336,7 +336,6 @@ Global Symbols
 
 <P><STRONG><a name="[96]"></a>__aeabi_memclr4</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, memseta.o(.text))
 <BR><BR>[Called By]<UL><LI><a href="#[59]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ips200_show_float
-<LI><a href="#[a7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;find_line
 <LI><a href="#[91]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_output
 </UL>
 
@@ -811,7 +810,6 @@ Global Symbols
 <LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;fifo_clear
 <LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_write_string
 <LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
-<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_write_8bit_register
 <LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_sccb_write_register
 <LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_sccb_read_register
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_read_8bit_registers
@@ -821,12 +819,13 @@ Global Symbols
 <LI><a href="#[5a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_send_data
 <LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_read_data
 <LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timer_etr_init
+<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_write_8bit_register
 <LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_write_buffer
 <LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_query_byte
 <LI><a href="#[b8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ips200_show_char
 </UL>
-<BR>[Address Reference Count : 3]<UL><LI> zf_driver_spi.o(.text.spi_init)
-<LI> zf_device_ips200.o(.text.ips200_show_uint)
+<BR>[Address Reference Count : 3]<UL><LI> zf_device_ips200.o(.text.ips200_show_uint)
+<LI> zf_driver_spi.o(.text.spi_init)
 <LI> zf_device_ips200.o(.text.ips200_show_gray_image)
 </UL>
 <P><STRONG><a name="[92]"></a>debug_init</STRONG> (Thumb, 80 bytes, Stack size 0 bytes, zf_common_debug.o(.text.debug_init))
@@ -856,8 +855,8 @@ Global Symbols
 <P><STRONG><a name="[99]"></a>dl1a_get_distance</STRONG> (Thumb, 120 bytes, Stack size 24 bytes, zf_device_dl1a.o(.text.dl1a_get_distance))
 <BR><BR>[Stack]<UL><LI>Max Depth = 528<LI>Call Chain = dl1a_get_distance &rArr; soft_iic_read_8bit_registers &rArr; soft_iic_read_data &rArr; debug_assert_handler &rArr; debug_output &rArr; __2sprintf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_write_8bit_register
-<LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_read_8bit_registers
+<BR>[Calls]<UL><LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_read_8bit_registers
+<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_write_8bit_register
 </UL>
 <BR>[Called By]<UL><LI><a href="#[78]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dl1a_int_handler
 </UL>
@@ -993,15 +992,14 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[a7]"></a>find_line</STRONG> (Thumb, 1684 bytes, Stack size 168 bytes, image.o(.text.find_line))
-<BR><BR>[Stack]<UL><LI>Max Depth = 188<LI>Call Chain = find_line &rArr; __aeabi_fadd &rArr; _float_epilogue
+<P><STRONG><a name="[a7]"></a>find_line</STRONG> (Thumb, 1408 bytes, Stack size 48 bytes, image.o(.text.find_line))
+<BR><BR>[Stack]<UL><LI>Max Depth = 68<LI>Call Chain = find_line &rArr; __aeabi_fadd &rArr; _float_epilogue
 </UL>
 <BR>[Calls]<UL><LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
 <LI><a href="#[6f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2f
 <LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fdiv
 <LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_fadd
 <LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_f2uiz
-<LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
 </UL>
 <BR>[Called By]<UL><LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -1291,7 +1289,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mt9v03x_init
 </UL>
 
-<P><STRONG><a name="[c2]"></a>print_menu</STRONG> (Thumb, 500 bytes, Stack size 40 bytes, menu.o(.text.print_menu))
+<P><STRONG><a name="[c2]"></a>print_menu</STRONG> (Thumb, 748 bytes, Stack size 40 bytes, menu.o(.text.print_menu))
 <BR><BR>[Stack]<UL><LI>Max Depth = 624<LI>Call Chain = print_menu &rArr; ips200_show_float &rArr; func_float_to_str &rArr; debug_assert_handler &rArr; debug_output &rArr; __2sprintf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ips200_show_gray_image
@@ -1464,7 +1462,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_uart_str_output
 </UL>
 
-<P><STRONG><a name="[c1]"></a>weight_find_mid_value</STRONG> (Thumb, 88 bytes, Stack size 8 bytes, image.o(.text.weight_find_mid_value))
+<P><STRONG><a name="[c1]"></a>weight_find_mid_value</STRONG> (Thumb, 92 bytes, Stack size 8 bytes, image.o(.text.weight_find_mid_value))
 <BR><BR>[Stack]<UL><LI>Max Depth = 96<LI>Call Chain = weight_find_mid_value &rArr; __aeabi_dmul &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_i2d
@@ -1539,10 +1537,10 @@ Local Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_assert_handler
 </UL>
-<BR>[Called By]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_write_8bit_register
-<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_sccb_write_register
+<BR>[Called By]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_sccb_write_register
 <LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_sccb_read_register
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_read_8bit_registers
+<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_write_8bit_register
 </UL>
 
 <P><STRONG><a name="[d3]"></a>soft_iic_stop</STRONG> (Thumb, 136 bytes, Stack size 24 bytes, zf_driver_soft_iic.o(.text.soft_iic_stop))
@@ -1550,10 +1548,10 @@ Local Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_assert_handler
 </UL>
-<BR>[Called By]<UL><LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_write_8bit_register
-<LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_sccb_write_register
+<BR>[Called By]<UL><LI><a href="#[cf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_sccb_write_register
 <LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_sccb_read_register
 <LI><a href="#[9a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_read_8bit_registers
+<LI><a href="#[9b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;soft_iic_write_8bit_register
 </UL>
 
 <P><STRONG><a name="[b4]"></a>ips200_set_region</STRONG> (Thumb, 148 bytes, Stack size 40 bytes, zf_device_ips200.o(.text.ips200_set_region))

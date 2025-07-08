@@ -145,18 +145,26 @@ void print_menu(){
 //		ips200_draw_point(x3,y3,RGB565_RED);
 //		ips200_draw_point(x4,y4,RGB565_RED);
 		
-//		ips200_show_uint(0,128+16*4,x1,3);
-//		ips200_show_uint(8*5,128+16*4,y1,3);
-//		ips200_show_uint(8*10,128+16*4,x2,3);
-//		ips200_show_uint(8*15,128+16*4,y2,3);
-//		ips200_show_uint(8*20,128+16*4,x3,3);
-//		ips200_show_uint(8*25,128+16*4,y3,3);
-//		ips200_show_uint(0,128+16*5,x4,3);
-//		ips200_show_uint(8*5,128+16*5,y4,3);
+		ips200_show_uint(0,128+16*4,x1,3);
+		ips200_show_uint(8*5,128+16*4,y1,3);
+		ips200_show_uint(8*10,128+16*4,x2,3);
+		ips200_show_uint(8*15,128+16*4,y2,3);
+		ips200_show_uint(8*20,128+16*4,x3,3);
+		ips200_show_uint(8*25,128+16*4,y3,3);
+		ips200_show_uint(0,128+16*5,x4,3);
+		ips200_show_uint(8*5,128+16*5,y4,3);
+		ips200_show_uint(8*10,128+16*5,x5,3);
+		ips200_show_uint(8*15,128+16*5,y5,3);
+		ips200_show_uint(8*20,128+16*5,x6,3);
+		ips200_show_uint(8*25,128+16*5,y6,3);
+		ips200_show_uint(0,128+16*6,x7,3);
+		ips200_show_uint(8*5,128+16*6,y7,3);
 //		ips200_show_float(0,128+16*6,kl,2,2);
 //		ips200_show_float(8*5,128+16*6,kr,2,2);
+		ips200_show_float(8*10,128+16*6,k1,2,2);
 //		ips200_draw_line(x1,y1,x3,y3,RGB565_RED);
 //		ips200_draw_line(x2,y2,x4,y4,RGB565_RED);
+//		ips200_draw_line(x5,y5,x6,y6,RGB565_RED);
 
 		//»­±ßÏß
 		draw_line();
@@ -165,10 +173,10 @@ void print_menu(){
 		ips200_show_string(0,128+16*3,"m_value");
 		ips200_show_uint(8*10,128+16*3,final_mid_value,3);
 		
-//		ips200_show_uint(0,128+16*4,mid_line[110],3);
-//		ips200_show_uint(8*5,128+16*4,mid_line[90],3);
-//		ips200_show_uint(8*10,128+16*4,mid_line[70],3);
-//		ips200_show_uint(8*15,128+16*4,mid_line[50],3);
+//		ips200_show_uint(0,128+16*6,mid_line[80],3);
+//		ips200_show_uint(8*5,128+16*6,mid_line[75],3);
+//		ips200_show_uint(8*10,128+16*6,mid_line[70],3);
+//		ips200_show_uint(8*15,128+16*6,mid_line[65],3);
 		
 //		ips200_show_uint(0,128+16*5,right_line[110],3);
 //		ips200_show_uint(8*5,128+16*5,right_line[90],3);

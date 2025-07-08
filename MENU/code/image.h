@@ -7,6 +7,9 @@ void image_binaryzation(uint8 thershold);												//图像分段二值化
 void find_basic_point(uint8 bio_image[MT9V03X_H][MT9V03X_W]);   //寻找左右基点
 void find_line(uint8 index[MT9V03X_H][MT9V03X_W]);   						//寻找左右边线
 uint8 weight_find_mid_value();																	//加权求中线值
+uint8 mini_uint8(uint8 a,uint8 b);															//最小值函数
+uint8 max_uint8(uint8 a,uint8 b);																//最大值函数
+uint8 limit_uint8(uint8 a,uint8 b,uint8 c);											//限幅函数
 
 extern uint8 threshold;																					//二值化阈值
 extern uint8 basic_image[MT9V03X_H][MT9V03X_W];									//基础图像
@@ -21,8 +24,9 @@ extern uint8 right_line[MT9V03X_H];															//右边线存储
 extern uint8 mid_line[MT9V03X_H];																//中线存储
 extern uint8 mid_weight[120];																		//中线权重
 extern uint8 final_mid_value;																		//最终中线值
-extern uint8 x1,x2,x3,x4,y1,y2,y3,y4;														//拐点坐标
+extern uint8 x1,x2,x3,x4,y1,y2,y3,y4,x5,y5,x6,y6,x7,y7,x8,y8;														//拐点坐标
 extern float kl,kr;																							//十字补线斜率
+extern float k1,k3;																							//圆环补线斜率
 
 #define find_end_line 20																				//边线寻找截止处
 #define bottom_line 119																					//底线位置
