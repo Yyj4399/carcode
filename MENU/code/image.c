@@ -564,41 +564,41 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 					
 				}
 				
-				//状态5进行补线
-				else if(circle5_flag==1){
-				
-					for(uint8 i=y9+2;i>40;i--){
-						
-						left_line[i]=x9+(i-y9)/k5;
-						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
-						
-					}
-					
-					//圆环状态5标志位置0
-					circle5_flag=0;
-					
-				}
-				
-				//状态8进行补线
-				else if(circle8_flag==1&&x7!=0){
-					//计算斜率
-					if(k8==0){
-						
-						k8=((float)(y7-(y7-2)))/(float)(x7-left_line[y7-2]);
-						
-					}
-					
-					for(uint8 i=y7-2;i<110;i++){
-						
-						left_line[i]=x7+(i-y7)/k8;
-						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
-						
-					}
-					
-					//圆环状态8标志位置0
-					circle8_flag=0;
-					
-				}
+//				//状态5进行补线
+//				else if(circle5_flag==1){
+//				
+//					for(uint8 i=y9+2;i>40;i--){
+//						
+//						left_line[i]=x9+(i-y9)/k5;
+//						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
+//						
+//					}
+//					
+//					//圆环状态5标志位置0
+//					circle5_flag=0;
+//					
+//				}
+//				
+//				//状态8进行补线
+//				else if(circle8_flag==1&&x7!=0){
+//					//计算斜率
+//					if(k8==0){
+//						
+//						k8=((float)(y7-(y7-2)))/(float)(x7-left_line[y7-2]);
+//						
+//					}
+//					
+//					for(uint8 i=y7-2;i<110;i++){
+//						
+//						left_line[i]=x7+(i-y7)/k8;
+//						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
+//						
+//					}
+//					
+//					//圆环状态8标志位置0
+//					circle8_flag=0;
+//					
+//				}
 				
 				//计数清零
 				num_lossr=0;
@@ -612,7 +612,7 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 	//判断丢线数量若大于40则判断进入十字
 	if(x6==0&&(num_loss>=40||num_lossl>=35||num_lossr>=35)){
 		
-		for(uint8 i=bottom_line;i>80;i--){
+		for(uint8 i=110;i>80;i--){
 			
 			//记录左下拐点
 			if(left_line[i]-left_line[i+1]>=1&&left_line[i]-left_line[i-1]>=1&&left_line[i]>=3&&left_line[i]>=10){
@@ -630,7 +630,7 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 		for(uint8 i=70;i>=40;i--){
 			
 			//记录左上拐点
-			 if(left_line[i]-left_line[i+4]>=10&&left_line[i]>10&&left_line[i+4]<=3){
+			if(left_line[i]-left_line[i+4]>=10&&left_line[i]>20&&left_line[i+4]<=3){
 				x3=left_line[i];
 				y3=i;
 			}
@@ -653,7 +653,7 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			kl=((float)(y3-y1))/(float)(x3-x1);
 		}
 		else if(x3!=0&&x1==0){
-			kl=((float)(y3-(y3-1))/(float)(x3-left_line[y3-1]));
+			kl=((float)(y3-(y3-2))/(float)(x3-left_line[y3-2]));
 		}
 		
 		//计算右边斜率
@@ -661,8 +661,9 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			kr=((float)(y4-y2))/(float)(x4-x2);
 		}
 		else if(x4!=0&&x2==0){
-			kr=((float)(y4-(y4-1))/(float)(x4-left_line[y4-1]));
+			kr=((float)(y4-(y4-2))/(float)(x4-right_line[y4-2]));
 		}
+		
 		if(x3!=0&&x4!=0){
 			//进行补线
 			for(uint8 i=max_uint8(y1,y2);i>mini_uint8(y4,y3);i--){
@@ -674,21 +675,23 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			}
 			
 		}
-		else if(x3==0){
+		else if(x1==0){
 			//进行补线
 			for(uint8 i=y2;i>y4;i--){
 				
-					right_line[i]=x2+(i-y2)/kr;
-					mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
+				left_line[i]=x3+(i-y3)/kl;
+				right_line[i]=x2+(i-y2)/kr;
+				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
 							
 			}
 		}
-		else if(x4==0){
+		else if(x2==0){
 			//进行补线
 			for(uint8 i=y1;i>y3;i--){
 				
-					left_line[i]=x1+(i-y1)/kl;
-					mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
+				left_line[i]=x1+(i-y1)/kl;
+				right_line[i]=x4+(i-y4)/kr;
+				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
 							
 			}
 		}

@@ -9,6 +9,7 @@ void Key_Init();									//按键初始化
 int KeyNum();											//获取按键情况
 void draw_line();									//画出边线和中线								
 
-extern  int KeyNumber;						
+extern int KeyNumber;			
+extern int main_menu_position;
 
 #endif

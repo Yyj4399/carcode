@@ -28,7 +28,7 @@ extern uint8 x1,x2,x3,x4,y1,y2,y3,y4,x5,y5,x6,y6,x7,y7,x8,y8;														//¹Õµ
 extern float kl,kr;																							//Ê®×Ö²¹ÏßĞ±ÂÊ
 extern float k1,k3;																							//Ô²»·²¹ÏßĞ±ÂÊ
 
-#define find_end_line 20																				//±ßÏßÑ°ÕÒ½ØÖ¹´¦
+#define find_end_line 25																				//±ßÏßÑ°ÕÒ½ØÖ¹´¦
 #define bottom_line 119																					//µ×ÏßÎ»ÖÃ
 
 #endif

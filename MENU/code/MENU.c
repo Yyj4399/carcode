@@ -157,20 +157,20 @@ void print_menu(){
 		ips200_show_uint(8*15,128+16*5,y5,3);
 		ips200_show_uint(8*20,128+16*5,x6,3);
 		ips200_show_uint(8*25,128+16*5,y6,3);
-		ips200_show_uint(0,128+16*6,x7,3);
-		ips200_show_uint(8*5,128+16*6,y7,3);
-		ips200_show_uint(8*10,128+16*6,x8,3);
-		ips200_show_uint(8*15,128+16*6,y8,3);
-//		ips200_show_float(0,128+16*6,kl,2,2);
-//		ips200_show_float(8*5,128+16*6,kr,2,2);
+		ips200_show_uint(0,128+16*6,right_line[y4-2],3);
+		ips200_show_uint(8*5,128+16*6,y4-2,3);
+//		ips200_show_uint(8*10,128+16*6,x8,3);
+//		ips200_show_uint(8*15,128+16*6,y8,3);
+		ips200_show_float(0,128+16*7,kl,2,2);
+		ips200_show_float(8*10,128+16*7,kr,2,2);
 //		ips200_show_float(8*10,128+16*6,k1,2,2);
-//		ips200_draw_line(x1,y1,x3,y3,RGB565_RED);
-//		ips200_draw_line(x2,y2,x4,y4,RGB565_RED);
-//		ips200_draw_line(x5,y5,x6,y6,RGB565_RED);
+		ips200_draw_line(x1,y1,x3,y3,RGB565_RED);
+		ips200_draw_line(x2,y2,x4,y4,RGB565_RED);
+		ips200_draw_line(x5,y5,x6,y6,RGB565_RED);
 //		ips200_draw_line(x7,y7,x8,y8,RGB565_RED);
 
 		//画边线
-		draw_line();
+//		draw_line();
 	
 		//最终中值显示
 		ips200_show_string(0,128+16*3,"m_value");
@@ -181,10 +181,10 @@ void print_menu(){
 //		ips200_show_uint(8*10,128+16*6,mid_line[70],3);
 //		ips200_show_uint(8*15,128+16*6,mid_line[65],3);
 		
-		ips200_show_uint(0,128+16*7,right_line[80],3);
-		ips200_show_uint(8*5,128+16*7,right_line[70],3);
-		ips200_show_uint(8*10,128+16*7,right_line[60],3);
-		ips200_show_uint(8*15,128+16*7,right_line[45],3);		
+//		ips200_show_uint(0,128+16*7,right_line[80],3);
+//		ips200_show_uint(8*5,128+16*7,right_line[70],3);
+//		ips200_show_uint(8*10,128+16*7,right_line[60],3);
+//		ips200_show_uint(8*15,128+16*7,right_line[45],3);		
 
 	}
 	
