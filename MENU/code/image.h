@@ -11,6 +11,7 @@ uint8 mini_uint8(uint8 a,uint8 b);															//×îĞ¡Öµº¯Êı
 uint8 max_uint8(uint8 a,uint8 b);																//×î´óÖµº¯Êı
 uint8 limit_uint8(uint8 a,uint8 b,uint8 c);											//ÏŞ·ùº¯Êı
 
+extern uint8 find_end_line;
 extern uint8 threshold;																					//¶şÖµ»¯ãĞÖµ
 extern uint8 basic_image[MT9V03X_H][MT9V03X_W];									//»ù´¡Í¼Ïñ
 extern uint8 image[MT9V03X_H][MT9V03X_W];												//¶şÖµ»¯ºóµÄÍ¼Ïñ
@@ -28,7 +29,8 @@ extern uint8 x1,x2,x3,x4,y1,y2,y3,y4,x5,y5,x6,y6,x7,y7,x8,y8;														//¹Õµ
 extern float kl,kr;																							//Ê®×Ö²¹ÏßĞ±ÂÊ
 extern float k1,k3;																							//Ô²»·²¹ÏßĞ±ÂÊ
 
-#define find_end_line 25																				//±ßÏßÑ°ÕÒ½ØÖ¹´¦
+#define MID_W         94																				//Ö±µÀÖĞÏßÖµ
+
 #define bottom_line 119																					//µ×ÏßÎ»ÖÃ
 
 #endif

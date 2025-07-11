@@ -1,7 +1,9 @@
 #include "zf_common_headfile.h"
+#include "image.h"
 
 uint8 basic_image[MT9V03X_H][MT9V03X_W];  					//图像复制后的基础图像
 uint8 image[MT9V03X_H][MT9V03X_W];    							//二值化后的图像
+uint8 find_end_line=25;															//边线寻找截止处
 
 //获取图像
 void get_image(){
@@ -84,17 +86,28 @@ uint8 Otsu(uint8 index_image[MT9V03X_H][MT9V03X_W]){
 void image_binaryzation(uint8 thershold){
 	
 	uint8 temp;
+	uint8 num=0;
 	
 	for(uint8 i=0;i<40;i++){							//远端图像阈值+10
 		for(uint8 j=0;j<MT9V03X_W;j++){
 			temp = basic_image[i][j];
 			if(temp<(thershold+10)){
 				image[i][j] =0;
+				num++;
 			}
 			else{
 				image[i][j]=255;
 			}
 		}
+		//若有一行基本为黑则这一行为搜寻截止行
+		if(num>=186){
+			find_end_line=i;
+			num=0;
+		}
+		else{
+			find_end_line=25;
+		}
+		num=0;
 	}
 	
 	for(uint8 i=40;i<MT9V03X_H;i++){			//近端不变
@@ -102,11 +115,21 @@ void image_binaryzation(uint8 thershold){
 			temp = basic_image[i][j];
 			if(temp<thershold){
 				image[i][j] =0;
+				num++;
 			}
 			else{
 				image[i][j]=255;
 			}
 		}
+		//若有一行基本为黑则这一行为搜寻截止行
+		if(num>=186){
+			find_end_line=i;
+			num=0;
+		}
+		else{
+			find_end_line=25;
+		}
+		num=0;
 	}
 	
 }
@@ -245,8 +268,6 @@ uint8 max_uint8(uint8 a,uint8 b){
 	return 0;
 }
 
-
-#define find_end_line 25   						//寻找截止处
 #define l_right_find 20								//左边线向右寻找20个像素
 #define l_left_find 10								//左边线向左寻找10个像素
 #define r_right_find 10								//右边线向右寻找10个像素
@@ -653,7 +674,7 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			kl=((float)(y3-y1))/(float)(x3-x1);
 		}
 		else if(x3!=0&&x1==0){
-			kl=((float)(y3-(y3-2))/(float)(x3-left_line[y3-2]));
+			kl=-1.5;
 		}
 		
 		//计算右边斜率
@@ -661,10 +682,10 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			kr=((float)(y4-y2))/(float)(x4-x2);
 		}
 		else if(x4!=0&&x2==0){
-			kr=((float)(y4-(y4-2))/(float)(x4-right_line[y4-2]));
+			kr=1.8;
 		}
 		
-		if(x3!=0&&x4!=0){
+		if(x1!=0&&x2!=0&&kl!=0&&kr!=0){
 			//进行补线
 			for(uint8 i=max_uint8(y1,y2);i>mini_uint8(y4,y3);i--){
 				
@@ -675,9 +696,9 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			}
 			
 		}
-		else if(x1==0){
+		else if(x1==0&&kl!=0&&kr!=0){
 			//进行补线
-			for(uint8 i=y2;i>y4;i--){
+			for(uint8 i=bottom_line;i>mini_uint8(y4,y3);i--){
 				
 				left_line[i]=x3+(i-y3)/kl;
 				right_line[i]=x2+(i-y2)/kr;
@@ -685,9 +706,9 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 							
 			}
 		}
-		else if(x2==0){
+		else if(x2==0&&kl!=0&&kr!=0){
 			//进行补线
-			for(uint8 i=y1;i>y3;i--){
+			for(uint8 i=bottom_line;i>mini_uint8(y4,y3);i--){
 				
 				left_line[i]=x1+(i-y1)/kl;
 				right_line[i]=x4+(i-y4)/kr;
@@ -722,7 +743,7 @@ uint8 mid_weight[120]={
 uint8 final_mid_value = MT9V03X_W/2;			//最终中线值
 
 //加权求中线值
-uint32 weight_find_mid_value(){
+uint8 weight_find_mid_value(){
 	
 	
 	uint8 last_mid_line = MT9V03X_W/2;			//上一次的中线值

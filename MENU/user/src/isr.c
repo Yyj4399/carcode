@@ -93,10 +93,7 @@ void TIM4_IRQHandler (void)
 void TIM5_IRQHandler (void)
 {
 	
-    car_protect(image);													//出界保护
-		Encoder_Get();															//编码器值获取
-		KeyNumber = KeyNum();												//获取按键信息
-		car_start();																//发车
+
 	
     TIM5->SR &= ~TIM5->SR;                                                      // 清空中断状态
 }
@@ -107,9 +104,11 @@ void TIM5_IRQHandler (void)
 //-------------------------------------------------------------------------------------------------------------------
 void TIM6_IRQHandler (void)
 {
-    // 此处编写用户代码
-
-    // 此处编写用户代码
+	
+//    car_protect(image);													//出界保护
+		Encoder_Get();															//编码器值获取
+//		KeyNumber = KeyNum();												//获取按键信息
+	
     TIM6->SR &= ~TIM6->SR;                                                      // 清空中断状态
 }
 

@@ -1,5 +1,7 @@
 #include "zf_common_headfile.h"
 #include "image.h"
+#include "MOTOR.H"
+#include "PID.H"
 
 #define KEY1                    (E2 )
 #define KEY2                    (E3 )
@@ -16,7 +18,6 @@ int len_main=2;																			//主菜单可进入界面的数量
 int len_pid=3;																			//同理
 int len_image=1;
 int i=0;
-float kp=0.2,ki=0.3,kd=0.5;
 
 void IPS_Init(){
 	ips200_set_color(RGB565_WHITE,RGB565_BLACK); //白底黑字
@@ -99,14 +100,21 @@ void print_menu(){
 			ips200_show_string(16,16,"ki");
 			ips200_show_string(16,32,"kd");
 			
-			ips200_show_float(48,0,kp,2,3);
-			ips200_show_float(48,16,ki,2,3);
-			ips200_show_float(48,32,kd,2,3);
+			ips200_show_float(48,0,motor_pid_l.Kp,2,3);
+			ips200_show_float(48,16,motor_pid_l.Ki,2,3);
+			ips200_show_float(48,32,motor_pid_l.Kd,2,3);
 			
-			ips200_show_string(16,32+16,"motor_l");
+			ips200_show_float(16*5,0,motor_pid_r.Kp,2,3);
+			ips200_show_float(16*5,16,motor_pid_r.Ki,2,3);
+			ips200_show_float(16*5,32,motor_pid_r.Kd,2,3);
+			
+//			ips200_show_string(16,32+16,"motor_l");
+			ips200_show_uint(8*15,32+16,car_num,2);
 			ips200_show_string(16,32+16*2,"encoder_l");
-			ips200_show_string(16,32+16*3,"motor_r");
-			ips200_show_string(16,32+16*4,"encoder_r");
+			ips200_show_int(8*15,32+16*2,motor_l.encoder_speed,5);
+//			ips200_show_string(16,32+16*3,"motor_r");
+			ips200_show_string(16,32+16*3,"encoder_r");
+			ips200_show_int(8*15,32+16*4,motor_r.encoder_speed,5);
 			
 			
 		
@@ -114,13 +122,13 @@ void print_menu(){
 			ips200_show_string(0,last_cursor_position*16," ");
 		}
 		else if(pid_menu_position==1){				//调节kp的数值显示
-			ips200_show_float(0,0,kp,2,3);
+			ips200_show_float(0,0,motor_pid_l.Kp,2,3);
 		}
 		else if(pid_menu_position==2){				//调节ki的数值显示
-			ips200_show_float(0,0,ki,2,3);
+			ips200_show_float(0,0,motor_pid_l.Ki,2,3);
 		}
 		else if(pid_menu_position==3){				//调节kd的数值显示
-			ips200_show_float(0,0,kd,2,3);
+			ips200_show_float(0,0,motor_pid_l.Kd,2,3);
 		}
 	}
 	else if(main_menu_position==2){					//图像界面显示
@@ -157,20 +165,20 @@ void print_menu(){
 		ips200_show_uint(8*15,128+16*5,y5,3);
 		ips200_show_uint(8*20,128+16*5,x6,3);
 		ips200_show_uint(8*25,128+16*5,y6,3);
-		ips200_show_uint(0,128+16*6,right_line[y4-2],3);
-		ips200_show_uint(8*5,128+16*6,y4-2,3);
+		ips200_show_uint(0,128+16*6,x7,3);
+		ips200_show_uint(8*5,128+16*6,y7,3);
 //		ips200_show_uint(8*10,128+16*6,x8,3);
 //		ips200_show_uint(8*15,128+16*6,y8,3);
 		ips200_show_float(0,128+16*7,kl,2,2);
 		ips200_show_float(8*10,128+16*7,kr,2,2);
 //		ips200_show_float(8*10,128+16*6,k1,2,2);
-		ips200_draw_line(x1,y1,x3,y3,RGB565_RED);
-		ips200_draw_line(x2,y2,x4,y4,RGB565_RED);
-		ips200_draw_line(x5,y5,x6,y6,RGB565_RED);
+//		ips200_draw_line(x1,y1,x3,y3,RGB565_RED);
+//		ips200_draw_line(x2,y2,x4,y4,RGB565_RED);
+//		ips200_draw_line(x5,y5,x6,y6,RGB565_RED);
 //		ips200_draw_line(x7,y7,x8,y8,RGB565_RED);
 
 		//画边线
-//		draw_line();
+		draw_line();
 	
 		//最终中值显示
 		ips200_show_string(0,128+16*3,"m_value");
@@ -205,13 +213,13 @@ void handle1(int KeyNumber){
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position-1+len_pid)%len_pid;
 				if(pid_menu_position==1){															//在PID界面时，按键一二用来调节PID参数
-					kp+=0.1;
+					motor_pid_l.Kp+=0.1;
 				}
 				else if(pid_menu_position==2){
-					ki+=0.1;
+					motor_pid_l.Ki+=0.1;
 				}
 				else if(pid_menu_position==3){
-					kd+=0.1;
+					motor_pid_l.Kd+=0.1;
 				}
 			}
 			break;
@@ -224,13 +232,13 @@ void handle1(int KeyNumber){
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position+1)%len_pid;
 				if(pid_menu_position==1){															//在PID界面时，按键一二用来调节PID参数
-					kp-=0.1;
+					motor_pid_l.Kp-=0.1;
 				}
 				else if(pid_menu_position==2){
-					ki-=0.1;
+					motor_pid_l.Ki-=0.1;
 				}
 				else if(pid_menu_position==3){
-					kd-=0.1;
+					motor_pid_l.Kd-=0.1;
 				}
 			}
 			break;

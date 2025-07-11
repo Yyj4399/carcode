@@ -1,8 +1,8 @@
 #include "zf_common_headfile.h"
 #include "PID.h"
 
-PID motor_pid_l = {0,0,0,0,0,0,0,0,2,0,1};												//左轮PID参数设置
-PID motor_pid_r = {0,0,0,0,0,0,0,0,2,0,1};												//右轮PID参数设置
+PID motor_pid_l = {0,0,0,0,0,0,0,10,2,0,1};												//左轮PID参数设置
+PID motor_pid_r = {0,0,0,0,0,0,0,10,2,0,1};												//右轮PID参数设置
 
 //增量式PID
 float PID_increase(PID *PID,float Nowdata,float point){

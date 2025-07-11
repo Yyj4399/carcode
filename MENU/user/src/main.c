@@ -16,11 +16,19 @@ int main (void){
 	IPS_Init();														//屏幕初始化
 	
 	PWM_Init();														//PWM初始化
+	Encoder_Init();												//编码器初始化
 	
-	pit_ms_init(TIM5_PIT,5);							//定时器初始化
+	
+	pit_ms_init(TIM6_PIT,5);							//定时器初始化
 	
 	if(mt9v03x_flag ==0){
 		while(1){
+			
+			KeyNumber = KeyNum();												//获取按键信息
+			
+			Motor_Control(100,100);
+//			Speed_Set(pwm_l,A0,1000,1,0);
+//			Speed_Set(pwm_r,A2,1000,1,0);
 			
 			get_image();																//获取图像
 			threshold = Otsu(basic_image);							//获取阈值
@@ -33,6 +41,8 @@ int main (void){
 			handle2(KeyNumber);													//操作
 			handle1(KeyNumber);													//操作一
 			print_menu();																//显示菜单
+			
+			car_start();																//发车
 			
     }
 	}
