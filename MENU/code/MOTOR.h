@@ -11,9 +11,9 @@ void Final_Motor_Control(int Speed,float k,int limit);																				//差速
 void car_start();																																							//发车函数
 
 
-#define pwm_limit 6000																																				//编码器限幅
-#define pwm_l TIM5_PWM_CH2_A1
-#define pwm_r TIM5_PWM_CH4_A3
+
+#define pwm_l TIM5_PWM_CH4_A3
+#define pwm_r TIM5_PWM_CH2_A1
 
 typedef struct motor1{																																				//电机参数定义
 	int32 target_speed;

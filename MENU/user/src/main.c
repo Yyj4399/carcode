@@ -2,6 +2,7 @@
 #include "MENU.H"
 #include "IMAGE.H"
 #include "MOTOR.H"
+#include "PID.H"
 	
 uint8 mt9v03x_flag;
 
@@ -26,21 +27,23 @@ int main (void){
 			
 			KeyNumber = KeyNum();												//获取按键信息
 			
-			Motor_Control(100,100);
-//			Speed_Set(pwm_l,A0,1000,1,0);
+//			Encoder_Get();															//编码器值获取
+//			Motor_Control(1000,1000);
+			printf("%d,%d,%d,%d\n",motor_l.encoder_speed,motor_r.encoder_speed,motor_l.target_speed,motor_r.target_speed);
+//			Speed_Set(pwm_l,A0,(int)(1000*motor_pid_l[1]),1,0);
 //			Speed_Set(pwm_r,A2,1000,1,0);
 			
-			get_image();																//获取图像
-			threshold = Otsu(basic_image);							//获取阈值
-			image_binaryzation(threshold);							//图像二值化
+//			get_image();																//获取图像
+//			threshold = Otsu(basic_image);							//获取阈值
+//			image_binaryzation(threshold);							//图像二值化
 			
-			find_basic_point(image);										//找到左右边线基点
-			find_line(image);														//寻找边线
-			final_mid_value = weight_find_mid_value();	//加权求中线值	
-			
-			handle2(KeyNumber);													//操作
-			handle1(KeyNumber);													//操作一
-			print_menu();																//显示菜单
+//			find_basic_point(image);										//找到左右边线基点
+//			find_line(image);														//寻找边线
+//			final_mid_value = weight_find_mid_value();	//加权求中线值	
+//			
+//			handle2(KeyNumber);													//操作二
+//			handle1(KeyNumber);													//操作一
+//			print_menu();																//显示菜单
 			
 			car_start();																//发车
 			

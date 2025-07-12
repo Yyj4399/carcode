@@ -100,20 +100,20 @@ void print_menu(){
 			ips200_show_string(16,16,"ki");
 			ips200_show_string(16,32,"kd");
 			
-			ips200_show_float(48,0,motor_pid_l.Kp,2,3);
-			ips200_show_float(48,16,motor_pid_l.Ki,2,3);
-			ips200_show_float(48,32,motor_pid_l.Kd,2,3);
+			ips200_show_float(48,0,motor_pid_l[0],4,3);
+			ips200_show_float(48,16,motor_pid_l[1],4,3);
+			ips200_show_float(48,32,Out_I_l,4,3);
 			
-			ips200_show_float(16*5,0,motor_pid_r.Kp,2,3);
-			ips200_show_float(16*5,16,motor_pid_r.Ki,2,3);
-			ips200_show_float(16*5,32,motor_pid_r.Kd,2,3);
+			ips200_show_float(16*7,0,motor_pid_r[0],2,3);
+			ips200_show_float(16*7,16,motor_pid_r[1],2,3);
+			ips200_show_float(16*7,32,Out_I_l,2,3);
 			
 //			ips200_show_string(16,32+16,"motor_l");
 			ips200_show_uint(8*15,32+16,car_num,2);
 			ips200_show_string(16,32+16*2,"encoder_l");
 			ips200_show_int(8*15,32+16*2,motor_l.encoder_speed,5);
 //			ips200_show_string(16,32+16*3,"motor_r");
-			ips200_show_string(16,32+16*3,"encoder_r");
+			ips200_show_string(16,32+16*4,"encoder_r");
 			ips200_show_int(8*15,32+16*4,motor_r.encoder_speed,5);
 			
 			
@@ -122,14 +122,14 @@ void print_menu(){
 			ips200_show_string(0,last_cursor_position*16," ");
 		}
 		else if(pid_menu_position==1){				//调节kp的数值显示
-			ips200_show_float(0,0,motor_pid_l.Kp,2,3);
+			ips200_show_float(0,0,motor_pid_l[0],2,3);
 		}
 		else if(pid_menu_position==2){				//调节ki的数值显示
-			ips200_show_float(0,0,motor_pid_l.Ki,2,3);
+			ips200_show_float(0,0,motor_pid_l[1],2,3);
 		}
-		else if(pid_menu_position==3){				//调节kd的数值显示
-			ips200_show_float(0,0,motor_pid_l.Kd,2,3);
-		}
+//		else if(pid_menu_position==3){				//调节kd的数值显示
+//			ips200_show_float(0,0,motor_pid_l[2],2,3);
+//		}
 	}
 	else if(main_menu_position==2){					//图像界面显示
 		
@@ -213,14 +213,14 @@ void handle1(int KeyNumber){
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position-1+len_pid)%len_pid;
 				if(pid_menu_position==1){															//在PID界面时，按键一二用来调节PID参数
-					motor_pid_l.Kp+=0.1;
+					motor_pid_l[0]+=0.1;
 				}
 				else if(pid_menu_position==2){
-					motor_pid_l.Ki+=0.1;
+					motor_pid_l[1]+=0.1;
 				}
-				else if(pid_menu_position==3){
-					motor_pid_l.Kd+=0.1;
-				}
+//				else if(pid_menu_position==3){
+//					motor_pid_l[2]+=0.1;
+//				}
 			}
 			break;
 		case(2):
@@ -232,14 +232,14 @@ void handle1(int KeyNumber){
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position+1)%len_pid;
 				if(pid_menu_position==1){															//在PID界面时，按键一二用来调节PID参数
-					motor_pid_l.Kp-=0.1;
+					motor_pid_l[0]-=0.1;
 				}
 				else if(pid_menu_position==2){
-					motor_pid_l.Ki-=0.1;
+					motor_pid_l[1]-=0.1;
 				}
-				else if(pid_menu_position==3){
-					motor_pid_l.Kd-=0.1;
-				}
+//				else if(pid_menu_position==3){
+//					motor_pid_l[2]-=0.1;
+//				}
 			}
 			break;
 

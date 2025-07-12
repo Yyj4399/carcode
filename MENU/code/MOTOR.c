@@ -21,8 +21,8 @@ void PWM_Init(){
 //编码器初始化
 void Encoder_Init(){
 	
-	encoder_dir_init(TIM4_ENCODER, TIM4_ENCODER_CH1_B6, TIM4_ENCODER_CH2_B7);
-	encoder_dir_init(TIM3_ENCODER, TIM3_ENCODER_CH1_B4, TIM3_ENCODER_CH2_B5);
+	encoder_quad_init(TIM4_ENCODER, TIM4_ENCODER_CH1_B6, TIM4_ENCODER_CH2_B7);
+	encoder_quad_init(TIM3_ENCODER, TIM3_ENCODER_CH1_B4, TIM3_ENCODER_CH2_B5);
 	
 }
 
@@ -35,8 +35,8 @@ void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
 		}
 	}
 	if(num<=60){
-		Speed_Set(pwm_l,A0,0,1,0);
-		Speed_Set(pwm_r,A2,0,1,0);
+		Speed_Set(pwm_l,A0,0,0,1);
+		Speed_Set(pwm_r,A2,0,0,1);
 	}
 }
 
@@ -44,16 +44,16 @@ void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
 void Encoder_Get(){
 	
 	//左轮编码器值获取
-	motor_l.encoder_raw = encoder_get_count(TIM3_ENCODER);
+	motor_l.encoder_raw = encoder_get_count(TIM4_ENCODER);
 	motor_l.encoder_speed=motor_l.encoder_speed*0.2+motor_l.encoder_raw*0.8;
 	motor_l.total_encoder+=motor_l.encoder_raw;
-	encoder_clear_count(TIM3_ENCODER);
+	encoder_clear_count(TIM4_ENCODER);
 	
 	//右轮编码器值获取
-	motor_r.encoder_raw = encoder_get_count(TIM4_ENCODER);
-	motor_r.encoder_speed=motor_r.encoder_speed*0.2+motor_r.encoder_raw*0.8;
+	motor_r.encoder_raw = encoder_get_count(TIM3_ENCODER);
+	motor_r.encoder_speed=-(motor_r.encoder_speed*0.2+motor_r.encoder_raw*0.8);
 	motor_r.total_encoder+=motor_r.encoder_raw;
-	encoder_clear_count(TIM4_ENCODER);
+	encoder_clear_count(TIM3_ENCODER);
 	
 }
 
@@ -93,12 +93,14 @@ void Motor_Control(int Speed_L,int Speed_R){
 	motor_r.target_speed = Speed_R;
 	
 	//PID控制
-	motor_l.duty = limit_int(-pwm_limit,motor_l.duty+PID_increase(&motor_pid_l,(float)motor_l.encoder_speed,(float)motor_l.target_speed),pwm_limit);
-	motor_r.duty = limit_int(-pwm_limit,motor_r.duty+PID_increase(&motor_pid_r,(float)motor_r.encoder_speed,(float)motor_r.target_speed),pwm_limit);
+	motor_l.duty = PID_increase_l(motor_pid_l[0],motor_pid_l[1],(float)motor_l.encoder_speed,(float)motor_l.target_speed);
+	motor_r.duty = PID_increase_r(motor_pid_r[0],motor_pid_r[1],(float)motor_r.encoder_speed,(float)motor_r.target_speed);
 	
 	//输出速度
-	Speed_Set(pwm_l,A0,motor_l.duty,1,0);
-	Speed_Set(pwm_r,A2,motor_r.duty,1,0);
+	Speed_Set(pwm_l,A2,motor_l.duty,1,0);
+	Speed_Set(pwm_r,A0,motor_r.duty,1,0);
+
+	
 }
 
 //差速控制
@@ -110,15 +112,19 @@ void Final_Motor_Control(int Speed,float k,int limit){
 //车辆启动
 void car_start(){
 	
-	if(KeyNumber==4&&main_menu_position==0){
+	if(KeyNumber==4){
 		car_num++;
 	}
 	if(car_num!=0){
 		if(car_num%2==1){
-			Motor_Control(1000,1000);
+			Motor_Control(100,100);
+//			Speed_Set(pwm_l,A2,1000,1,0);
+//			Speed_Set(pwm_r,A0,1000,1,0);
 		}
 		else{
-			Motor_Control(0,0);
+//			Motor_Control(20,20);
+			Speed_Set(pwm_l,A2,0,0,1);
+			Speed_Set(pwm_r,A0,0,0,1);
 		}
 	}
 }
