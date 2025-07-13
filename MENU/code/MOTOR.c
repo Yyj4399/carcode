@@ -35,8 +35,8 @@ void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
 		}
 	}
 	if(num<=60){
-		Speed_Set(pwm_l,A0,0,0,1);
-		Speed_Set(pwm_r,A2,0,0,1);
+		Speed_Set(pwm_l,A0,0,1,0);
+		Speed_Set(pwm_r,A2,0,1,0);
 	}
 }
 
@@ -50,8 +50,8 @@ void Encoder_Get(){
 	encoder_clear_count(TIM4_ENCODER);
 	
 	//ÓÒÂÖ±àÂëÆ÷Öµ»ñÈ¡
-	motor_r.encoder_raw = encoder_get_count(TIM3_ENCODER);
-	motor_r.encoder_speed=-(motor_r.encoder_speed*0.2+motor_r.encoder_raw*0.8);
+	motor_r.encoder_raw = -encoder_get_count(TIM3_ENCODER);
+	motor_r.encoder_speed=motor_r.encoder_speed*0.2+motor_r.encoder_raw*0.8;
 	motor_r.total_encoder+=motor_r.encoder_raw;
 	encoder_clear_count(TIM3_ENCODER);
 	
@@ -117,7 +117,7 @@ void car_start(){
 	}
 	if(car_num!=0){
 		if(car_num%2==1){
-			Motor_Control(100,100);
+			Final_Motor_Control(50,0.5,30);
 //			Speed_Set(pwm_l,A2,1000,1,0);
 //			Speed_Set(pwm_r,A0,1000,1,0);
 		}

@@ -111,10 +111,10 @@ void print_menu(){
 //			ips200_show_string(16,32+16,"motor_l");
 			ips200_show_uint(8*15,32+16,car_num,2);
 			ips200_show_string(16,32+16*2,"encoder_l");
-			ips200_show_int(8*15,32+16*2,motor_l.encoder_speed,5);
+			ips200_show_int(8*15,32+16*2,motor_l.encoder_raw,5);
 //			ips200_show_string(16,32+16*3,"motor_r");
 			ips200_show_string(16,32+16*4,"encoder_r");
-			ips200_show_int(8*15,32+16*4,motor_r.encoder_speed,5);
+			ips200_show_int(8*15,32+16*4,motor_r.encoder_raw,5);
 			
 			
 		
@@ -231,7 +231,7 @@ void handle1(int KeyNumber){
 			else{
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position+1)%len_pid;
-				if(pid_menu_position==1){															//在PID界面时，按键一二用来调节PID参数
+				if(pid_menu_position==1){															//在/PID界面时，按键一二用来调节PID参数
 					motor_pid_l[0]-=0.1;
 				}
 				else if(pid_menu_position==2){
