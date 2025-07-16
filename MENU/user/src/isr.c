@@ -104,8 +104,10 @@ void TIM5_IRQHandler (void)
 //-------------------------------------------------------------------------------------------------------------------
 void TIM6_IRQHandler (void)
 {
+
 	
-//    car_protect(image);													//出界保护
+
+
 		Encoder_Get();															//编码器值获取
 //		KeyNumber = KeyNum();												//获取按键信息
 	

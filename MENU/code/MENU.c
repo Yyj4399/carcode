@@ -96,17 +96,17 @@ void print_menu(){
 	else if(main_menu_position == 1){
 		if(pid_menu_position==0){					//PID菜单显示
 			
-			ips200_show_string(16,0,"kp");
-			ips200_show_string(16,16,"ki");
-			ips200_show_string(16,32,"kd");
+			ips200_show_string(16,0,"k");
+			ips200_show_string(16,16,"d");
+//			ips200_show_string(16,32,"kd");
 			
-			ips200_show_float(48,0,motor_pid_l[0],4,3);
-			ips200_show_float(48,16,motor_pid_l[1],4,3);
-			ips200_show_float(48,32,Out_I_l,4,3);
+			ips200_show_float(48,0,k,4,3);
+			ips200_show_float(48,16,d,4,3);
+			ips200_show_int(48,32,motorr,4);
 			
-			ips200_show_float(16*7,0,motor_pid_r[0],2,3);
-			ips200_show_float(16*7,16,motor_pid_r[1],2,3);
-			ips200_show_float(16*7,32,Out_I_l,2,3);
+//			ips200_show_float(16*7,0,motor_pid_r[0],2,3);
+//			ips200_show_float(16*7,16,motor_pid_r[1],2,3);
+//			ips200_show_float(16*7,32,Out_I_l,2,3);
 			
 //			ips200_show_string(16,32+16,"motor_l");
 			ips200_show_uint(8*15,32+16,car_num,2);
@@ -122,10 +122,10 @@ void print_menu(){
 			ips200_show_string(0,last_cursor_position*16," ");
 		}
 		else if(pid_menu_position==1){				//调节kp的数值显示
-			ips200_show_float(0,0,motor_pid_l[0],2,3);
+			ips200_show_float(0,0,k,2,3);
 		}
 		else if(pid_menu_position==2){				//调节ki的数值显示
-			ips200_show_float(0,0,motor_pid_l[1],2,3);
+			ips200_show_float(0,0,d,2,3);
 		}
 //		else if(pid_menu_position==3){				//调节kd的数值显示
 //			ips200_show_float(0,0,motor_pid_l[2],2,3);
@@ -153,24 +153,24 @@ void print_menu(){
 //		ips200_draw_point(x3,y3,RGB565_RED);
 //		ips200_draw_point(x4,y4,RGB565_RED);
 		
-		ips200_show_uint(0,128+16*4,x1,3);
-		ips200_show_uint(8*5,128+16*4,y1,3);
-		ips200_show_uint(8*10,128+16*4,x2,3);
-		ips200_show_uint(8*15,128+16*4,y2,3);
-		ips200_show_uint(8*20,128+16*4,x3,3);
-		ips200_show_uint(8*25,128+16*4,y3,3);
-		ips200_show_uint(0,128+16*5,x4,3);
-		ips200_show_uint(8*5,128+16*5,y4,3);
-		ips200_show_uint(8*10,128+16*5,x5,3);
-		ips200_show_uint(8*15,128+16*5,y5,3);
-		ips200_show_uint(8*20,128+16*5,x6,3);
-		ips200_show_uint(8*25,128+16*5,y6,3);
-		ips200_show_uint(0,128+16*6,x7,3);
-		ips200_show_uint(8*5,128+16*6,y7,3);
+//		ips200_show_uint(0,128+16*4,x1,3);
+//		ips200_show_uint(8*5,128+16*4,y1,3);
+//		ips200_show_uint(8*10,128+16*4,x2,3);
+//		ips200_show_uint(8*15,128+16*4,y2,3);
+//		ips200_show_uint(8*20,128+16*4,x3,3);
+//		ips200_show_uint(8*25,128+16*4,y3,3);
+//		ips200_show_uint(0,128+16*5,x4,3);
+//		ips200_show_uint(8*5,128+16*5,y4,3);
+//		ips200_show_uint(8*10,128+16*5,x5,3);
+//		ips200_show_uint(8*15,128+16*5,y5,3);
+//		ips200_show_uint(8*20,128+16*5,x6,3);
+//		ips200_show_uint(8*25,128+16*5,y6,3);
+//		ips200_show_uint(0,128+16*6,x7,3);
+//		ips200_show_uint(8*5,128+16*6,y7,3);
 //		ips200_show_uint(8*10,128+16*6,x8,3);
 //		ips200_show_uint(8*15,128+16*6,y8,3);
-		ips200_show_float(0,128+16*7,kl,2,2);
-		ips200_show_float(8*10,128+16*7,kr,2,2);
+//		ips200_show_float(0,128+16*7,kl,2,2);
+//		ips200_show_float(8*10,128+16*7,kr,2,2);
 //		ips200_show_float(8*10,128+16*6,k1,2,2);
 //		ips200_draw_line(x1,y1,x3,y3,RGB565_RED);
 //		ips200_draw_line(x2,y2,x4,y4,RGB565_RED);
@@ -183,6 +183,8 @@ void print_menu(){
 		//最终中值显示
 		ips200_show_string(0,128+16*3,"m_value");
 		ips200_show_uint(8*10,128+16*3,final_mid_value,3);
+		
+		ips200_show_int(0,128+16*4,error,3);
 		
 //		ips200_show_uint(0,128+16*6,mid_line[80],3);
 //		ips200_show_uint(8*5,128+16*6,mid_line[75],3);
@@ -213,10 +215,10 @@ void handle1(int KeyNumber){
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position-1+len_pid)%len_pid;
 				if(pid_menu_position==1){															//在PID界面时，按键一二用来调节PID参数
-					motor_pid_l[0]+=0.1;
+					k+=10;
 				}
 				else if(pid_menu_position==2){
-					motor_pid_l[1]+=0.1;
+					d+=10;
 				}
 //				else if(pid_menu_position==3){
 //					motor_pid_l[2]+=0.1;
@@ -232,10 +234,10 @@ void handle1(int KeyNumber){
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position+1)%len_pid;
 				if(pid_menu_position==1){															//在/PID界面时，按键一二用来调节PID参数
-					motor_pid_l[0]-=0.1;
+					k-=10;
 				}
 				else if(pid_menu_position==2){
-					motor_pid_l[1]-=0.1;
+					d-=10;
 				}
 //				else if(pid_menu_position==3){
 //					motor_pid_l[2]-=0.1;

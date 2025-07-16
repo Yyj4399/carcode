@@ -7,6 +7,13 @@
 motor1 motor_l;						//定义左轮参数
 motor1 motor_r;						//定义右轮参数
 uint8 car_num=0;					//用来存储发车次数
+int motorl;
+int motorr;
+int error=0;
+int last_error=0;
+float k=90;
+float d=60;
+int PD;
 
 //PWM初始化
 void PWM_Init(){
@@ -27,7 +34,7 @@ void Encoder_Init(){
 }
 
 //出界保护
-void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
+void car_protect(uint8 bio_image[MT9V03X_H-40][MT9V03X_W]){
 	uint8 num=0;
 	for(uint8 i=3;i<MT9V03X_W-2;i++){
 		if(bio_image[bottom_line][i]==255){
@@ -37,6 +44,9 @@ void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
 	if(num<=60){
 		Speed_Set(pwm_l,A0,0,1,0);
 		Speed_Set(pwm_r,A2,0,1,0);
+		while(1){
+		
+		}
 	}
 }
 
@@ -58,14 +68,14 @@ void Encoder_Get(){
 }
 
 //限幅函数
-uint8 limit_int(int a,int b,int c){
+int32 limit_int(int32 a,int32 b,int32 c){
 	if(b>=a&&b<=c){
 		return b;
 	}
-	else if(b<=a){
+	else if(b<a){
 		return a;
 	}
-	else if(b>=c){
+	else if(b>c){
 		return c;
 	}
 	return 0;
@@ -96,17 +106,31 @@ void Motor_Control(int Speed_L,int Speed_R){
 	motor_l.duty = PID_increase_l(motor_pid_l[0],motor_pid_l[1],(float)motor_l.encoder_speed,(float)motor_l.target_speed);
 	motor_r.duty = PID_increase_r(motor_pid_r[0],motor_pid_r[1],(float)motor_r.encoder_speed,(float)motor_r.target_speed);
 	
-	//输出速度
-	Speed_Set(pwm_l,A2,motor_l.duty,1,0);
-	Speed_Set(pwm_r,A0,motor_r.duty,1,0);
+//	//输出速度
+//	Speed_Set(pwm_l,A2,motor_l.duty,1,0);
+//	Speed_Set(pwm_r,A0,motor_r.duty,1,0);
 
 	
 }
 
 //差速控制
-void Final_Motor_Control(int Speed,float k,int limit){
+void Final_Motor_Control(float k,float d,int32 limit){
+
+	error = MID_W-final_mid_value;
+	PD=(int)(k*error+d*last_error);
 	
-	Motor_Control(limit_int(Speed-limit,Speed-k*(MID_W-final_mid_value),Speed+limit),limit_int(Speed-limit,Speed+k*(MID_W-final_mid_value),Speed+limit));
+	motorl=limit_int(-limit,motor_l.duty-PD,limit);
+	motorr=limit_int(-limit,motor_r.duty+PD,limit);
+		
+	Speed_Set(pwm_l,A2,motorl,1,0);
+	Speed_Set(pwm_r,A0,motorr,1,0);
+	
+//		Motor_Control(Speed,limit_int(Speed-limit,Speed+k*error+d*last_error,Speed+limit));
+//		Motor_Control(limit_int(Speed-limit,Speed-k*error-d*last_error,Speed+limit),Speed);
+	
+	
+	last_error=error;
+	
 }
 
 //车辆启动
@@ -117,14 +141,17 @@ void car_start(){
 	}
 	if(car_num!=0){
 		if(car_num%2==1){
-			Final_Motor_Control(50,0.5,30);
+			Motor_Control(70,70);
+			Final_Motor_Control(k,d,9000);
+			car_protect(image);												
+
 //			Speed_Set(pwm_l,A2,1000,1,0);
 //			Speed_Set(pwm_r,A0,1000,1,0);
 		}
 		else{
 //			Motor_Control(20,20);
-			Speed_Set(pwm_l,A2,0,0,1);
-			Speed_Set(pwm_r,A0,0,0,1);
+			Speed_Set(pwm_l,A2,0,1,0);
+			Speed_Set(pwm_r,A0,0,1,0);
 		}
 	}
 }

@@ -1,8 +1,8 @@
 #include "zf_common_headfile.h"
 #include "PID.h"
 
-float motor_pid_r[2] = {20,0.4};												//左轮PID参数设置
-float motor_pid_l[2] = {22,0.3};												//右轮PID参数设置
+float motor_pid_r[2] = {15,1};												//左轮PID参数设置
+float motor_pid_l[2] = {15,1};												//右轮PID参数设置
 						
 float Error_l=0;
 float LastError_l=0;

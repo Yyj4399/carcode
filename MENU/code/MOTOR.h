@@ -7,8 +7,9 @@ void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]);																			//³ö½
 void Encoder_Get();																																						//±àÂëÆ÷Öµ»ñÈ¡
 void Speed_Set(pwm_channel_enum pin1,gpio_pin_enum pin2,int Speed,uint8 just,uint8 lose);			//ÉèÖÃµç»úËÙ¶È
 void Motor_Control(int Speed_L,int Speed_R);																									//µç»ú¿ØÖÆ
-void Final_Motor_Control(int Speed,float k,int limit);																				//²îËÙ¿ØÖÆ
+void Final_Motor_Control(float k,float d,int limit);																				//²îËÙ¿ØÖÆ
 void car_start();																																							//·¢³µº¯Êı
+int32 limit_int(int32 a,int32 b,int32 c);
 
 
 
@@ -26,6 +27,12 @@ typedef struct motor1{																																				//µç»ú²ÎÊı¶¨Òå
 extern struct motor1 motor_l;																														
 extern struct motor1 motor_r;
 extern uint8 car_num;
-
+extern int error;
+extern int last_error;
+extern float k;
+extern float d;
+extern int PD;
+extern int motorl;
+extern int motorr;
 
 #endif
