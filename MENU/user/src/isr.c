@@ -104,11 +104,17 @@ void TIM5_IRQHandler (void)
 //-------------------------------------------------------------------------------------------------------------------
 void TIM6_IRQHandler (void)
 {
+//		if(car_num!=0){
+//			if(car_num%2==1){
+//				Motor_Control(80,80);
+////				Final_Motor_Control(k,d,7000);
+//				car_protect(image);
+//			}
+//		}
 
 	
-
-
 		Encoder_Get();															//编码器值获取
+		
 //		KeyNumber = KeyNum();												//获取按键信息
 	
     TIM6->SR &= ~TIM6->SR;                                                      // 清空中断状态

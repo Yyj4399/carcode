@@ -11,8 +11,8 @@ int motorl;
 int motorr;
 int error=0;
 int last_error=0;
-float k=90;
-float d=60;
+float k=95;
+float d=85;
 int PD;
 
 //PWM初始化
@@ -36,12 +36,21 @@ void Encoder_Init(){
 //出界保护
 void car_protect(uint8 bio_image[MT9V03X_H-40][MT9V03X_W]){
 	uint8 num=0;
+	uint8 num1=0;
+	static uint8 flag=0;
 	for(uint8 i=3;i<MT9V03X_W-2;i++){
 		if(bio_image[bottom_line][i]==255){
 				num++;
 		}
+		if(bio_image[bottom_line][i-1]==255&&bio_image[bottom_line][i]==255&&bio_image[bottom_line][i+1]==0){
+			num1++;
+		}
 	}
-	if(num<=60){
+
+	if(num1>=5){
+		flag++;
+	}
+	if(num<=60||flag==2){
 		Speed_Set(pwm_l,A0,0,1,0);
 		Speed_Set(pwm_r,A2,0,1,0);
 		while(1){
@@ -119,8 +128,13 @@ void Final_Motor_Control(float k,float d,int32 limit){
 	error = MID_W-final_mid_value;
 	PD=(int)(k*error+d*last_error);
 	
-	motorl=limit_int(-limit,motor_l.duty-PD,limit);
-	motorr=limit_int(-limit,motor_r.duty+PD,limit);
+	PD=limit_int(-limit,PD,limit);
+	
+		motorl=limit_int(-pwm_limit,motor_l.duty-PD,pwm_limit);
+		motorr=limit_int(-pwm_limit,motor_r.duty+PD,pwm_limit);
+
+//	motorl=limit_int(-pwm_limit,motor_l.duty-PD,pwm_limit);
+//	motorr=limit_int(-pwm_limit,motor_r.duty+PD,pwm_limit);
 		
 	Speed_Set(pwm_l,A2,motorl,1,0);
 	Speed_Set(pwm_r,A0,motorr,1,0);
@@ -141,11 +155,13 @@ void car_start(){
 	}
 	if(car_num!=0){
 		if(car_num%2==1){
-			Motor_Control(70,70);
-			Final_Motor_Control(k,d,9000);
+			Motor_Control(80,80);
+			for(int i=0;i<1000;i++){
+				Final_Motor_Control(k,d,7000);
+			}	
 			car_protect(image);												
 
-//			Speed_Set(pwm_l,A2,1000,1,0);
+//			Speed_Set(pwm_l,A2,-1000,1,0);
 //			Speed_Set(pwm_r,A0,1000,1,0);
 		}
 		else{

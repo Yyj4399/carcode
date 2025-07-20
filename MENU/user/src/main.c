@@ -27,9 +27,7 @@ int main (void){
 	if(mt9v03x_flag ==0){
 		while(1){
 			KeyNumber = KeyNum();												//获取按键信息
-
-			
-//			printf("%d,%d,%d,%d\n",motor_l.encoder_speed,motor_r.encoder_speed,motor_l.target_speed,motor_r.target_speed);
+//			printf("%d,%d,%d,%d\n",motor_l.duty,motor_r.encoder_speed,motor_l.target_speed,motor_r.target_speed);
 			
 			get_image();																//获取图像
 			threshold = Otsu(basic_image);							//获取阈值
