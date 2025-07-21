@@ -46,11 +46,7 @@ void car_protect(uint8 bio_image[MT9V03X_H-40][MT9V03X_W]){
 			num1++;
 		}
 	}
-
-	if(num1>=5){
-		flag++;
-	}
-	if(num<=60||flag==2){
+	if(num<=60||num1>=5){
 		Speed_Set(pwm_l,A0,0,1,0);
 		Speed_Set(pwm_r,A2,0,1,0);
 		while(1){
@@ -155,7 +151,7 @@ void car_start(){
 	}
 	if(car_num!=0){
 		if(car_num%2==1){
-			Motor_Control(80,80);
+			Motor_Control(90,90);
 			for(int i=0;i<1000;i++){
 				Final_Motor_Control(k,d,7000);
 			}	

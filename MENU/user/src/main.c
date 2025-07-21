@@ -6,6 +6,7 @@
 	
 uint8 mt9v03x_flag;
 
+
 int main (void){
 	
 	clock_init(SYSTEM_CLOCK_120M);
@@ -18,6 +19,8 @@ int main (void){
 	
 	PWM_Init();														//PWM初始化
 	Encoder_Init();												//编码器初始化
+	
+	gpio_init(BEEP, GPO, GPIO_LOW, GPO_PUSH_PULL); //蜂鸣器初始化
 	
 	
 	pit_ms_init(TIM6_PIT,5);							//定时器初始化

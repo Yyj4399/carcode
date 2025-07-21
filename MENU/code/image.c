@@ -285,6 +285,7 @@ uint8 x1=0,x2=0,x3=0,x4=0,y1=0,y2=0,y3=0,y4=0;				//十字拐点坐标
 uint8 x5=0,y5=0,x6=0,y6=0,x7=0,y7=0,x8=0,y8=0,x9=0,y9=0;				//圆环拐点坐标
 float kl=0,kr=0;													//十字补线斜率
 float k1=0,k3=0,k5=0,k8=0;															//圆环补线斜率
+uint16 count_beep = 0;									//蜂鸣器计数
 
 //寻找边线
 void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
@@ -422,6 +423,9 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 		left_line[i] = limit_uint8(1,l,MT9V03X_W-2);
 		right_line[i] = limit_uint8(1,r,MT9V03X_W-2);
 		mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
+//		if(image[i][mid_line[i]]==0){
+//			mid_line[i]=mid_line[i+1];
+//		}
 	}
 	
 	uint8 circle1_flag=0;							//圆环状态一标志位
@@ -463,7 +467,7 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 	}
 	
 	//拐点清零
-	if(num_lossr<=3){
+	if(num_lossr<=3&&num_loss<=10){
 		x5=0;y5=0;
 		x6=0;y6=0;
 		x7=0;y7=0;
@@ -472,21 +476,32 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 	}
 	
 //	//右边丢线数超过25则判断进入圆环状态
-//	if(num_lossr>=15&&(num_loss<=2||x6!=0)){//&&((x5!=0&&y5!=0)||(x7!=0&&y7!=0))){
+//	if(num_lossr>=15&&(num_loss<=10||x6!=0)){//&&((x5!=0&&y5!=0)||(x7!=0&&y7!=0))){
 //		
 //		for(uint8 i=bottom_line;i>25;i--){
 //			//判断圆处是否出现切点用作判断是否进入圆环状态1的依据之一
 //			if(i<70&&i>30&&right_line[i-1]-right_line[i]>=1&&right_line[i+1]-right_line[i]>=0&&right_line[i-2]-right_line[i]>=1&&right_line[i+2]-right_line[i]>=0){
-//				if(x6==0&&left_line[i+12]>=5&&right_line[i+12]>=MT9V03X_W-7){
+//				if(x6==0&&left_line[i+15]>=5&&right_line[i+15]>=MT9V03X_W-7){
 //					x6=right_line[i];
 //					y6=i;
+//					count_beep=500;
 //				}
+
 //				else if(x6!=0){
 //					x6=right_line[i];
 //					y6=i;
 //				}
 //				
 //			}
+//			if(count_beep)
+//        {
+//            gpio_set_level(BEEP, GPIO_HIGH);
+//            count_beep --;
+//        }
+//        else
+//        {
+//            gpio_set_level(BEEP, GPIO_LOW);
+//        }
 //			if(x6!=0){
 //				
 //				//判断右边是否出现拐点并且拐点上方右边丢线左边未丢线用作判断是否进入圆环状态1的依据之一
@@ -497,13 +512,13 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 //			
 //				}
 
-////				//判断右上方是否出现拐点并且拐点下方右边丢线左边未丢线用作判断是否进入圆环状态3的依据之一
-////				if(i<y6&&i>40&&left_line[i+3]>=5&&right_line[i+3]>=MT9V03X_W-7&&left_line[i+4]>=5&&right_line[i+4]>=MT9V03X_W-7&&right_line[i+3]-right_line[i]>=20&&right_line[i]-right_line[i-1]<=3){
-////					
-////					x7=right_line[i];
-////					y7=i;
-////				
-////				}
+//				//判断右上方是否出现拐点并且拐点下方右边丢线左边未丢线用作判断是否进入圆环状态3的依据之一
+//				if(i<y6&&i>40&&left_line[i+3]>=5&&right_line[i+3]>=MT9V03X_W-7&&left_line[i+4]>=5&&right_line[i+4]>=MT9V03X_W-7&&right_line[i+3]-right_line[i]>=20&&right_line[i]-right_line[i-1]<=3){
+//					
+//					x7=right_line[i];
+//					y7=i;
+//				
+//				}
 //				
 //				//判断左下方是否出现拐点作为是否进入圆环状态5的依据之一
 //				if(i>60&&left_line[i]-left_line[i+1]>=1&&left_line[i]-left_line[i-1]>=1&&left_line[i]>=3&&left_line[i]>=10){
@@ -514,7 +529,7 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 //				}
 //				
 //				//如果右边出现拐点并且圆处有切点并且右上方没有拐点则进入状态1
-//				if(x5!=0&&x7==0){
+//				if(x5!=0&&x7==0&&y6<=65){
 //					
 //					//圆环状态1标志位置1
 //					circle1_flag=1;
@@ -524,14 +539,14 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 //					
 //				}
 //				//右上方出现拐点则进入状态3
-//				else if(x7!=0&&x9==0&&left_line[40]<=100){
+//				else if(x7!=0&&x9==0&&left_line[40]>=5){
 //					
 //					//圆环状态3标志位置1
 //					circle3_flag=1;
 //					
 //					//将左边底角边界点作为补线起始点
-//					x8=left_line[119];
-//					y8=119;
+//					x8=left_line[90];
+//					y8=90;
 //					
 //					//计算斜率
 //					k3=((float)(y7-y8))/(float)(x7-x8);
@@ -561,7 +576,7 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 //				}
 //						
 //				//状态1进行补线
-//				if(circle1_flag==1){
+//				if(circle1_flag==1&&y6<50){
 //					
 //					for(uint8 i=y5;i>y6;i--){
 //						
@@ -579,10 +594,10 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 //				//状态3进行补线
 //				else if(circle3_flag==1){
 //					
-//					for(uint8 i=bottom_line;i>y7;i--){
+//					for(uint8 i=y8;i>y7;i--){
 //						
 //						left_line[i]=x8+(i-y8)/k3;
-//						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
+//						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
 //						
 //					}
 //					
@@ -591,41 +606,41 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 //					
 //				}
 //				
-//				//状态5进行补线
-//				else if(circle5_flag==1){
-//				
-//					for(uint8 i=y9+2;i>40;i--){
-//						
-//						left_line[i]=x9+(i-y9)/k5;
-//						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
-//						
-//					}
-//					
-//					//圆环状态5标志位置0
-//					circle5_flag=0;
-//					
-//				}
-//				
-//				//状态8进行补线
-//				else if(circle8_flag==1&&x7!=0){
-//					//计算斜率
-//					if(k8==0){
-//						
-//						k8=((float)(y7-(y7-2)))/(float)(x7-left_line[y7-2]);
-//						
-//					}
-//					
-//					for(uint8 i=y7-2;i<110;i++){
-//						
-//						left_line[i]=x7+(i-y7)/k8;
-//						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
-//						
-//					}
-//					
-//					//圆环状态8标志位置0
-//					circle8_flag=0;
-//					
-//				}
+////				//状态5进行补线
+////				else if(circle5_flag==1){
+////				
+////					for(uint8 i=y9+2;i>40;i--){
+////						
+////						left_line[i]=x9+(i-y9)/k5;
+////						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
+////						
+////					}
+////					
+////					//圆环状态5标志位置0
+////					circle5_flag=0;
+////					
+////				}
+////				
+////				//状态8进行补线
+////				else if(circle8_flag==1&&x7!=0){
+////					//计算斜率
+////					if(k8==0){
+////						
+////						k8=((float)(y7-(y7-2)))/(float)(x7-left_line[y7-2]);
+////						
+////					}
+////					
+////					for(uint8 i=y7-2;i<110;i++){
+////						
+////						left_line[i]=x7+(i-y7)/k8;
+////						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
+////						
+////					}
+////					
+////					//圆环状态8标志位置0
+////					circle8_flag=0;
+////					
+////				}
 //				
 //				//计数清零
 //				num_lossr=0;

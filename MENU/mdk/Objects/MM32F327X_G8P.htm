@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\MM32F327X_G8P.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\MM32F327X_G8P.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6070001: Last Updated: Sun Jul 20 17:11:35 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6070001: Last Updated: Mon Jul 21 16:43:37 2025
 <BR><P>
 <H3>Maximum Stack Usage =        728 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -936,8 +936,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[a8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_init
 <LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pwm_init
 <LI><a href="#[80]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;encoder_quad_init
-<LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_init
 <LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timer_etr_init
+<LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;spi_init
 </UL>
 
 <P><STRONG><a name="[9a]"></a>camera_fifo_init</STRONG> (Thumb, 20 bytes, Stack size 0 bytes, zf_device_camera.o(.text.camera_fifo_init))
@@ -952,8 +952,8 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 480<LI>Call Chain = camera_init &rArr; timer_etr_init &rArr; debug_assert_handler &rArr; debug_output &rArr; __2sprintf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;interrupt_set_priority
-<LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exti_init
 <LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dma_camera_init
+<LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exti_init
 <LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timer_etr_init
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mt9v03x_init
@@ -1217,7 +1217,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[be]"></a>find_line</STRONG> (Thumb, 1920 bytes, Stack size 72 bytes, image.o(.text.find_line))
+<P><STRONG><a name="[be]"></a>find_line</STRONG> (Thumb, 1964 bytes, Stack size 72 bytes, image.o(.text.find_line))
 <BR><BR>[Stack]<UL><LI>Max Depth = 160<LI>Call Chain = find_line &rArr; __aeabi_dadd &rArr; _double_epilogue &rArr; _double_round
 </UL>
 <BR>[Calls]<UL><LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_ui2f
@@ -1295,6 +1295,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_set_level
 </UL>
 <BR>[Called By]<UL><LI><a href="#[d6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;mt9v03x_init
+<LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PWM_Init
 <LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_assert_handler
 <LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exti_init
@@ -1349,8 +1350,8 @@ Global Symbols
 
 <P><STRONG><a name="[b3]"></a>interrupt_enable</STRONG> (Thumb, 28 bytes, Stack size 0 bytes, zf_common_interrupt.o(.text.interrupt_enable))
 <BR><BR>[Called By]<UL><LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pit_init
-<LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exti_init
 <LI><a href="#[9e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;dma_camera_init
+<LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;exti_init
 <LI><a href="#[e3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;uart_rx_interrupt
 </UL>
 
@@ -1484,7 +1485,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> menu.o(.text.print_menu)
 </UL>
-<P><STRONG><a name="[49]"></a>main</STRONG> (Thumb, 184 bytes, Stack size 24 bytes, main.o(.text.main))
+<P><STRONG><a name="[49]"></a>main</STRONG> (Thumb, 196 bytes, Stack size 24 bytes, main.o(.text.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 728<LI>Call Chain = main &rArr; mt9v03x_init &rArr; mt9v03x_set_config_sccb &rArr; mt9v03x_read_word_sccb &rArr; soft_iic_sccb_read_register &rArr; soft_iic_read_data &rArr; debug_assert_handler &rArr; debug_output &rArr; __2sprintf
 </UL>
 <BR>[Calls]<UL><LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;weight_find_mid_value
@@ -1495,6 +1496,7 @@ Global Symbols
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;image_binaryzation
 <LI><a href="#[cb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;handle2
 <LI><a href="#[ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;handle1
+<LI><a href="#[4c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;gpio_init
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;get_image
 <LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;find_line
 <LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;find_basic_point
@@ -1555,10 +1557,10 @@ Global Symbols
 <P><STRONG><a name="[d8]"></a>pit_init</STRONG> (Thumb, 232 bytes, Stack size 16 bytes, zf_driver_pit.o(.text.pit_init))
 <BR><BR>[Stack]<UL><LI>Max Depth = 456<LI>Call Chain = pit_init &rArr; debug_assert_handler &rArr; debug_output &rArr; __2sprintf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;interrupt_enable
-<LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_assert_handler
+<BR>[Calls]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_assert_handler
 <LI><a href="#[b4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timer_funciton_check
 <LI><a href="#[b5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timer_clock_enable
+<LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;interrupt_enable
 </UL>
 <BR>[Called By]<UL><LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
@@ -1812,9 +1814,9 @@ Local Symbols
 <P><STRONG><a name="[a6]"></a>debug_output</STRONG> (Thumb, 764 bytes, Stack size 376 bytes, zf_common_debug.o(.text.debug_output))
 <BR><BR>[Stack]<UL><LI>Max Depth = 400<LI>Call Chain = debug_output &rArr; __2sprintf
 </UL>
-<BR>[Calls]<UL><LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
+<BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
+<LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen
 <LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memclr4
-<LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2sprintf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[a9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_log_handler
 <LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;debug_assert_handler

@@ -30,7 +30,7 @@ extern float kl,kr;																							//十字补线斜率
 extern float k1,k3;																							//圆环补线斜率
 
 #define MID_W         94																				//直道中线值
-
-#define bottom_line 119																					//底线位置
+#define BEEP         (D7 )
+#define bottom_line 	119																					//底线位置
 
 #endif
