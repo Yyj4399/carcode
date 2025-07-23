@@ -34,5 +34,6 @@ extern float d;
 extern int PD;
 extern int motorl;
 extern int motorr;
+extern int32 speed;
 
 #endif

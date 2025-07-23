@@ -11,9 +11,10 @@ int motorl;
 int motorr;
 int error=0;
 int last_error=0;
-float k=95;
-float d=85;
+float k=205;
+float d=140;
 int PD;
+int32 speed=60;
 
 //PWM初始化
 void PWM_Init(){
@@ -122,9 +123,9 @@ void Motor_Control(int Speed_L,int Speed_R){
 void Final_Motor_Control(float k,float d,int32 limit){
 
 	error = MID_W-final_mid_value;
-	PD=(int)(k*error+d*last_error);
+	PD=(int)(k*error+d*(error-last_error));
 	
-	PD=limit_int(-limit,PD,limit);
+//	PD=limit_int(-limit,PD,limit);
 	
 		motorl=limit_int(-pwm_limit,motor_l.duty-PD,pwm_limit);
 		motorr=limit_int(-pwm_limit,motor_r.duty+PD,pwm_limit);
@@ -146,16 +147,20 @@ void Final_Motor_Control(float k,float d,int32 limit){
 //车辆启动
 void car_start(){
 	
-	if(KeyNumber==4){
+	if(KeyNumber==4&&main_menu_position==0){
 		car_num++;
 	}
 	if(car_num!=0){
 		if(car_num%2==1){
-			Motor_Control(90,90);
-			for(int i=0;i<1000;i++){
-				Final_Motor_Control(k,d,7000);
-			}	
-			car_protect(image);												
+//			if(final_mid_value-MID_W>=2||MID_W-final_mid_value>=2){
+//				speed=50;
+//			}
+//			else{
+//				speed=70;
+//			}
+//			Motor_Control(speed,speed);
+//			Final_Motor_Control(k,d,7000);
+//			car_protect(image);												
 
 //			Speed_Set(pwm_l,A2,-1000,1,0);
 //			Speed_Set(pwm_r,A0,1000,1,0);

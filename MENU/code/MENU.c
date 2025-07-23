@@ -102,7 +102,7 @@ void print_menu(){
 			
 			ips200_show_float(48,0,k,4,3);
 			ips200_show_float(48,16,d,4,3);
-			ips200_show_int(48,32,motor_l.duty,4);
+			ips200_show_int(48,32,speed,4);
 			
 //			ips200_show_float(16*7,0,motor_pid_r[0],2,3);
 //			ips200_show_float(16*7,16,motor_pid_r[1],2,3);
@@ -122,14 +122,14 @@ void print_menu(){
 			ips200_show_string(0,last_cursor_position*16," ");
 		}
 		else if(pid_menu_position==1){				//调节kp的数值显示
-			ips200_show_float(0,0,k,2,3);
+			ips200_show_float(0,0,k,4,3);
 		}
 		else if(pid_menu_position==2){				//调节ki的数值显示
-			ips200_show_float(0,0,d,2,3);
+			ips200_show_float(0,0,d,4,3);
 		}
-//		else if(pid_menu_position==3){				//调节kd的数值显示
-//			ips200_show_float(0,0,motor_pid_l[2],2,3);
-//		}
+		else if(pid_menu_position==3){				//调节kd的数值显示
+			ips200_show_float(0,0,speed,2,3);
+		}
 	}
 	else if(main_menu_position==2){					//图像界面显示
 		
@@ -220,9 +220,9 @@ void handle1(int KeyNumber){
 				else if(pid_menu_position==2){
 					d+=10;
 				}
-//				else if(pid_menu_position==3){
-//					motor_pid_l[2]+=0.1;
-//				}
+				else if(pid_menu_position==3){
+					speed+=10;
+				}
 			}
 			break;
 		case(2):
@@ -239,9 +239,9 @@ void handle1(int KeyNumber){
 				else if(pid_menu_position==2){
 					d-=10;
 				}
-//				else if(pid_menu_position==3){
-//					motor_pid_l[2]-=0.1;
-//				}
+				else if(pid_menu_position==3){
+					speed-=10;
+				}
 			}
 			break;
 
@@ -278,7 +278,7 @@ void handle2(int KeyNumber){
 					ips200_clear();
 					rest_cursor();
 				}	
-				else if(cursor_position == 1){
+				else if(cursor_position == 2){
 					pid_menu_position=3;
 					ips200_clear();
 					rest_cursor();
