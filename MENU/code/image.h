@@ -29,6 +29,7 @@ extern uint8 x1,x2,x3,x4,y1,y2,y3,y4,x5,y5,x6,y6,x7,y7,x8,y8;														//¹Õµ
 extern float kl,kr;																							//Ê®×Ö²¹ÏßÐ±ÂÊ
 extern float k1,k3;																							//Ô²»·²¹ÏßÐ±ÂÊ
 
+
 #define MID_W         94																				//Ö±µÀÖÐÏßÖµ
 #define BEEP         (D7 )
 #define bottom_line 	119																					//µ×ÏßÎ»ÖÃ

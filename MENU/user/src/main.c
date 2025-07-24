@@ -8,6 +8,7 @@ uint8 mt9v03x_flag;
 
 
 int main (void){
+
 	
 	clock_init(SYSTEM_CLOCK_120M);
 	debug_init();
@@ -25,7 +26,9 @@ int main (void){
 	
 	pit_ms_init(TIM6_PIT,3);							//定时器初始化
 	
-	interrupt_set_priority(TIM6_IRQn,1);
+	interrupt_set_priority(TIM6_IRQn,0);
+	
+	
 	
 	if(mt9v03x_flag ==0){
 		while(1){
@@ -47,7 +50,7 @@ int main (void){
 			handle1(KeyNumber);													//操作一
 			print_menu();																//显示菜单
 			
-
+//			num2++;
     }
 	}
 }

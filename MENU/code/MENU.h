@@ -11,5 +11,6 @@ void draw_line();									//画出边线和中线
 
 extern int KeyNumber;			
 extern int main_menu_position;
+//extern int32 num2;
 
 #endif

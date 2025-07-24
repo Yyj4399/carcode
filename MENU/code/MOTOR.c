@@ -11,10 +11,10 @@ int motorl;
 int motorr;
 int error=0;
 int last_error=0;
-float k=205;
-float d=140;
+float k=460;
+float d=760;
 int PD;
-int32 speed=60;
+int32 speed=120;
 
 //PWM≥ı ºªØ
 void PWM_Init(){
@@ -47,7 +47,7 @@ void car_protect(uint8 bio_image[MT9V03X_H-40][MT9V03X_W]){
 			num1++;
 		}
 	}
-	if(num<=60||num1>=5){
+	if(num<=30||num1>=5){
 		Speed_Set(pwm_l,A0,0,1,0);
 		Speed_Set(pwm_r,A2,0,1,0);
 		while(1){
@@ -125,10 +125,10 @@ void Final_Motor_Control(float k,float d,int32 limit){
 	error = MID_W-final_mid_value;
 	PD=(int)(k*error+d*(error-last_error));
 	
-//	PD=limit_int(-limit,PD,limit);
+	PD=limit_int(-limit,PD,limit);
 	
-		motorl=limit_int(-pwm_limit,motor_l.duty-PD,pwm_limit);
-		motorr=limit_int(-pwm_limit,motor_r.duty+PD,pwm_limit);
+	motorl=limit_int(-pwm_limit,motor_l.duty-PD,pwm_limit);
+	motorr=limit_int(-pwm_limit,motor_r.duty+PD,pwm_limit);
 
 //	motorl=limit_int(-pwm_limit,motor_l.duty-PD,pwm_limit);
 //	motorr=limit_int(-pwm_limit,motor_r.duty+PD,pwm_limit);
@@ -153,10 +153,14 @@ void car_start(){
 	if(car_num!=0){
 		if(car_num%2==1){
 //			if(final_mid_value-MID_W>=2||MID_W-final_mid_value>=2){
-//				speed=50;
+//				speed=200;
+////				motor_pid_l[0]=225;
+////				motor_pid_l[1]=160;
 //			}
 //			else{
-//				speed=70;
+//				speed=250;
+////				motor_pid_l[0]=205;
+////				motor_pid_l[1]=160;
 //			}
 //			Motor_Control(speed,speed);
 //			Final_Motor_Control(k,d,7000);

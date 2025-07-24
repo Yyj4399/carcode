@@ -2,6 +2,7 @@
 #include "image.h"
 #include "MOTOR.H"
 #include "PID.H"
+#include "MENU.H"
 
 #define KEY1                    (E2 )
 #define KEY2                    (E3 )
@@ -18,6 +19,7 @@ int len_main=2;																			//主菜单可进入界面的数量
 int len_pid=3;																			//同理
 int len_image=1;
 int i=0;
+//int32 num2=0;
 
 void IPS_Init(){
 	ips200_set_color(RGB565_WHITE,RGB565_BLACK); //白底黑字
@@ -88,7 +90,7 @@ void print_menu(){
 	if(main_menu_position == 0){									//主菜单显示
 		ips200_show_string(16,0,"pid");
 		ips200_show_string(16,16,"image");
-	
+//		ips200_show_int(48,32,num2,6);
 	
 		ips200_show_string(0,cursor_position*16,">");
 		ips200_show_string(0,last_cursor_position*16," ");
@@ -98,7 +100,7 @@ void print_menu(){
 			
 			ips200_show_string(16,0,"k");
 			ips200_show_string(16,16,"d");
-//			ips200_show_string(16,32,"kd");
+			ips200_show_string(16,32,"s");
 			
 			ips200_show_float(48,0,k,4,3);
 			ips200_show_float(48,16,d,4,3);

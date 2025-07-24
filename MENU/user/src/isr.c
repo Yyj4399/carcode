@@ -37,6 +37,7 @@
 #include "MOTOR.H"
 #include "MENU.H"
 #include "image.h"
+#include "motor.h"
 
 //-------------------------------------------------------------------------------------------------------------------
 // 函数简介     TIM1 的定时器更新中断服务函数 启动 .s 文件定义 不允许修改函数名称
@@ -107,8 +108,18 @@ void TIM6_IRQHandler (void)
 	Encoder_Get();												//编码器值获取
 	if(car_num!=0){
 		if(car_num%2==1){
+			if(final_mid_value-MID_W>=5||MID_W-final_mid_value>=5){
+				speed=90;
+//				k=500;
+//				d=780;
+			}
+			else{
+				speed=120;
+//				k=460;
+//				d=760;
+			}
 			Motor_Control(speed,speed);
-			Final_Motor_Control(k,d,5000);
+			Final_Motor_Control(k,d,6000);
 			car_protect(image);
 //			Speed_Set(pwm_l,A2,2000,1,0);
 //			Speed_Set(pwm_r,A0,2000,1,0);
