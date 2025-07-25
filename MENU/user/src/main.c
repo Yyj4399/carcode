@@ -23,12 +23,9 @@ int main (void){
 	
 	gpio_init(BEEP, GPO, GPIO_LOW, GPO_PUSH_PULL); //蜂鸣器初始化
 	
-	
 	pit_ms_init(TIM6_PIT,3);							//定时器初始化
 	
-	interrupt_set_priority(TIM6_IRQn,0);
-	
-	
+	interrupt_set_priority(TIM6_IRQn,0);	
 	
 	if(mt9v03x_flag ==0){
 		while(1){

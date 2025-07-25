@@ -108,16 +108,16 @@ void TIM6_IRQHandler (void)
 	Encoder_Get();												//编码器值获取
 	if(car_num!=0){
 		if(car_num%2==1){
-			if(final_mid_value-MID_W>=5||MID_W-final_mid_value>=5){
-				speed=90;
-//				k=500;
-//				d=780;
-			}
-			else{
-				speed=120;
-//				k=460;
-//				d=760;
-			}
+//			if(final_mid_value-MID_W>=2||MID_W-final_mid_value>=2){
+//				speed=90;
+////				k=380;
+////				d=380;
+//			}
+//			else if(mid_line[35]==mid_line[110]==mid_line[60]==mid_line[80]==mid_line[50]){
+//				speed=100;
+////				k=360;
+////				d=380;
+//			}
 			Motor_Control(speed,speed);
 			Final_Motor_Control(k,d,6000);
 			car_protect(image);

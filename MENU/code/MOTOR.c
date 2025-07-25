@@ -11,10 +11,10 @@ int motorl;
 int motorr;
 int error=0;
 int last_error=0;
-float k=460;
-float d=760;
+float k=290;//460;
+float d=30;//760;
 int PD;
-int32 speed=120;
+int32 speed=90;
 
 //PWM≥ı ºªØ
 void PWM_Init(){
@@ -47,7 +47,10 @@ void car_protect(uint8 bio_image[MT9V03X_H-40][MT9V03X_W]){
 			num1++;
 		}
 	}
-	if(num<=30||num1>=5){
+	if(num1>=5){
+		flag++;
+	}
+	if(num<=30||flag>=25){
 		Speed_Set(pwm_l,A0,0,1,0);
 		Speed_Set(pwm_r,A2,0,1,0);
 		while(1){
