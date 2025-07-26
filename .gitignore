@@ -53,11 +53,11 @@ dkms.conf
 
 # debug information files
 *.dwo
-
-# My configurations
-MM32F327X_G8P.axf
-*.htm
-mm32f327x_g8p.uvguix.ssshh
-mm32f327x_g8p.uvoptx
-mm32f327x_g8p.uvprojx
 *.bat
+*.dep
+*.axf
+*.htm
+*.uvoptx
+*.ssshhh
+*.uvguix.ssshhh
+*.uvprojx
