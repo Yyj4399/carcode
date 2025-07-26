@@ -13,27 +13,35 @@ int32 limit_int(int32 a,int32 b,int32 c);
 
 
 
-#define pwm_l TIM5_PWM_CH4_A3
-#define pwm_r TIM5_PWM_CH2_A1
+#define pwm_l TIM5_PWM_CH4_A3									//左电机PWM引脚定义
+#define pwm_r TIM5_PWM_CH2_A1									//右电机PWM引脚定义
 
-typedef struct motor1{																																				//电机参数定义
-	int32 target_speed;
-	int32 duty;
-	int32 encoder_speed;
-	int32 encoder_raw;
-	int32 total_encoder;
+typedef struct motor1{			//电机参数定义
+	
+	int32 target_speed;				//目标速度
+	int32 duty;								//电机速度环PWM输出
+	int32 encoder_speed;			//编码器读数
+	int32 encoder_raw;				//上一次编码器读数
+	int32 total_encoder;			//编码器读数总和
+	int32 motor_v;						//PWM最终输出
+	
 }motor1;
 
-extern struct motor1 motor_l;																														
-extern struct motor1 motor_r;
-extern uint8 car_num;
-extern int error;
-extern int last_error;
-extern float k;
-extern float d;
-extern int PD;
-extern int motorl;
-extern int motorr;
-extern int32 speed;
+typedef struct PD{					//PD参数定义
+	
+	int error;								//本次中值误差
+	int last_error;						//上一次中值误差
+	int PD_v;									//方向环输出
+		
+}PD;
+
+extern struct motor1 motor_l;			//左电机结构体																											
+extern struct motor1 motor_r;			//右电机结构体
+extern struct PD pd;							//方向环结构体
+
+extern uint8 car_num;							//发车计数
+extern float p;										//方向环kp
+extern float d;										//方向环kd
+extern int32 speed;								//目标速度
 
 #endif

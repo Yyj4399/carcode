@@ -55,8 +55,10 @@ dkms.conf
 *.dwo
 
 # My configurations:
-MM32F327X_G8P.map
 MM32F327X_G8P.axf
-MM32F327X_G8P.htm
+*.htm
 *.dep
 mm32f327x_g8p.uvguix.ssshh
+mm32f327x_g8p.uvoptx
+mm32f327x_g8p.uvprojx
+*.bat

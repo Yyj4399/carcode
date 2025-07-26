@@ -15,7 +15,7 @@ int main (void){
 	
 	mt9v03x_flag = mt9v03x_init();				//摄像头初始化验证
 	
-	Key_Init();														//按键初始化
+	key_init(5);													//按键初始化
 	IPS_Init();														//屏幕初始化
 	
 	PWM_Init();														//PWM初始化
@@ -29,7 +29,8 @@ int main (void){
 	
 	if(mt9v03x_flag ==0){
 		while(1){
-			KeyNumber = KeyNum();												//获取按键信息
+			key_scanner();
+	
 //			printf("%d,%d,%d,%d\n",motor_l.encoder_speed,motor_r.encoder_speed,motor_l.target_speed,motor_r.target_speed);
 			
 			get_image();																//获取图像
@@ -41,11 +42,6 @@ int main (void){
 			final_mid_value = weight_find_mid_value();	//加权求中线值
 			
 			car_start();																//发车
-	
-			
-			handle2(KeyNumber);													//操作二
-			handle1(KeyNumber);													//操作一
-			print_menu();																//显示菜单
 			
 //			num2++;
     }

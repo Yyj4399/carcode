@@ -28,44 +28,6 @@ void IPS_Init(){
   ips200_init(IPS200_TYPE_SPI);								 //SPI通信
 }
 
-void Key_Init(){
-	gpio_init(KEY1, GPI, GPIO_HIGH, GPI_PULL_UP);                               //  KEY1  默认高电平 上拉输入
-  gpio_init(KEY2, GPI, GPIO_HIGH, GPI_PULL_UP);                               //  KEY2  默认高电平 上拉输入
-  gpio_init(KEY3, GPI, GPIO_HIGH, GPI_PULL_UP);                               //  KEY3  默认高电平 上拉输入
-  gpio_init(KEY4, GPI, GPIO_HIGH, GPI_PULL_UP);                               //  KEY4  默认高电平 上拉输入
-}
-
-
-//读取按键
-int KeyNum(){
-	int num =0;
-	if(!gpio_get_level(KEY1)){
-		system_delay_ms(20);
-		while(!gpio_get_level(KEY1));
-		system_delay_ms(20);
-		num =1;
-	}
-	if(!gpio_get_level(KEY2)){
-		system_delay_ms(20);
-		while(!gpio_get_level(KEY2));
-		system_delay_ms(20);
-		num =2;
-	}
-	if(!gpio_get_level(KEY3)){
-		system_delay_ms(20);
-		while(!gpio_get_level(KEY3));
-		system_delay_ms(20);
-		num =3;
-	}
-	if(!gpio_get_level(KEY4)){
-		system_delay_ms(20);
-		while(!gpio_get_level(KEY4));
-		system_delay_ms(20);
-		num =4;
-	}
-	return num;
-}
-
 
 //重置指针
 void rest_cursor(){
@@ -75,7 +37,9 @@ void rest_cursor(){
 
 //画边线和中线
 void draw_line(){
+	
 	for(uint8 i=bottom_line;i>find_end_line;i--){
+		
 		ips200_draw_point(left_line[i],i,RGB565_RED);
 		ips200_draw_point(left_line[i]+1,i,RGB565_BLUE);
 		ips200_draw_point(right_line[i],i,RGB565_RED);
@@ -102,7 +66,7 @@ void print_menu(){
 			ips200_show_string(16,16,"d");
 			ips200_show_string(16,32,"s");
 			
-			ips200_show_float(48,0,k,4,3);
+			ips200_show_float(48,0,p,4,3);
 			ips200_show_float(48,16,d,4,3);
 			ips200_show_int(48,32,speed,4);
 			
@@ -124,7 +88,7 @@ void print_menu(){
 			ips200_show_string(0,last_cursor_position*16," ");
 		}
 		else if(pid_menu_position==1){				//调节kp的数值显示
-			ips200_show_float(0,0,k,4,3);
+			ips200_show_float(0,0,p,4,3);
 		}
 		else if(pid_menu_position==2){				//调节ki的数值显示
 			ips200_show_float(0,0,d,4,3);
@@ -155,29 +119,29 @@ void print_menu(){
 //		ips200_draw_point(x3,y3,RGB565_RED);
 //		ips200_draw_point(x4,y4,RGB565_RED);
 		
-		ips200_show_uint(0,128+16*4,x1,3);
-		ips200_show_uint(8*5,128+16*4,y1,3);
-		ips200_show_uint(8*10,128+16*4,x2,3);
-		ips200_show_uint(8*15,128+16*4,y2,3);
-		ips200_show_uint(8*20,128+16*4,x3,3);
-		ips200_show_uint(8*25,128+16*4,y3,3);
-		ips200_show_uint(0,128+16*5,x4,3);
-		ips200_show_uint(8*5,128+16*5,y4,3);
-		ips200_show_uint(8*10,128+16*5,x5,3);
-		ips200_show_uint(8*15,128+16*5,y5,3);
-		ips200_show_uint(8*20,128+16*5,x6,3);
-		ips200_show_uint(8*25,128+16*5,y6,3);
-		ips200_show_uint(0,128+16*6,x7,3);
-		ips200_show_uint(8*5,128+16*6,y7,3);
-		ips200_show_uint(8*10,128+16*6,x8,3);
-		ips200_show_uint(8*15,128+16*6,y8,3);
-//		ips200_show_float(0,128+16*7,kl,2,2);
-//		ips200_show_float(8*10,128+16*7,kr,2,2);
-//		ips200_show_float(8*10,128+16*6,k1,2,2);
-//		ips200_draw_line(x1,y1,x3,y3,RGB565_RED);
-//		ips200_draw_line(x2,y2,x4,y4,RGB565_RED);
-//		ips200_draw_line(x5,y5,x6,y6,RGB565_RED);
-//		ips200_draw_line(x7,y7,x8,y8,RGB565_RED);
+		ips200_show_uint(0,128+16*4,cross_point.x1,3);
+		ips200_show_uint(8*5,128+16*4,cross_point.y1,3);
+		ips200_show_uint(8*10,128+16*4,cross_point.x2,3);
+		ips200_show_uint(8*15,128+16*4,cross_point.y2,3);
+		ips200_show_uint(8*20,128+16*4,cross_point.x3,3);
+		ips200_show_uint(8*25,128+16*4,cross_point.y3,3);
+		ips200_show_uint(0,128+16*5,cross_point.x4,3);
+		ips200_show_uint(8*5,128+16*5,cross_point.y4,3);
+		ips200_show_uint(8*10,128+16*5,circle_point.x5,3);
+		ips200_show_uint(8*15,128+16*5,circle_point.y5,3);
+		ips200_show_uint(8*20,128+16*5,circle_point.x6,3);
+		ips200_show_uint(8*25,128+16*5,circle_point.y6,3);
+		ips200_show_uint(0,128+16*6,circle_point.x7,3);
+		ips200_show_uint(8*5,128+16*6,circle_point.y7,3);
+		ips200_show_uint(8*10,128+16*6,circle_point.x8,3);
+		ips200_show_uint(8*15,128+16*6,circle_point.y8,3);
+//		ips200_show_float(0,128+16*7,cross_point.kl,2,2);
+//		ips200_show_float(8*10,128+16*7,cross_point.kr,2,2);
+//		ips200_show_float(8*10,128+16*6,circle_point.k1,2,2);
+//		ips200_draw_line(cross_point.x1,cross_point.y1,cross_point.x3,cross_point.y3,RGB565_RED);
+//		ips200_draw_line(cross_point.x2,cross_point.y2,cross_point.x4,cross_point.y4,RGB565_RED);
+//		ips200_draw_line(circle_point.x5,circle_point.y5,circle_point.x6,circle_point.y6,RGB565_RED);
+//		ips200_draw_line(circle_point.x7,circle_point.y7,circle_point.x8,circle_point.y8,RGB565_RED);
 
 		//画边线
 		draw_line();
@@ -185,8 +149,6 @@ void print_menu(){
 		//最终中值显示
 		ips200_show_string(0,128+16*3,"m_value");
 		ips200_show_uint(8*10,128+16*3,final_mid_value,3);
-		
-		ips200_show_int(0,128+16*4,error,3);
 		
 //		ips200_show_uint(0,128+16*6,mid_line[80],3);
 //		ips200_show_uint(8*5,128+16*6,mid_line[75],3);
@@ -202,22 +164,22 @@ void print_menu(){
 	
 }
 
-//操作一
-void handle1(int KeyNumber){
+//操作
+void handle(){
 	
-	switch(KeyNumber){
-		case(0):break;
-		case(1):
+		if(KEY_SHORT_PRESS == key_get_state(KEY_1)){
 			if(main_menu_position==0){															//在主菜单界面时，按键一二用来改变指针位置
+				
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position-1+len_main)%len_main;
 				
 			}
 			else{
+				
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position-1+len_pid)%len_pid;
 				if(pid_menu_position==1){															//在PID界面时，按键一二用来调节PID参数
-					k+=10;
+					p+=10;
 				}
 				else if(pid_menu_position==2){
 					d+=10;
@@ -225,10 +187,13 @@ void handle1(int KeyNumber){
 				else if(pid_menu_position==3){
 					speed+=10;
 				}
+				
 			}
-			break;
-		case(2):
-		  if(main_menu_position==0){															//在主菜单界面时，按键一二用来改变指针位置
+			key_clear_state(KEY_1);
+		}
+	
+		else if(KEY_SHORT_PRESS == key_get_state(KEY_2)){
+			if(main_menu_position==0){															//在主菜单界面时，按键一二用来改变指针位置
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position+1)%len_main;
 			}
@@ -236,7 +201,7 @@ void handle1(int KeyNumber){
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position+1)%len_pid;
 				if(pid_menu_position==1){															//在/PID界面时，按键一二用来调节PID参数
-					k-=10;
+					p-=10;
 				}
 				else if(pid_menu_position==2){
 					d-=10;
@@ -244,19 +209,11 @@ void handle1(int KeyNumber){
 				else if(pid_menu_position==3){
 					speed-=10;
 				}
+				
 			}
-			break;
-
-	}	
-}
-
-
-
-//操作二
-void handle2(int KeyNumber){
-	switch(KeyNumber){
-		case(0):break;
-		case(3):
+			key_clear_state(KEY_2);
+		}
+		else if(KEY_SHORT_PRESS == key_get_state(KEY_3)){
 			if(main_menu_position==0){					//按键三四用于确认和返回
 				if(cursor_position==0){
 					main_menu_position=1;
@@ -285,10 +242,13 @@ void handle2(int KeyNumber){
 					ips200_clear();
 					rest_cursor();
 				}	
+
 			}
-			break;
-		case(4):
-		  if(pid_menu_position!=0){
+			key_clear_state(KEY_3);
+		}
+		else if(KEY_SHORT_PRESS == key_get_state(KEY_4)){
+			
+			if(pid_menu_position!=0){
 		    pid_menu_position=0;
 				ips200_clear();
 		    rest_cursor();
@@ -298,9 +258,7 @@ void handle2(int KeyNumber){
 				ips200_clear();
 		    rest_cursor();
 			}
-			break;		
-	}
+			key_clear_state(KEY_4);
+		}
 }
-
-
 
