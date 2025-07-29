@@ -4,19 +4,20 @@
 #include "image.h"
 #include "menu.h"
 
-motor1 motor_l;						//定义左轮参数
-motor1 motor_r;						//定义右轮参数
-PD pd;
+motor1 motor_l;						//定义左轮参数定义
+motor1 motor_r;						//定义右轮参数定义
+PD pd;										//方向环参数定义
 uint8 car_num=0;					//用来存储发车次数
-float p=210;//210,110,100
-float d=110;
-int32 speed=100;
+float p=210;							//方向环kp     //210，110，100（11.9V）；210,150,100（摄像头改动后）
+float d=150;							//方向环kd
+int32 speed=100;					//目标速度
 
 //PWM初始化
 void PWM_Init(){
 	
 	gpio_init(A0,GPO,GPIO_HIGH,GPO_PUSH_PULL);
 	pwm_init(pwm_l,17000,0);
+	
 	gpio_init(A2,GPO,GPIO_HIGH,GPO_PUSH_PULL);
 	pwm_init(pwm_r,17000,0);
 	
@@ -26,33 +27,49 @@ void PWM_Init(){
 void Encoder_Init(){
 	
 	encoder_quad_init(TIM4_ENCODER, TIM4_ENCODER_CH1_B6, TIM4_ENCODER_CH2_B7);
+	
 	encoder_quad_init(TIM3_ENCODER, TIM3_ENCODER_CH1_B4, TIM3_ENCODER_CH2_B5);
 	
 }
 
+uint8 car_protect_flag=0;
+
 //出界保护
 void car_protect(uint8 bio_image[MT9V03X_H-40][MT9V03X_W]){
+	
 	uint8 num=0;
 	uint8 num1=0;
-	static uint8 flag=0;
+
 	for(uint8 i=3;i<MT9V03X_W-2;i++){
+		
 		if(bio_image[bottom_line][i]==255){
+			
 				num++;
+			
 		}
 		if(bio_image[bottom_line][i-1]==255&&bio_image[bottom_line][i]==255&&bio_image[bottom_line][i+1]==0){
+			
 			num1++;
+			
 		}
+		
 	}
+	
 	if(num1>=5){
-		flag++;
+		
+		car_protect_flag++;
+		
 	}
-	if(num<=30||flag>=25){
+	if(num<=30||car_protect_flag>=25){
+		
 		Speed_Set(pwm_l,A0,0,1,0);
 		Speed_Set(pwm_r,A2,0,1,0);
-		while(1){
 		
+		while(1){
 		}
+		
 	}
+	
 }
 
 //编码器值获取
@@ -120,25 +137,26 @@ void Motor_Control(int Speed_L,int Speed_R){
 
 //差速控制
 void Final_Motor_Control(float k,float d,int32 limit){
-
+	//方向环计算
 	pd.error = MID_W-final_mid_value;
 	pd.PD_v=(int)(p*pd.error+d*(pd.error-pd.last_error));
-	
+	//方向环限幅
 	pd.PD_v=limit_int(-limit,pd.PD_v,limit);
-	
+	//PWM总输出限幅和计算
 	motor_l.motor_v=limit_int(-pwm_limit,motor_l.duty-pd.PD_v,pwm_limit);
 	motor_r.motor_v=limit_int(-pwm_limit,motor_r.duty+pd.PD_v,pwm_limit);
 
 //	motorl=limit_int(-pwm_limit,motor_l.duty-PD,pwm_limit);
 //	motorr=limit_int(-pwm_limit,motor_r.duty+PD,pwm_limit);
-		
+	
+	//给电机PWM	
 	Speed_Set(pwm_l,A2,motor_l.motor_v,1,0);
 	Speed_Set(pwm_r,A0,motor_r.motor_v,1,0);
 	
 //		Motor_Control(Speed,limit_int(Speed-limit,Speed+k*error+d*last_error,Speed+limit));
 //		Motor_Control(limit_int(Speed-limit,Speed-k*error-d*last_error,Speed+limit),Speed);
 	
-	
+	//更新变量
 	pd.last_error=pd.error;
 	
 }
@@ -147,10 +165,16 @@ void Final_Motor_Control(float k,float d,int32 limit){
 void car_start(){
 	
 	if( KEY_SHORT_PRESS == key_get_state(KEY_4)&&main_menu_position==0){
+		
+		//发车计数累加
 		car_num++;
+		
+		//清空按键状态
 		key_clear_state(KEY_4);
+		
 	}
 	if(car_num!=0){
+		
 		if(car_num%2==1){
 //			if(final_mid_value-MID_W>=2||MID_W-final_mid_value>=2){
 //				speed=200;
@@ -169,15 +193,25 @@ void car_start(){
 //			Speed_Set(pwm_l,A2,-1000,1,0);
 //			Speed_Set(pwm_r,A0,1000,1,0);
 		}
+		
 		else{
 //			Motor_Control(20,20);
+			
 			Speed_Set(pwm_l,A2,0,1,0);
 			Speed_Set(pwm_r,A0,0,1,0);
+			
 		}
+		
 	}
 	else{
+		
+		//按键操作
 		handle();
+		
+		//显示菜单
 		print_menu();
+		
 	}
+	
 }
 
