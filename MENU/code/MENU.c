@@ -4,21 +4,13 @@
 #include "PID.H"
 #include "MENU.H"
 
-#define KEY1                    (E2 )
-#define KEY2                    (E3 )
-#define KEY3                    (E4 )
-#define KEY4                    (E5 )
-
-int KeyNumber=0;																		//按键参数
-//uint8 base_image[MT9V03X_H][MT9V03X_W];  						//图像复制后的基础图像
 int cursor_position=0;															//指针位置
 int last_cursor_position=1;													//上一次指针的位置，用来消除上一次的指针图像
 int main_menu_position=0;														//一级菜单的层数，表面为0，PID界面为1，image界面为2
-int pid_menu_position=0;														//PID界面的层数，表面为0，kp调参界面为1，ki为2，kd为3
+int pid_menu_position=0;														//PID界面的层数，表面为0，kp调参界面为1，ki为2，speed为3
 int len_main=2;																			//主菜单可进入界面的数量
 int len_pid=3;																			//同理
 int len_image=1;
-int i=0;
 //int32 num2=0;
 
 void IPS_Init(){
@@ -90,11 +82,11 @@ void print_menu(){
 		else if(pid_menu_position==1){				//调节kp的数值显示
 			ips200_show_float(0,0,p,4,3);
 		}
-		else if(pid_menu_position==2){				//调节ki的数值显示
+		else if(pid_menu_position==2){				//调节kd的数值显示
 			ips200_show_float(0,0,d,4,3);
 		}
-		else if(pid_menu_position==3){				//调节kd的数值显示
-			ips200_show_float(0,0,speed,2,3);
+		else if(pid_menu_position==3){				//调节speed的数值显示
+			ips200_show_int(0,0,speed,4);
 		}
 	}
 	else if(main_menu_position==2){					//图像界面显示

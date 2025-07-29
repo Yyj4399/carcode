@@ -116,13 +116,13 @@ void TIM6_IRQHandler (void)
 //			else if(mid_line[35]==mid_line[110]==mid_line[60]){
 //				speed=160;
 ////				k=360;
-////				d=380;
+////				d=380
 //			}
 			Motor_Control(speed,speed);
-			Final_Motor_Control(p,d,6000);
+			Final_Motor_Control(p,d,8000);
 			car_protect(image);
-//			Speed_Set(pwm_l,A2,2000,1,0);
-//			Speed_Set(pwm_r,A0,2000,1,0);
+//			Speed_Set(pwm_l,A2,1000,1,0);
+//			Speed_Set(pwm_r,A0,1000,1,0);
 		}
 		else{
 //			Motor_Control(20,20);

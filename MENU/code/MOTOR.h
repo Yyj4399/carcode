@@ -3,18 +3,25 @@
 
 void PWM_Init();																																							//PWM初始化
 void Encoder_Init();																																					//编码器初始化
+
 void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]);																			//出界保护
 void Encoder_Get();																																						//编码器值获取
 void Speed_Set(pwm_channel_enum pin1,gpio_pin_enum pin2,int Speed,uint8 just,uint8 lose);			//设置电机速度
+
 void Motor_Control(int Speed_L,int Speed_R);																									//电机控制
-void Final_Motor_Control(float k,float d,int limit);																				//差速控制
+void Final_Motor_Control(float k,float d,int limit);																					//差速控制
+
 void car_start();																																							//发车函数
-int32 limit_int(int32 a,int32 b,int32 c);
+
+int32 limit_int(int32 a,int32 b,int32 c);																											//整形限幅函数
 
 
 
 #define pwm_l TIM5_PWM_CH4_A3									//左电机PWM引脚定义
 #define pwm_r TIM5_PWM_CH2_A1									//右电机PWM引脚定义
+
+
+
 
 typedef struct motor1{			//电机参数定义
 	
@@ -35,9 +42,12 @@ typedef struct PD{					//PD参数定义
 		
 }PD;
 
+
+
+
+
 extern struct motor1 motor_l;			//左电机结构体																											
 extern struct motor1 motor_r;			//右电机结构体
-extern struct PD pd;							//方向环结构体
 
 extern uint8 car_num;							//发车计数
 extern float p;										//方向环kp

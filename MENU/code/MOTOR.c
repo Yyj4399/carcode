@@ -8,9 +8,9 @@ motor1 motor_l;						//定义左轮参数
 motor1 motor_r;						//定义右轮参数
 PD pd;
 uint8 car_num=0;					//用来存储发车次数
-float p=290;//460;
-float d=30;//760;
-int32 speed=90;
+float p=210;//210,110,100
+float d=110;
+int32 speed=100;
 
 //PWM初始化
 void PWM_Init(){

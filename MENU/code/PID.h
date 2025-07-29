@@ -4,8 +4,16 @@
 float PID_l(float Kp,float Ki,float Nowdata,float point);											//增量式PID
 float PID_r(float Kp,float Ki,float Nowdata,float point);											//增量式PID
 
+
+
+
+
 #define pwm_limit 8000																							//编码器限幅
-#define pwm_I_limit 100																							//PID的I项限幅																															
+#define pwm_I_limit 100																							//PID的I项限幅		
+
+
+
+
 
 typedef struct pid{	//PID参数定义
 	
@@ -17,11 +25,13 @@ typedef struct pid{	//PID参数定义
 
 }pid;
 
-extern float motor_pid_l[2];		//速度环PID参数
-extern float motor_pid_r[2];		//速度环PID参数
 
-extern struct pid pid_l;				//左电机PID参数结构体
-extern struct pid pid_r;				//右电机PID参数结构体
+
+
+
+
+extern float motor_pid_l[2];		//速度环PID参数，顺序为kp，ki
+extern float motor_pid_r[2];		//速度环PID参数，顺序为kp，ki
 
 
 #endif
