@@ -14,17 +14,21 @@ int len_image=1;
 //int32 num2=0;
 
 void IPS_Init(){
+	
 	ips200_set_color(RGB565_WHITE,RGB565_BLACK); //白底黑字
 	ips200_set_font(IPS200_8X16_FONT);            //字体8X16
 	ips200_set_dir(IPS200_PORTAIT);      				 //竖向显示
   ips200_init(IPS200_TYPE_SPI);								 //SPI通信
+	
 }
 
 
 //重置指针
 void rest_cursor(){
+	
 	cursor_position=0;
 	last_cursor_position=1;
+	
 }
 
 //画边线和中线
@@ -43,15 +47,20 @@ void draw_line(){
 
 //显示菜单
 void print_menu(){
+	
 	if(main_menu_position == 0){									//主菜单显示
+		
 		ips200_show_string(16,0,"pid");
 		ips200_show_string(16,16,"image");
 //		ips200_show_int(48,32,num2,6);
 	
 		ips200_show_string(0,cursor_position*16,">");
 		ips200_show_string(0,last_cursor_position*16," ");
+		
 	}
+	
 	else if(main_menu_position == 1){
+		
 		if(pid_menu_position==0){					//PID菜单显示
 			
 			ips200_show_string(16,0,"k");
@@ -62,15 +71,11 @@ void print_menu(){
 			ips200_show_float(48,16,d,4,3);
 			ips200_show_int(48,32,speed,4);
 			
-//			ips200_show_float(16*7,0,motor_pid_r[0],2,3);
-//			ips200_show_float(16*7,16,motor_pid_r[1],2,3);
-//			ips200_show_float(16*7,32,Out_I_l,2,3);
+//			ips200_show_uint(8*15,32+16,car_num,2);
 			
-//			ips200_show_string(16,32+16,"motor_l");
-			ips200_show_uint(8*15,32+16,car_num,2);
 			ips200_show_string(16,32+16*2,"encoder_l");
 			ips200_show_int(8*15,32+16*2,motor_l.encoder_raw,5);
-//			ips200_show_string(16,32+16*3,"motor_r");
+			
 			ips200_show_string(16,32+16*4,"encoder_r");
 			ips200_show_int(8*15,32+16*4,motor_r.encoder_raw,5);
 			
@@ -78,17 +83,29 @@ void print_menu(){
 		
 			ips200_show_string(0,cursor_position*16,">");
 			ips200_show_string(0,last_cursor_position*16," ");
+			
 		}
+		
 		else if(pid_menu_position==1){				//调节kp的数值显示
+			
 			ips200_show_float(0,0,p,4,3);
+			
 		}
+		
 		else if(pid_menu_position==2){				//调节kd的数值显示
+			
 			ips200_show_float(0,0,d,4,3);
+			
 		}
+		
 		else if(pid_menu_position==3){				//调节speed的数值显示
+			
 			ips200_show_int(0,0,speed,4);
+			
 		}
+		
 	}
+	
 	else if(main_menu_position==2){					//图像界面显示
 		
 		//二值化图像显示
@@ -160,97 +177,160 @@ void print_menu(){
 void handle(){
 	
 		if(KEY_SHORT_PRESS == key_get_state(KEY_1)){
+			
 			if(main_menu_position==0){															//在主菜单界面时，按键一二用来改变指针位置
 				
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position-1+len_main)%len_main;
 				
 			}
+			
 			else{
 				
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position-1+len_pid)%len_pid;
+				
 				if(pid_menu_position==1){															//在PID界面时，按键一二用来调节PID参数
+					
 					p+=10;
-				}
-				else if(pid_menu_position==2){
-					d+=10;
-				}
-				else if(pid_menu_position==3){
-					speed+=10;
+					
 				}
 				
+				else if(pid_menu_position==2){
+					
+					d+=10;
+					
+				}
+				
+				else if(pid_menu_position==3){
+					
+					speed+=10;
+					
+				}
+
 			}
+			
+			//清除按键状态
 			key_clear_state(KEY_1);
+			
 		}
 	
 		else if(KEY_SHORT_PRESS == key_get_state(KEY_2)){
+			
 			if(main_menu_position==0){															//在主菜单界面时，按键一二用来改变指针位置
+				
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position+1)%len_main;
+				
 			}
+			
 			else{
+				
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position+1)%len_pid;
+				
 				if(pid_menu_position==1){															//在/PID界面时，按键一二用来调节PID参数
+					
 					p-=10;
+					
 				}
+				
 				else if(pid_menu_position==2){
+					
 					d-=10;
+					
 				}
+				
 				else if(pid_menu_position==3){
+					
 					speed-=10;
+					
 				}
 				
 			}
+			
+			//清除按键状态
 			key_clear_state(KEY_2);
+			
 		}
+		
 		else if(KEY_SHORT_PRESS == key_get_state(KEY_3)){
+			
 			if(main_menu_position==0){					//按键三四用于确认和返回
+				
 				if(cursor_position==0){
+					
 					main_menu_position=1;
 					ips200_clear();
 				  rest_cursor();
+					
 				}
+				
 				else if(cursor_position == 1){
+					
 					main_menu_position=2;
 					ips200_clear();
 					rest_cursor();
+					
 				}	
+				
 			}
+			
 			else if(main_menu_position==1){
+				
 				if(cursor_position==0){
+					
 					pid_menu_position=1;
 					ips200_clear();
 				  rest_cursor();
+					
 				}
+				
 				else if(cursor_position == 1){
+					
 					pid_menu_position=2;
 					ips200_clear();
 					rest_cursor();
+					
 				}	
+				
 				else if(cursor_position == 2){
+					
 					pid_menu_position=3;
 					ips200_clear();
 					rest_cursor();
+					
 				}	
 
 			}
+			
+			//清除按键状态
 			key_clear_state(KEY_3);
+			
 		}
+		
 		else if(KEY_SHORT_PRESS == key_get_state(KEY_4)){
 			
 			if(pid_menu_position!=0){
+				
 		    pid_menu_position=0;
 				ips200_clear();
 		    rest_cursor();
+				
 			}
+			
 			else if(pid_menu_position==0&&main_menu_position!=0){
+				
 				main_menu_position=0;
 				ips200_clear();
 		    rest_cursor();
+				
 			}
+			
+			//清除按键状态
 			key_clear_state(KEY_4);
+			
 		}
+		
 }
 
