@@ -8,9 +8,9 @@ motor1 motor_l;						//定义左轮参数定义
 motor1 motor_r;						//定义右轮参数定义
 PD pd={0};								//方向环参数定义
 uint8 car_num=0;					//用来存储发车次数
-float p=230;							//方向环kp     //210，110，100（11.9V）；230，180，100（摄像头改动后，12.0V）；230，330，110（12.1V）
-float d=330;							//方向环kd
-int32 speed=110;					//目标速度
+float p=240;							//方向环kp     //210，110，100（11.9V）；230，180，100（摄像头改动后，12.0V）；230，330，110（12.1V）；240，480，120（12.0V，满电也可）
+float d=480;							//方向环kd
+int32 speed=120;					//目标速度
 
 //PWM初始化
 void PWM_Init(){
@@ -66,7 +66,7 @@ void car_protect(uint8 bio_image[MT9V03X_H-40][MT9V03X_W]){
 	}
 	
 	//若出界或者斑马线数达到一定数量则停车
-	if(num<=30||car_protect_flag>=25){
+	if(num<=30||car_protect_flag>=20){
 		
 		Speed_Set(pwm_l,A0,0,1,0);
 		Speed_Set(pwm_r,A2,0,1,0);

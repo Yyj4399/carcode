@@ -41,6 +41,7 @@ void draw_line(){
 		ips200_draw_point(right_line[i],i,RGB565_RED);
 		ips200_draw_point(right_line[i]+1,i,RGB565_PINK);
 		ips200_draw_point(mid_line[i],i,RGB565_GREEN);
+		
 	}
 	
 }
