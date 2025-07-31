@@ -17,8 +17,16 @@ int32 limit_int(int32 a,int32 b,int32 c);																											//整形限幅函
 
 
 
+
+
+
+
 #define pwm_l TIM5_PWM_CH4_A3									//左电机PWM引脚定义
 #define pwm_r TIM5_PWM_CH2_A1									//右电机PWM引脚定义
+
+
+
+
 
 
 
@@ -41,6 +49,8 @@ typedef struct PD{					//PD参数定义
 	int PD_v;									//方向环输出
 		
 }PD;
+
+
 
 
 

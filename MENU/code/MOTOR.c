@@ -6,10 +6,10 @@
 
 motor1 motor_l;						//定义左轮参数定义
 motor1 motor_r;						//定义右轮参数定义
-PD pd;										//方向环参数定义
+PD pd={0};								//方向环参数定义
 uint8 car_num=0;					//用来存储发车次数
 float p=230;							//方向环kp     //210，110，100（11.9V）；230，180，100（摄像头改动后，12.0V）；230，330，110（12.1V）
-float d=320;							//方向环kd
+float d=330;							//方向环kd
 int32 speed=110;					//目标速度
 
 //PWM初始化
@@ -42,11 +42,14 @@ void car_protect(uint8 bio_image[MT9V03X_H-40][MT9V03X_W]){
 
 	for(uint8 i=3;i<MT9V03X_W-2;i++){
 		
+		//扫描底线黑色像素
 		if(bio_image[bottom_line][i]==255){
 			
 				num++;
 			
 		}
+		
+		//扫描底线黑白跳变点
 		if(bio_image[bottom_line][i-1]==255&&bio_image[bottom_line][i]==255&&bio_image[bottom_line][i+1]==0){
 			
 			num1++;
@@ -55,11 +58,14 @@ void car_protect(uint8 bio_image[MT9V03X_H-40][MT9V03X_W]){
 		
 	}
 	
+	//若黑白跳变点数量大于5则计斑马线数
 	if(num1>=5){
 		
 		car_protect_flag++;
 		
 	}
+	
+	//若出界或者斑马线数达到一定数量则停车
 	if(num<=30||car_protect_flag>=25){
 		
 		Speed_Set(pwm_l,A0,0,1,0);
@@ -91,30 +97,46 @@ void Encoder_Get(){
 
 //限幅函数
 int32 limit_int(int32 a,int32 b,int32 c){
+	
 	if(b>=a&&b<=c){
+		
 		return b;
+		
 	}
+	
 	else if(b<a){
+		
 		return a;
+		
 	}
+	
 	else if(b>c){
+		
 		return c;
+		
 	}
+	
 	return 0;
+	
 }
 
 //设置电机速度
 void Speed_Set(pwm_channel_enum pin1,gpio_pin_enum pin2,int Speed,uint8 just,uint8 lose){
+	
 	if(Speed>0){
 		
 		pwm_set_duty(pin1,Speed);
 		gpio_set_level(pin2,just);
 		
 	}
+	
 	else {
+		
 		pwm_set_duty(pin1,-Speed);
 		gpio_set_level(pin2,lose);
+		
 	}
+	
 }
 
 //电机控制
@@ -137,11 +159,14 @@ void Motor_Control(int Speed_L,int Speed_R){
 
 //差速控制
 void Final_Motor_Control(float k,float d,int32 limit){
+	
 	//方向环计算
 	pd.error = MID_W-final_mid_value;
 	pd.PD_v=(int)(p*pd.error+d*(pd.error-pd.last_error));
+	
 	//方向环限幅
 	pd.PD_v=limit_int(-limit,pd.PD_v,limit);
+	
 	//PWM总输出限幅和计算
 	motor_l.motor_v=limit_int(-pwm_limit,motor_l.duty-pd.PD_v,pwm_limit);
 	motor_r.motor_v=limit_int(-pwm_limit,motor_r.duty+pd.PD_v,pwm_limit);
@@ -156,7 +181,7 @@ void Final_Motor_Control(float k,float d,int32 limit){
 //		Motor_Control(Speed,limit_int(Speed-limit,Speed+k*error+d*last_error,Speed+limit));
 //		Motor_Control(limit_int(Speed-limit,Speed-k*error-d*last_error,Speed+limit),Speed);
 	
-	//更新变量
+	//更新上一次误差
 	pd.last_error=pd.error;
 	
 }
@@ -173,6 +198,8 @@ void car_start(){
 		key_clear_state(KEY_4);
 		
 	}
+	
+	//发车后
 	if(car_num!=0){
 		
 		if(car_num%2==1){
@@ -203,6 +230,7 @@ void car_start(){
 		}
 		
 	}
+	//未发车时
 	else{
 		
 		//按键操作

@@ -89,53 +89,72 @@ void image_binaryzation(uint8 thershold){
 	uint8 num=0;
 	uint8 num1=0;
 	
-	for(uint8 i=0;i<40;i++){							//远端图像阈值+10
+	for(uint8 i=0;i<40;i++){			//远端图像阈值+10
+		
 		for(uint8 j=0;j<MT9V03X_W;j++){
+			
 			temp = basic_image[i][j];
+			
 			if(temp<(thershold+10)){
+				
 				image[i][j] =0;
 				num++;
+				
 			}
 			else{
+				
 				image[i][j]=255;
+				
 			}
+			
 		}
+		
 		//若有一行基本为黑则这一行为搜寻截止行
 		if(num>=180){
+			
 			find_end_line=i;
-			num=0;
 			num1++;
+			
 		}
-//		else{
-//			find_end_line=25;
-//		}
+
 		num=0;
 	}
 	
 	for(uint8 i=40;i<MT9V03X_H;i++){			//近端不变
+		
 		for(uint8 j=0;j<MT9V03X_W;j++){
+			
 			temp = basic_image[i][j];
+			
 			if(temp<thershold){
+				
 				image[i][j] =0;
 				num++;
+				
 			}
 			else{
+				
 				image[i][j]=255;
+				
 			}
+			
 		}
+		
 		//若有一行基本为黑则这一行为搜寻截止行
 		if(num>=180){
+			
 			find_end_line=i;
-			num=0;
 			num1++;
+			
 		}
-//		else{
-//			find_end_line=25;
-//		}
+
 		num=0;
 	}
+	
 	if(num1==0||find_end_line<=25){
+		
 		find_end_line=25;
+		
 	}
 	
 }
@@ -152,81 +171,130 @@ uint8 r_point;							//右基点
 
 //找图像边线基点
 void find_basic_point(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
+	
 	//从1/2处开始找
 	if(bio_image[bottom_line][MT9V03X_W/2]==255&&bio_image[bottom_line][MT9V03X_W/2+1]==255&&bio_image[bottom_line][MT9V03X_W/2-1]==255){
+		
 		//寻找左基点
 		for(uint8 i=MT9V03X_W/2;i>0;i--){
+			
 			if(bio_image[bottom_line][i-1]==0&&bio_image[bottom_line][i]==255&&bio_image[bottom_line][i+1]==255){
+				
 				l_point = i;
 				break;
+				
 			}
 			if(i-1==1){
+				
 				l_point=1;
 				break;
+				
 			}
+			
 		}
+		
 		//寻找右基点
 		for(uint8 i=MT9V03X_W/2;i<MT9V03X_W-2;i++){
+			
 			if(bio_image[bottom_line][i-1]==255&&bio_image[bottom_line][i]==255&&bio_image[bottom_line][i+1]==0){
+				
 				r_point = i;
 				break;
+				
 			}
 			if(i+1==MT9V03X_W-2){
+				
 				r_point=MT9V03X_W-2;
 				break;
+				
 			}
+			
 		}
 		
 	}
+	
 	//从1/4处开始找
 	else if(bio_image[bottom_line][MT9V03X_W/4]==255&&bio_image[bottom_line][MT9V03X_W/4+1]==255&&bio_image[bottom_line][MT9V03X_W/4-1]==255){
+		
 		//寻找左基点
 		for(uint8 i=MT9V03X_W/4;i>0;i--){
+			
 			if(bio_image[bottom_line][i-1]==0&&bio_image[bottom_line][i]==255&&bio_image[bottom_line][i+1]==255){
+				
 				l_point = i;
 				break;
+				
 			}
+			
 			if(i-1==1){
+				
 				l_point=1;
 				break;
+				
 			}
+			
 		}
+		
 		//寻找右基点
 		for(uint8 i=MT9V03X_W/4;i<MT9V03X_W-2;i++){
+			
 			if(bio_image[bottom_line][i-1]==255&&bio_image[bottom_line][i]==255&&bio_image[bottom_line][i+1]==0){
+				
 				r_point = i;
 				break;
+				
 			}
+			
 			if(i+1==MT9V03X_W-2){
+				
 				r_point=MT9V03X_W-2;
 				break;
+				
 			}
+			
 		}
 		
 	}
+	
 	//从3/4处开始找
 	else if(bio_image[bottom_line][MT9V03X_W/4*3]==255&&bio_image[bottom_line][MT9V03X_W/4*3+1]==255&&bio_image[bottom_line][MT9V03X_W/4*3-1]==255){
+		
 		//寻找左基点
 		for(uint8 i=MT9V03X_W/4*3;i>0;i--){
+			
 			if(bio_image[bottom_line][i-1]==0&&bio_image[bottom_line][i]==255&&bio_image[bottom_line][i+1]==255){
+				
 				l_point = i;
 				break;
+				
 			}
+			
 			if(i-1==1){
+				
 				l_point=1;
 				break;
+				
 			}
+			
 		}
+		
 		//寻找右基点
 		for(uint8 i=MT9V03X_W/4*3;i<MT9V03X_W-2;i++){
+			
 			if(bio_image[bottom_line][i-1]==255&&bio_image[bottom_line][i]==255&&bio_image[bottom_line][i+1]==0){
+				
 				r_point = i;
 				break;
+				
 			}
+			
 			if(i+1==MT9V03X_W-2){
+				
 				r_point=MT9V03X_W-2;
 				break;
+				
 			}
+			
 		}
 		
 	}
@@ -239,38 +307,65 @@ void find_basic_point(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
 
 //限幅函数
 uint8 limit_uint8(uint8 a,uint8 b,uint8 c){
+	
 	if(b>=a&&b<=c){
+		
 		return b;
+		
 	}
+	
 	else if(b<=a){
+		
 		return a;
+		
 	}
+	
 	else if(b>=c){
+		
 		return c;
+		
 	}
+	
 	return 0;
+	
 }
 
 //最小值函数
 uint8 mini_uint8(uint8 a,uint8 b){
+	
 	if(a>=b){
+		
 		return b;
+		
 	}
+	
 	else if(a<b){
+		
 		return a;
+		
 	}
+	
 	return 0;
+	
 }
 
 //最大值函数
 uint8 max_uint8(uint8 a,uint8 b){
+	
 	if(a>=b){
+		
 		return a;
+		
 	}
+	
 	else if(a<b){
+		
 		return b;
+		
 	}
+	
 	return 0;
+	
 }
 
 
@@ -309,117 +404,176 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 	
 	//从下往上开始寻找边线截止到搜寻截止行
 	for(uint8 i=bottom_line;i>find_end_line;i--){
+		
 		//向右寻找左边线
 		for(uint8 j=l;j<l+l_right_find;j++){
+			
 			if(index[i][j-1]==0&&index[i][j]==255&&index[i][j+1]==255){
+				
 				l = j;
 				break;
+				
 			}
+			
 			else if(j>=MT9V03X_W-2){
+				
 				l=j-3;
 				find_line_flag.l_find_flag =1;
 				break;
+				
 			}
+			
 			else if(j==l+l_right_find-1){
+				
 				find_line_flag.l_find_flag =1;
 				break;
+				
 			}
+			
 		}
 		
 		//向左寻找左边线
 		if(find_line_flag.l_find_flag==1){
+			
 			for(uint8 j=l;j>l-l_left_find;j--){
+				
 				if(index[i][j-1]==0&&index[i][j]==255&&index[i][j+1]==255){
+					
 					l = j;
 					break;
+					
 				}
+				
 				else if(j==1){
+					
 					l = 1;
 					find_line_flag.m_l_find_flag =1;
 					break;
+					
 				}
+				
 				else if(j==l-l_left_find+1){
+					
 					find_line_flag.m_l_find_flag =1;
 					break;
+					
 				}
+				
 			}
+			
 		}
 		
 		//从1/2处寻找左边线（环境光问题）
 		if(find_line_flag.m_l_find_flag==1){
+			
 			for(uint8 j=MT9V03X_W/2;j>0;j--){
 				
 				if(index[i][j-1]==0&&index[i][j]==255&&index[i][j+1]==255){
 					l = j;
 					break;
+					
 				}
 				
 				else if(j==1){
 					l = 1;
 					break;
+					
 				}
 		
 			}
+			
 		}
 		
 		//向左寻找右边线
 		for(uint8 j=r;j>r-r_left_find;j--){
+			
 			if(index[i][j-1]==255&&index[i][j]==255&&index[i][j+1]==0){
+				
 				r = j;
 				break;
+				
 			}
+			
 			else if(j<=3){
+				
 				r=j+3;
 				find_line_flag.r_find_flag =1;
 				break;
+				
 			}
+			
 			 if(j<=r-r_left_find+1){
+				 
 				find_line_flag.r_find_flag =1;
 				break;
+				 
 			}
+			 
 		}
+		
 		//向右寻找右边线
 		if(find_line_flag.r_find_flag==1){
+			
 			for(uint8 j=r;j<r+r_right_find;j++){
+				
 				if(index[i][j-1]==255&&index[i][j]==255&&index[i][j+1]==0){
+					
 					r = j;
 					break;
 				}
+				
 				else if(j==MT9V03X_W-2){
+					
 					r = MT9V03X_W-2;
 					find_line_flag.m_r_find_flag =1;
 					break;
+					
 				}
+				
 				else if(j==r+r_right_find-1){
+					
 					find_line_flag.m_r_find_flag =1;
 					break;
+					
 				}
+				
 			}
+			
 		}
 		
 		//从1/2处寻找右边线(环境光问题)
 		if(find_line_flag.m_r_find_flag==1){
+			
 			for(uint8 j=MT9V03X_W/2;j<MT9V03X_W-1;j++){
 				
 				if(index[i][j-1]==255&&index[i][j]==255&&index[i][j+1]==0){
+					
 					r = j;
 					break;
+					
 				}
 				
 				else if(j==MT9V03X_W-2){
+					
 					r = MT9V03X_W-2;
 					break;
+					
 				}
 		
 			}
+			
 		}
 		
 		//存储边线以及中线
 		left_line[i] = limit_uint8(1,l,MT9V03X_W-2);
 		right_line[i] = limit_uint8(1,r,MT9V03X_W-2);
 		mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
+		
+		//若中线为黑色则改变搜寻截止行
 		if(image[i][mid_line[i]]==0){
-			mid_line[i]=mid_line[i+1];
+			
+			find_end_line = i;
+			
 		}
 		
 		//标志位清零
@@ -441,12 +595,14 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 		
 		//计算左边未丢线右边丢线数量用作判断是否进入圆环状态1的依据之一
 		if(left_line[i]>=5&&right_line[i]>=MT9V03X_W-7){
+			
 			loss_num.num_lossr++;
 			
 		}
 		
 		//计算右边未丢线左边丢线数量
 		if(left_line[i]<=5&&right_line[i]<=MT9V03X_W-7){
+			
 			loss_num.num_lossl++;
 			
 		}
@@ -643,71 +799,79 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			
 			//记录左下拐点
 			if(left_line[i]-left_line[i+1]>=1&&left_line[i]-left_line[i-1]>=1&&left_line[i]>=3&&left_line[i]>=10){
+				
 				cross_point.x1=left_line[i];
 				cross_point.y1=i;
+				
 			}
 
 			//记录右下拐点
 			else if(right_line[i+1]-right_line[i]>=1&&right_line[i-1]-right_line[i]>=1&&right_line[i]<=MT9V03X_W-3){
+				
 				cross_point.x2=right_line[i];
 				cross_point.y2=i;
+				
 			}
 
 		}
+		
 		for(uint8 i=70;i>=40;i--){
 			
 			//记录左上拐点
 			if(left_line[i]-left_line[i+4]>=10&&left_line[i]>20){
+				
 				cross_point.x3=left_line[i];
 				cross_point.y3=i;
+				
 			}
 			 
 			//记录右上拐点
 			else if(right_line[i+3]-right_line[i]>=15&&right_line[i]-right_line[i-2]<=5&&right_line[i]<MT9V03X_W-5){
+				
 				cross_point.x4=right_line[i];
 				cross_point.y4=i;
+				
 			}
 			
 		}
+		
+		//十字补线状态清除
 		if(cross_point.y3>=100||cross_point.y4>=100){
+			
 			cross_point=cross_zero_point;
+			
 		}
-		for(uint8 i=cross_point.y2;i>40;i--){
-			if(cross_point.x2!=0&&cross_point.x4==0){
-				right_line[i]=cross_point.x2+(i-cross_point.y2)/1.8;
-			}
-			else{
-				break;
-			}
-		}
-		for(uint8 i=cross_point.y1;i>40;i--){
-			if(cross_point.x1!=0&&cross_point.x3==0){
-				left_line[i]=cross_point.x1+(i-cross_point.y1)/-1.5;
-			}
-			else{
-				break;
-			}
-		}
+		
 		//计数清零
 		loss_num=loss_zeronum;
 		
 		//计算左边斜率
 		if(cross_point.x3!=0&&cross_point.x1!=0){
+			
 			cross_point.kl=((float)(cross_point.y3-cross_point.y1))/(float)(cross_point.x3-cross_point.x1);
+			
 		}
-		else if((cross_point.x3!=0&&cross_point.x1==0)||cross_point.kl>0){
+		else if((cross_point.x3!=0&&cross_point.x1==0)||(cross_point.x3==0&&cross_point.x1!=0)||cross_point.kl>0){
+			
 			cross_point.kl=-1.5;
+			
 		}
 		
 		//计算右边斜率
 		if(cross_point.x4!=0&&cross_point.x2!=0){
+			
 			cross_point.kr=((float)(cross_point.y4-cross_point.y2))/(float)(cross_point.x4-cross_point.x2);
+			
 		}
-		else if((cross_point.x4!=0&&cross_point.x2==0)||cross_point.kr<0){
+		else if((cross_point.x4!=0&&cross_point.x2==0)||(cross_point.x4==0&&cross_point.x2!=0)||cross_point.kr<0){
+			
 			cross_point.kr=1.8;
+			
 		}
 		
-		if(cross_point.x1!=0&&cross_point.x2!=0&&cross_point.kl<0&&cross_point.kr>0){
+		//若拐点都存在
+		if(cross_point.x1!=0&&cross_point.x3!=0&&cross_point.x2!=0&&cross_point.x4!=0&&cross_point.kl<0&&cross_point.kr>0){
+			
 			//进行补线
 			for(uint8 i=max_uint8(cross_point.y1,cross_point.y2);i>mini_uint8(cross_point.y4,cross_point.y3);i--){
 				
@@ -718,33 +882,64 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			}
 			
 		}
-		else if(cross_point.x1==0&&cross_point.kl<0&&cross_point.kr>0){
+		
+		//若左下拐点不存在
+		else if(cross_point.x1==0&&cross_point.x3!=0&&cross_point.x2!=0&&cross_point.x4!=0&&cross_point.kl<0&&cross_point.kr>0){
+			
 			//进行补线
-			for(uint8 i=bottom_line;i>mini_uint8(cross_point.y4,cross_point.y3);i--){
+			for(uint8 i=mini_uint8(cross_point.y4,cross_point.y3);i>bottom_line;i++){
 				
 				left_line[i]=cross_point.x3+(i-cross_point.y3)/cross_point.kl;
+				right_line[i]=cross_point.x4+(i-cross_point.y4)/cross_point.kr;
+				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
+							
+			}
+			
+		}
+		
+		//若右下拐点不存在
+		else if(cross_point.x2==0&&cross_point.x4!=0&&cross_point.x1!=0&&cross_point.x3!=0&&cross_point.kl<0&&cross_point.kr>0){
+			
+			//进行补线
+			for(uint8 i=mini_uint8(cross_point.y4,cross_point.y3);i>bottom_line;i++){
+				
+				left_line[i]=cross_point.x3+(i-cross_point.y3)/cross_point.kl;
+				right_line[i]=cross_point.x4+(i-cross_point.y4)/cross_point.kr;
+				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
+							
+			}
+			
+		}
+		
+		//若左上拐点不存在
+		else if(cross_point.x1!=0&&cross_point.x3==0&&cross_point.x2!=0&&cross_point.x4!=0&&cross_point.kl<0&&cross_point.kr>0){
+			
+			//进行补线
+			for(uint8 i=max_uint8(cross_point.y1,cross_point.y2);i>40;i--){
+				
+				left_line[i]=cross_point.x1+(i-cross_point.y1)/cross_point.kl;
 				right_line[i]=cross_point.x2+(i-cross_point.y2)/cross_point.kr;
 				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
 							
 			}
+			
 		}
-		else if(cross_point.x2==0&&cross_point.kl<0&&cross_point.kr>0){
+		
+		//若右上拐点不存在
+		else if(cross_point.x2!=0&&cross_point.x4==0&&cross_point.x1!=0&&cross_point.x3!=0&&cross_point.kl<0&&cross_point.kr>0){
+			
 			//进行补线
-			for(uint8 i=bottom_line;i>mini_uint8(cross_point.y4,cross_point.y3);i--){
+			for(uint8 i=max_uint8(cross_point.y1,cross_point.y2);i>40;i--){
 				
 				left_line[i]=cross_point.x1+(i-cross_point.y1)/cross_point.kl;
-				right_line[i]=cross_point.x4+(i-cross_point.y4)/cross_point.kr;
+				right_line[i]=cross_point.x2+(i-cross_point.y2)/cross_point.kr;
 				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
-				if(image[mid_line[i]][i]!=255){
-					mid_line[i]=mid_line[i-1];
-				}
 							
 			}
+			
 		}
 		
 	}
-
-
 	
 }
 
@@ -782,7 +977,8 @@ uint8 weight_find_mid_value(){
 	
 	uint32 weight_mid_line_sum = 0;						//中线权重和
 	uint32 weight_sum = 0;										//总权重
-
+	
+	//计算中线权重和以及总权重
 	for(uint8 i=bottom_line;i>find_end_line-1;i--){
 		
 		weight_mid_line_sum += mid_line[i] *mid_weight[i];
@@ -791,18 +987,23 @@ uint8 weight_find_mid_value(){
 		
 	}
 	
+	//防止中值突变
 	if(now_mid_line-last_mid_line>=25||last_mid_line-now_mid_line>=25){
 		
 		now_mid_line = last_mid_line;
 		
 	}
 	
+	//计算中值
 	now_mid_line = (uint8)(weight_mid_line_sum/weight_sum);
-	mid_v = now_mid_line*0.9+last_mid_line*0.1;			//互补滤波
+	
+	//互补滤波
+	mid_v = now_mid_line*0.9+last_mid_line*0.1;		
+	
+	//更新上一次中值
 	last_mid_line = now_mid_line;
 	
-
-	
 	return mid_v;
+	
 }
 

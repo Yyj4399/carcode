@@ -106,8 +106,11 @@ void TIM5_IRQHandler (void)
 void TIM6_IRQHandler (void)
 {
 	Encoder_Get();												//编码器值获取
+	
 	if(car_num!=0){
+		
 		if(car_num%2==1){
+			
 //			if(final_mid_value-MID_W>=5||MID_W-final_mid_value>=5){
 //				speed=80;
 ////				k=380;
@@ -124,11 +127,14 @@ void TIM6_IRQHandler (void)
 //			Speed_Set(pwm_l,A2,1000,1,0);
 //			Speed_Set(pwm_r,A0,1000,1,0);
 		}
+		
 		else{
 //			Motor_Control(20,20);
 			Speed_Set(pwm_l,A2,0,1,0);
 			Speed_Set(pwm_r,A0,0,1,0);
+			
 		}
+		
 	}
 	
 	
