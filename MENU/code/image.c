@@ -418,9 +418,9 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 		left_line[i] = limit_uint8(1,l,MT9V03X_W-2);
 		right_line[i] = limit_uint8(1,r,MT9V03X_W-2);
 		mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
-//		if(image[i][mid_line[i]]==0){
-//			mid_line[i]=mid_line[i+1];
-//		}
+		if(image[i][mid_line[i]]==0){
+			mid_line[i]=mid_line[i+1];
+		}
 		
 		//标志位清零
 		find_line_flag=find_line_zeroflag;

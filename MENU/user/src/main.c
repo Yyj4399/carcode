@@ -32,14 +32,15 @@ int main (void){
 			key_scanner();
 	
 //			printf("%d,%d,%d,%d\n",motor_l.encoder_speed,motor_r.encoder_speed,motor_l.target_speed,motor_r.target_speed);
-			
-			get_image();																//获取图像
-			threshold = Otsu(basic_image);							//获取阈值
-			image_binaryzation(threshold);							//图像二值化
-			
-			find_basic_point(image);										//找到左右边线基点
-			find_line(image);														//寻找边线
-			final_mid_value = weight_find_mid_value();	//加权求中线值
+			if(mt9v03x_finish_flag==1){
+				get_image();																//获取图像
+				threshold = Otsu(basic_image);							//获取阈值
+				image_binaryzation(threshold);							//图像二值化
+				
+				find_basic_point(image);										//找到左右边线基点
+				find_line(image);														//寻找边线
+				final_mid_value = weight_find_mid_value();	//加权求中线值
+			}
 			
 			car_start();																//发车
 			
