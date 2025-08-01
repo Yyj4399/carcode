@@ -8,8 +8,8 @@ motor1 motor_l;						//定义左轮参数定义
 motor1 motor_r;						//定义右轮参数定义
 PD pd={0};								//方向环参数定义
 uint8 car_num=0;					//用来存储发车次数
-float p=240;							//方向环kp     //210，110，100（11.9V）；230，180，100（摄像头改动后，12.0V）；230，330，110（12.1V）；240，480，120（12.0V，满电也可）
-float d=480;							//方向环kd
+float p=240;							//方向环kp     //210，110，100（11.9V）；230，180，100（摄像头改动后，12.0V）；230，330，110（12.1V）；240，520，120（12.2V，满电也可）
+float d=520;							//方向环kd
 int32 speed=120;					//目标速度
 
 //PWM初始化
@@ -35,7 +35,7 @@ void Encoder_Init(){
 uint8 car_protect_flag=0;
 
 //出界保护
-void car_protect(uint8 bio_image[MT9V03X_H-40][MT9V03X_W]){
+void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
 	
 	uint8 num=0;
 	uint8 num1=0;
