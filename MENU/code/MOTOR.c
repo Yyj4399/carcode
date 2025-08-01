@@ -8,9 +8,9 @@ motor1 motor_l;						//定义左轮参数定义
 motor1 motor_r;						//定义右轮参数定义
 PD pd={0};								//方向环参数定义
 uint8 car_num=0;					//用来存储发车次数
-float p=240;							//方向环kp     //210，110，100（11.9V）；230，180，100（摄像头改动后，12.0V）；230，330，110（12.1V）；240，520，120（12.2V，满电也可）
-float d=520;							//方向环kd
-int32 speed=120;					//目标速度
+float p=250;							//方向环kp     //230，180，100（摄像头改动后，12.0V）；230，330，110（12.1V）；240（+10），520，120（12.2V，满电也可）；250，550，130（12.0V，过弯已经飘出）
+float d=550;							//方向环kd
+int32 speed=130;					//目标速度
 
 //PWM初始化
 void PWM_Init(){
@@ -68,7 +68,7 @@ void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
 	//若出界或者斑马线数达到一定数量则停车
 	if(num<=30||car_protect_flag>=20){
 		
-		Speed_Set(pwm_l,A0,0,1,0);
+		Speed_Set(pwm_l,A0,0,0,1);
 		Speed_Set(pwm_r,A2,0,1,0);
 		
 		while(1){
@@ -151,7 +151,7 @@ void Motor_Control(int Speed_L,int Speed_R){
 	motor_r.duty = PID_r(motor_pid_r[0],motor_pid_r[1],(float)motor_r.encoder_speed,(float)motor_r.target_speed);
 	
 //	//输出速度
-//	Speed_Set(pwm_l,A2,motor_l.duty,1,0);
+//	Speed_Set(pwm_l,A2,motor_l.duty,0,1);
 //	Speed_Set(pwm_r,A0,motor_r.duty,1,0);
 
 	
@@ -175,7 +175,7 @@ void Final_Motor_Control(float k,float d,int32 limit){
 //	motorr=limit_int(-pwm_limit,motor_r.duty+PD,pwm_limit);
 	
 	//给电机PWM	
-	Speed_Set(pwm_l,A2,motor_l.motor_v,1,0);
+	Speed_Set(pwm_l,A2,motor_l.motor_v,0,1);
 	Speed_Set(pwm_r,A0,motor_r.motor_v,1,0);
 	
 //		Motor_Control(Speed,limit_int(Speed-limit,Speed+k*error+d*last_error,Speed+limit));
@@ -217,14 +217,14 @@ void car_start(){
 //			Final_Motor_Control(k,d,7000);
 //			car_protect(image);												
 
-//			Speed_Set(pwm_l,A2,-1000,1,0);
+//			Speed_Set(pwm_l,A2,-1000,0,1);
 //			Speed_Set(pwm_r,A0,1000,1,0);
 		}
 		
 		else{
 //			Motor_Control(20,20);
 			
-			Speed_Set(pwm_l,A2,0,1,0);
+			Speed_Set(pwm_l,A2,0,0,1);
 			Speed_Set(pwm_r,A0,0,1,0);
 			
 		}

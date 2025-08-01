@@ -124,13 +124,13 @@ void TIM6_IRQHandler (void)
 			Motor_Control(speed,speed);
 			Final_Motor_Control(p,d,9000);
 			car_protect(image);
-//			Speed_Set(pwm_l,A2,1000,1,0);
+//			Speed_Set(pwm_l,A2,1000,0,1);
 //			Speed_Set(pwm_r,A0,1000,1,0);
 		}
 		
 		else{
 //			Motor_Control(20,20);
-			Speed_Set(pwm_l,A2,0,1,0);
+			Speed_Set(pwm_l,A2,0,0,1);
 			Speed_Set(pwm_r,A0,0,1,0);
 			
 		}
