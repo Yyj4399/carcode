@@ -3,14 +3,18 @@
 #include "MOTOR.H"
 #include "PID.H"
 #include "MENU.H"
+#include "flash.h"
 
 int cursor_position=0;															//指针位置
 int last_cursor_position=1;													//上一次指针的位置，用来消除上一次的指针图像
+
 int main_menu_position=0;														//一级菜单的层数，表面为0，PID界面为1，image界面为2
 int pid_menu_position=0;														//PID界面的层数，表面为0，kp调参界面为1，ki为2，speed为3
-int len_main=2;																			//主菜单可进入界面的数量
-int len_pid=3;																			//同理
-int len_image=1;
+int flash_menu_position=0;													//FLASH界面的层数，表面为0，保存界面为1，读取界面为2
+#define len_main 3																			//主菜单可进入界面的数量
+#define len_pid 3																			//同理
+#define len_image 1
+#define len_flash 2
 //int32 num2=0;
 
 void IPS_Init(){
@@ -53,7 +57,8 @@ void print_menu(){
 		
 		ips200_show_string(16,0,"pid");
 		ips200_show_string(16,16,"image");
-//		ips200_show_int(48,32,num2,6);
+		ips200_show_string(16,32,"flash");
+//		ips200_show_int(48,64,num2,6);
 	
 		ips200_show_string(0,cursor_position*16,">");
 		ips200_show_string(0,last_cursor_position*16," ");
@@ -88,7 +93,7 @@ void print_menu(){
 		}
 		
 		else if(pid_menu_position==1){				//调节kp的数值显示
-			
+		
 			ips200_show_float(0,0,p,4,3);
 			
 		}
@@ -170,6 +175,30 @@ void print_menu(){
 //		ips200_show_uint(8*10,128+16*7,right_line[60],3);
 //		ips200_show_uint(8*15,128+16*7,right_line[45],3);		
 
+	}
+	
+	else if(main_menu_position==3){			//FLASH界面显示
+		
+		if(flash_menu_position==0){
+		
+			ips200_show_string(16,0,"save");
+			ips200_show_string(16,16,"read");
+			
+			ips200_show_string(0,cursor_position*16,">");
+			ips200_show_string(0,last_cursor_position*16," ");
+			
+		}
+		else if(flash_menu_position==1){
+			
+			ips200_show_string(0,0,"success_save");
+			
+		}
+		else if(flash_menu_position==2){
+			
+			ips200_show_string(0,0,"success_read");
+			
+		}
+		
 	}
 	
 }
@@ -273,7 +302,14 @@ void handle(){
 					ips200_clear();
 					rest_cursor();
 					
-				}	
+				}
+				else if(cursor_position == 2){
+					
+					main_menu_position=3;
+					ips200_clear();
+					rest_cursor();
+					
+				}
 				
 			}
 			
@@ -304,6 +340,25 @@ void handle(){
 				}	
 
 			}
+			else if(main_menu_position==3){
+				if(cursor_position==0){
+					
+					save_pid();
+					flash_menu_position=1;
+					ips200_clear();
+					rest_cursor();
+					
+				}
+				else if(cursor_position==1){
+					
+					read_pid();
+					flash_menu_position=2;
+					ips200_clear();
+					rest_cursor();
+					
+				}
+				
+			}
 			
 			//清除按键状态
 			key_clear_state(KEY_3);
@@ -315,6 +370,14 @@ void handle(){
 			if(pid_menu_position!=0){
 				
 		    pid_menu_position=0;
+				ips200_clear();
+		    rest_cursor();
+				
+			}
+			
+			else if(flash_menu_position!=0){
+				
+				flash_menu_position=0;
 				ips200_clear();
 		    rest_cursor();
 				

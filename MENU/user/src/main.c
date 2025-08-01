@@ -3,6 +3,7 @@
 #include "IMAGE.H"
 #include "MOTOR.H"
 #include "PID.H"
+#include "flash.h"
 	
 uint8 mt9v03x_flag;
 
@@ -28,6 +29,8 @@ int main (void){
 	interrupt_set_priority(TIM6_IRQn,0);	
 	
 	if(mt9v03x_flag ==0){
+		
+		save_pid();
 		
 		while(1){
 			
