@@ -11,8 +11,9 @@ int last_cursor_position=1;													//上一次指针的位置，用来消除上一次的指针
 int main_menu_position=0;														//一级菜单的层数，表面为0，PID界面为1，image界面为2
 int pid_menu_position=0;														//PID界面的层数，表面为0，kp调参界面为1，ki为2，speed为3
 int flash_menu_position=0;													//FLASH界面的层数，表面为0，保存界面为1，读取界面为2
-#define len_main 3																			//主菜单可进入界面的数量
-#define len_pid 3																			//同理
+
+#define len_main 3																	//主菜单可进入界面的数量
+#define len_pid 3																		//同理
 #define len_image 1
 #define len_flash 2
 //int32 num2=0;
@@ -117,15 +118,15 @@ void print_menu(){
 		//二值化图像显示
 		ips200_show_gray_image(0,0,(const uint8*)image,MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
 		
-		//阈值显示
-		ips200_show_string(0,128,"threshold");
-		ips200_show_uint(8*10,128,threshold,3);
-		
-		//左右基点显示
-		ips200_show_string(0,128+16,"l_point");
-		ips200_show_uint(8*10,128+16,l_point,3);
-		ips200_show_string(0,128+16*2,"r_point");
-		ips200_show_uint(8*10,128+16*2,r_point,3);
+//		//阈值显示
+//		ips200_show_string(0,128,"threshold");
+//		ips200_show_uint(8*10,128,threshold,3);
+
+//		//左右基点显示
+//		ips200_show_string(0,128+16,"l_point");
+//		ips200_show_uint(8*10,128+16,l_point,3);
+//		ips200_show_string(0,128+16*2,"r_point");
+//		ips200_show_uint(8*10,128+16*2,r_point,3);
 //		ips200_show_string(0,128+16*3,"m_point");
 //		ips200_show_uint(8*10,128+16*3,(r_point+l_point)/2,3);
 		
@@ -215,7 +216,7 @@ void handle(){
 				
 			}
 			
-			else{
+			else if(main_menu_position==1){													//选择PID参数
 				
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position-1+len_pid)%len_pid;
@@ -240,6 +241,13 @@ void handle(){
 
 			}
 			
+			else if(main_menu_position==3){												//选择flash界面
+				
+				last_cursor_position = cursor_position;
+				cursor_position=(cursor_position-1+len_flash)%len_flash;
+				
+			}
+			
 			//清除按键状态
 			key_clear_state(KEY_1);
 			
@@ -254,7 +262,7 @@ void handle(){
 				
 			}
 			
-			else{
+			else if(main_menu_position==1){													//选择PID参数
 				
 				last_cursor_position = cursor_position;
 				cursor_position=(cursor_position+1)%len_pid;
@@ -276,6 +284,13 @@ void handle(){
 					speed-=10;
 					
 				}
+				
+			}
+			
+			else if(main_menu_position==3){												//选择flash界面
+				
+				last_cursor_position = cursor_position;
+				cursor_position=(cursor_position+1)%len_flash;
 				
 			}
 			
@@ -383,7 +398,7 @@ void handle(){
 				
 			}
 			
-			else if(pid_menu_position==0&&main_menu_position!=0){
+			else if(pid_menu_position==0&&flash_menu_position==0&&main_menu_position!=0){
 				
 				main_menu_position=0;
 				ips200_clear();

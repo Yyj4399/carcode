@@ -136,6 +136,12 @@ void TIM6_IRQHandler (void)
 		}
 		
 	}
+
+//	else{
+//		
+//		handle();
+//		
+//	}
 	
 	
     TIM6->SR &= ~TIM6->SR;                                                      // 清空中断状态

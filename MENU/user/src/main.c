@@ -30,8 +30,6 @@ int main (void){
 	
 	if(mt9v03x_flag ==0){
 		
-		save_pid();
-		
 		while(1){
 			
 			key_scanner();
