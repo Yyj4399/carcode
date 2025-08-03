@@ -941,6 +941,9 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 		
 	}
 	
+	//¼ÆÊıÇåÁã
+	loss_num=loss_zeronum;
+	
 }
 
 

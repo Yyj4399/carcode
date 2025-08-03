@@ -115,6 +115,7 @@ extern uint8 final_mid_value;																		//最终中线值
 
 extern struct cross cross_point;																//圆环拐点和斜率结构体
 extern struct circle circle_point;															//十字补线的拐点和斜率结构体
+extern struct Num loss_num;																			//丢线数量结构体
 																					
 
 #endif

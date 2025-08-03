@@ -13,7 +13,7 @@ int pid_menu_position=0;														//PID界面的层数，表面为0，kp调参界面为1，k
 int flash_menu_position=0;													//FLASH界面的层数，表面为0，保存界面为1，读取界面为2
 
 #define len_main 3																	//主菜单可进入界面的数量
-#define len_pid 3																		//同理
+#define len_pid 4																		//同理
 #define len_image 1
 #define len_flash 2
 //int32 num2=0;
@@ -72,16 +72,20 @@ void print_menu(){
 			
 			ips200_show_string(16,0,"k");
 			ips200_show_string(16,16,"d");
-			ips200_show_string(16,32,"s");
+			ips200_show_string(16,32,"h_s");
+			ips200_show_string(16,32+16,"l_s");
+			ips200_show_string(16,32+16*2,"s");
 			
 			ips200_show_float(48,0,p,4,3);
 			ips200_show_float(48,16,d,4,3);
-			ips200_show_int(48,32,speed,4);
+			ips200_show_int(48,32,high_speed,4);
+			ips200_show_int(48,32+16,low_speed,4);
+			ips200_show_int(48,32+16*2,speed,4);
 			
 //			ips200_show_uint(8*15,32+16,car_num,2);
 			
-			ips200_show_string(16,32+16*2,"encoder_l");
-			ips200_show_int(8*15,32+16*2,motor_l.encoder_raw,5);
+			ips200_show_string(16,32+16*3,"encoder_l");
+			ips200_show_int(8*15,32+16*3,motor_l.encoder_raw,5);
 			
 			ips200_show_string(16,32+16*4,"encoder_r");
 			ips200_show_int(8*15,32+16*4,motor_r.encoder_raw,5);
@@ -105,9 +109,14 @@ void print_menu(){
 			
 		}
 		
-		else if(pid_menu_position==3){				//调节speed的数值显示
+		else if(pid_menu_position==3){				//调节high_speed的数值显示
 			
-			ips200_show_int(0,0,speed,4);
+			ips200_show_int(0,0,high_speed,4);
+			
+		}
+		else if(pid_menu_position==4){				//调节low_speed的数值显示
+			
+			ips200_show_int(0,0,low_speed,4);
 			
 		}
 		
@@ -235,7 +244,12 @@ void handle(){
 				
 				else if(pid_menu_position==3){
 					
-					speed+=10;
+					high_speed+=10;
+					
+				}
+				else if(pid_menu_position==4){
+					
+					low_speed+=10;
 					
 				}
 
@@ -281,7 +295,12 @@ void handle(){
 				
 				else if(pid_menu_position==3){
 					
-					speed-=10;
+					high_speed-=10;
+					
+				}
+				else if(pid_menu_position==4){
+					
+					low_speed-=10;
 					
 				}
 				
@@ -352,7 +371,14 @@ void handle(){
 					ips200_clear();
 					rest_cursor();
 					
-				}	
+				}
+				else if(cursor_position == 3){
+					
+					pid_menu_position=4;
+					ips200_clear();
+					rest_cursor();
+					
+				}					
 
 			}
 			else if(main_menu_position==3){

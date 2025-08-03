@@ -11,7 +11,7 @@ float PID_r(float Kp,float Ki,float Nowdata,float point);											//增量式PID
 
 
 #define pwm_limit 8000																							//编码器限幅
-#define pwm_I_limit 100																							//PID的I项限幅		
+#define pwm_I_limit 160																							//PID的I项限幅		
 
 
 

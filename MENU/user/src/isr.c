@@ -111,16 +111,16 @@ void TIM6_IRQHandler (void)
 		
 		if(car_num%2==1){
 			
-//			if(final_mid_value-MID_W>=5||MID_W-final_mid_value>=5){
-//				speed=80;
-////				k=380;
-////				d=380;
-//			}
-//			else if(mid_line[35]==mid_line[110]==mid_line[60]){
-//				speed=160;
-////				k=360;
-////				d=380
-//			}
+			if((final_mid_value-MID_W<=2||MID_W-final_mid_value<=2)&&find_end_line<=26&&(mid_line[find_end_line+1]-MID_W<=2||MID_W-mid_line[find_end_line+1]<=2)&&(loss_num.num_loss+loss_num.num_lossl+loss_num.num_lossr<=5)){
+				speed=high_speed;
+//				k=380;
+//				d=380;
+			}
+			else{
+				speed=low_speed;
+//				k=360;
+//				d=380
+			}
 			Motor_Control(speed,speed);
 			Final_Motor_Control(p,d,9000);
 			car_protect(image);
