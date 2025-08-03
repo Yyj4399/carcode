@@ -13,6 +13,7 @@ uint8 weight_find_mid_value();																	//加权求中线值
 uint8 mini_uint8(uint8 a,uint8 b);															//无符号8位整形最小值函数
 uint8 max_uint8(uint8 a,uint8 b);																//无符号8位整形最大值函数
 uint8 limit_uint8(uint8 a,uint8 b,uint8 c);											//无符号8位整形限幅函数
+uint8 abs_subtact_uint8(uint8 a,uint8 b);												//无符号8位整形差值绝对值函数
 
 
 

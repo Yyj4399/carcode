@@ -368,6 +368,23 @@ uint8 max_uint8(uint8 a,uint8 b){
 	
 }
 
+uint8 abs_subtact_uint8(uint8 a,uint8 b){
+	if(a>=b){
+		
+		return a-b;
+		
+	}
+	
+	else{
+		
+		return b-a;
+		
+	}
+	
+	return 0;
+	
+}
+
 
 
 

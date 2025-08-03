@@ -111,7 +111,7 @@ void TIM6_IRQHandler (void)
 		
 		if(car_num%2==1){
 			
-			if((final_mid_value-MID_W<=2||MID_W-final_mid_value<=2)&&find_end_line<=26&&(mid_line[find_end_line+1]-MID_W<=2||MID_W-mid_line[find_end_line+1]<=2)&&(loss_num.num_loss+loss_num.num_lossl+loss_num.num_lossr<=5)){
+			if(abs_subtact_uint8(MID_W,final_mid_value)<=5&&find_end_line<=26&&abs_subtact_uint8(MID_W,mid_line[find_end_line+10])<=5&&(loss_num.num_loss+loss_num.num_lossl+loss_num.num_lossr<=5)){
 				speed=high_speed;
 //				k=380;
 //				d=380;
