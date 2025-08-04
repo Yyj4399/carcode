@@ -127,6 +127,13 @@ void print_menu(){
 		//二值化图像显示
 		ips200_show_gray_image(0,0,(const uint8*)image,MT9V03X_W, MT9V03X_H, MT9V03X_W, MT9V03X_H, 0);
 		
+		//搜寻截止行显示
+		ips200_show_string(0,128,"end");
+		ips200_show_uint(8*10,128,find_end_line,3);
+		
+		ips200_show_uint(0,128+16,mid_line[find_end_line+1],3);
+		
+		
 //		//阈值显示
 //		ips200_show_string(0,128,"threshold");
 //		ips200_show_uint(8*10,128,threshold,3);
