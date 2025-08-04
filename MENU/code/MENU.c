@@ -131,7 +131,7 @@ void print_menu(){
 		ips200_show_string(0,128,"end");
 		ips200_show_uint(8*10,128,find_end_line,3);
 		
-		ips200_show_uint(0,128+16,mid_line[find_end_line+1],3);
+		ips200_show_uint(0,128+16,mid_line[find_end_line+5],3);
 		
 		
 //		//ãÐÖµÏÔÊ¾

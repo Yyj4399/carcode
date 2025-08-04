@@ -820,6 +820,13 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 				cross_point.x1=left_line[i];
 				cross_point.y1=i;
 				
+				if(cross_point.x1>=94){
+					
+					cross_point.x1=0;
+					cross_point.y1=0;
+					
+				}
+				
 			}
 
 			//记录右下拐点
@@ -827,6 +834,14 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 				
 				cross_point.x2=right_line[i];
 				cross_point.y2=i;
+				
+				if(cross_point.x2<=94){
+					
+					cross_point.x2=0;
+					cross_point.y2=0;
+					
+				}
+				
 				
 			}
 
@@ -840,6 +855,14 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 				cross_point.x3=left_line[i];
 				cross_point.y3=i;
 				
+				if(cross_point.x3>=94){
+					
+					cross_point.x3=0;
+					cross_point.y3=0;
+					
+				}
+				
+				
 			}
 			 
 			//记录右上拐点
@@ -847,6 +870,13 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 				
 				cross_point.x4=right_line[i];
 				cross_point.y4=i;
+				
+				if(cross_point.x4<=94){
+					
+					cross_point.x4=0;
+					cross_point.y4=0;
+					
+				}
 				
 			}
 			
@@ -892,7 +922,8 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			//进行补线
 			for(uint8 i=cross_point.y1;i>cross_point.y3;i--){
 				
-					left_line[i]=cross_point.x1+(i-cross_point.y1)/cross_point.kl;
+				left_line[i]=cross_point.x1+(i-cross_point.y1)/cross_point.kl;
+				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
 							
 			}
 			
@@ -904,7 +935,8 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			//进行补线
 			for(uint8 i=cross_point.y3;i<bottom_line;i++){
 				
-					left_line[i]=cross_point.x3+(i-cross_point.y3)/cross_point.kl;
+				left_line[i]=cross_point.x3+(i-cross_point.y3)/cross_point.kl;
+				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
 							
 			}
 			
@@ -916,7 +948,8 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			//进行补线
 			for(uint8 i=cross_point.y1;i>40;i--){
 				
-					left_line[i]=cross_point.x1+(i-cross_point.y1)/cross_point.kl;
+				left_line[i]=cross_point.x1+(i-cross_point.y1)/cross_point.kl;
+				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
 							
 			}
 			
@@ -941,7 +974,7 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			//进行补线
 			for(uint8 i=cross_point.y4;i<bottom_line;i++){
 				
-					right_line[i]=cross_point.x2+(i-cross_point.y2)/cross_point.kr;
+					right_line[i]=cross_point.x4+(i-cross_point.y4)/cross_point.kr;
 					mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
 							
 			}
