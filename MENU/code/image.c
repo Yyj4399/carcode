@@ -886,25 +886,48 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			
 		}
 		
-		//若拐点都存在
+		//若左拐点都存在
 		if(cross_point.x1!=0&&cross_point.x3!=0&&cross_point.kl<0){
 			
 			//进行补线
 			for(uint8 i=cross_point.y1;i>cross_point.y3;i--){
 				
 					left_line[i]=cross_point.x1+(i-cross_point.y1)/cross_point.kl;
-//					right_line[i]=cross_point.x2+(i-cross_point.y2)/cross_point.kr;
-//					mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
 							
 			}
 			
 		}
+		
+		//若左下拐点不存在
+		else if(cross_point.x1==0&&cross_point.x3!=0&&cross_point.kl<0){
+			
+			//进行补线
+			for(uint8 i=cross_point.y3;i<bottom_line;i++){
+				
+					left_line[i]=cross_point.x3+(i-cross_point.y3)/cross_point.kl;
+							
+			}
+			
+		}
+		
+		//若左上拐点不存在
+		else if(cross_point.x1!=0&&cross_point.x3==0&&cross_point.kl<0){
+			
+			//进行补线
+			for(uint8 i=cross_point.y1;i>40;i--){
+				
+					left_line[i]=cross_point.x1+(i-cross_point.y1)/cross_point.kl;
+							
+			}
+			
+		}
+		
+		//若右拐点都存在
 		if(cross_point.x2!=0&&cross_point.x4!=0&&cross_point.kr>0){
 			
 			//进行补线
 			for(uint8 i=cross_point.y2;i>cross_point.y4;i--){
 				
-//					left_line[i]=cross_point.x1+(i-cross_point.y1)/cross_point.kl;
 					right_line[i]=cross_point.x2+(i-cross_point.y2)/cross_point.kr;
 					mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
 							
@@ -912,57 +935,27 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			
 		}
 		
-		//若左下拐点不存在
-		else if(cross_point.x1==0&&cross_point.x3!=0&&cross_point.x2!=0&&cross_point.x4!=0&&cross_point.kl<0&&cross_point.kr>0){
-			
-			//进行补线
-			for(uint8 i=mini_uint8(cross_point.y4,cross_point.y3);i>bottom_line;i++){
-				
-				left_line[i]=cross_point.x3+(i-cross_point.y3)/cross_point.kl;
-				right_line[i]=cross_point.x4+(i-cross_point.y4)/cross_point.kr;
-				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
-							
-			}
-			
-		}
-		
 		//若右下拐点不存在
-		else if(cross_point.x2==0&&cross_point.x4!=0&&cross_point.x1!=0&&cross_point.x3!=0&&cross_point.kl<0&&cross_point.kr>0){
+		else if(cross_point.x2==0&&cross_point.x4!=0&&cross_point.kr>0){
 			
 			//进行补线
-			for(uint8 i=mini_uint8(cross_point.y4,cross_point.y3);i>bottom_line;i++){
+			for(uint8 i=cross_point.y4;i<bottom_line;i++){
 				
-				left_line[i]=cross_point.x3+(i-cross_point.y3)/cross_point.kl;
-				right_line[i]=cross_point.x4+(i-cross_point.y4)/cross_point.kr;
-				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
-							
-			}
-			
-		}
-		
-		//若左上拐点不存在
-		else if(cross_point.x1!=0&&cross_point.x3==0&&cross_point.x2!=0&&cross_point.x4!=0&&cross_point.kl<0&&cross_point.kr>0){
-			
-			//进行补线
-			for(uint8 i=max_uint8(cross_point.y1,cross_point.y2);i>40;i--){
-				
-				left_line[i]=cross_point.x1+(i-cross_point.y1)/cross_point.kl;
-				right_line[i]=cross_point.x2+(i-cross_point.y2)/cross_point.kr;
-				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
+					right_line[i]=cross_point.x2+(i-cross_point.y2)/cross_point.kr;
+					mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
 							
 			}
 			
 		}
 		
 		//若右上拐点不存在
-		else if(cross_point.x2!=0&&cross_point.x4==0&&cross_point.x1!=0&&cross_point.x3!=0&&cross_point.kl<0&&cross_point.kr>0){
+		else if(cross_point.x2!=0&&cross_point.x4==0&&cross_point.kr>0){
 			
 			//进行补线
-			for(uint8 i=max_uint8(cross_point.y1,cross_point.y2);i>40;i--){
+			for(uint8 i=cross_point.y2;i>40;i--){
 				
-				left_line[i]=cross_point.x1+(i-cross_point.y1)/cross_point.kl;
-				right_line[i]=cross_point.x2+(i-cross_point.y2)/cross_point.kr;
-				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
+					right_line[i]=cross_point.x2+(i-cross_point.y2)/cross_point.kr;
+					mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
 							
 			}
 			

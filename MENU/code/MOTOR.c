@@ -69,7 +69,7 @@ void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
 	}
 	
 	//若出界或者斑马线数达到一定数量则停车
-	if(num<=30||car_protect_flag>=15){
+	if(num<=30||car_protect_flag>=16){
 		
 		Speed_Set(pwm_l,A0,0,0,1);
 		Speed_Set(pwm_r,A2,0,0,1);
