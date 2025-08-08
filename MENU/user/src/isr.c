@@ -111,15 +111,15 @@ void TIM6_IRQHandler (void)
 		
 		if(car_num%2==1){
 			
-			if(abs_subtact_uint8(MID_W,final_mid_value)<=5&&find_end_line<=30&&abs_subtact_uint8(MID_W,mid_line[find_end_line+5])<=5&&(loss_num.num_loss+loss_num.num_lossl+loss_num.num_lossr<=7)){
+			if(abs_subtact_uint8(MID_W,final_mid_value)<=5&&find_end_line<=26&&abs_subtact_uint8(MID_W,mid_line[find_end_line+1])<=5&&(loss_num.num_loss+loss_num.num_lossl+loss_num.num_lossr<=7)){
 				speed=high_speed;
-//				k=380;
-//				d=380;
+//				p=400;
+//				d=440;
 			}
 			else{
 				speed=low_speed;
-//				k=360;
-//				d=380
+//				p=405;
+//				d=440;
 			}
 			Motor_Control(speed,speed);
 			Final_Motor_Control(p,d,9000);
@@ -129,7 +129,7 @@ void TIM6_IRQHandler (void)
 		}
 		
 		else{
-//			Motor_Control(20,20);
+//			Motor_Control(110,110);
 			Speed_Set(pwm_l,A2,0,0,1);
 			Speed_Set(pwm_r,A0,0,1,0);
 			

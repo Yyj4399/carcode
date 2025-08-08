@@ -239,13 +239,13 @@ void handle(){
 				
 				if(pid_menu_position==1){															//在PID界面时，按键一二用来调节PID参数
 					
-					p+=10;
+					p+=5;
 					
 				}
 				
 				else if(pid_menu_position==2){
 					
-					d+=10;
+					d+=5;
 					
 				}
 				
@@ -290,13 +290,13 @@ void handle(){
 				
 				if(pid_menu_position==1){															//在/PID界面时，按键一二用来调节PID参数
 					
-					p-=10;
+					p-=5;
 					
 				}
 				
 				else if(pid_menu_position==2){
 					
-					d-=10;
+					d-=5;
 					
 				}
 				
