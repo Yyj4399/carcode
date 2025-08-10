@@ -133,6 +133,7 @@ void print_menu(){
 		
 		ips200_show_uint(0,128+16,mid_line[find_end_line+5],3);
 		
+		ips200_show_uint(0,128+16*2,circle_flag,3);
 		
 //		//ãÐÖµÏÔÊ¾
 //		ips200_show_string(0,128,"threshold");
@@ -167,6 +168,8 @@ void print_menu(){
 		ips200_show_uint(8*5,128+16*6,circle_point.y7,3);
 		ips200_show_uint(8*10,128+16*6,circle_point.x8,3);
 		ips200_show_uint(8*15,128+16*6,circle_point.y8,3);
+		ips200_show_uint(8*20,128+16*6,circle_point.x9,3);
+		ips200_show_uint(8*25,128+16*6,circle_point.y9,3);
 //		ips200_show_float(0,128+16*7,cross_point.kl,2,2);
 //		ips200_show_float(8*10,128+16*7,cross_point.kr,2,2);
 //		ips200_show_float(8*10,128+16*6,circle_point.k1,2,2);

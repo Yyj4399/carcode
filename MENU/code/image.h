@@ -75,16 +75,6 @@ typedef struct f_line{		//寻找边线标志位定义
 	
 }f_line;
 
-typedef struct f_circle{		//圆环状态标志位定义
-	
-	uint8 circle1_flag;							//圆环状态一标志位
-	uint8 circle3_flag;							//圆环状态三标志位
-	uint8 circle5_flag;							//圆环状态五标志位
-	uint8 circle8_flag;							//圆环状态八标志位
-	
-	
-}f_circle;
-
 typedef struct Num{					//丢线数定义
 	
 	uint8 num_loss;										//两边丢线计数
@@ -113,6 +103,8 @@ extern uint8 right_line[MT9V03X_H];															//右边线存储
 extern uint8 mid_line[MT9V03X_H];																//中线存储
 extern uint8 mid_weight[120];																		//中线权重
 extern uint8 final_mid_value;																		//最终中线值
+
+extern uint8 circle_flag;
 
 extern struct cross cross_point;																//圆环拐点和斜率结构体
 extern struct circle circle_point;															//十字补线的拐点和斜率结构体

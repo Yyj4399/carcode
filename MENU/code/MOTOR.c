@@ -4,8 +4,8 @@
 #include "image.h"
 #include "menu.h"
 
-motor1 motor_l;						//定义左轮参数定义
-motor1 motor_r;						//定义右轮参数定义
+motor1 motor_l={0};						//定义左轮参数定义
+motor1 motor_r={0};						//定义右轮参数定义
 PD pd={0};								//方向环参数定义
 uint8 car_num=0;					//用来存储发车次数
 float p=360;							//方向环kp     //240（+10），520，120（12.2V，满电也可）；250，660，130（12.0V）;350,440,150,100（换配重块后，12.1V）；390，450，200，100（满电也可）；360，400，200，110（换胎后）
@@ -69,7 +69,7 @@ void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
 	}
 	
 	//若出界或者斑马线数达到一定数量则停车
-	if(num<=30||car_protect_flag>=16){
+	if(num<=30||car_protect_flag>=30){
 		
 		Speed_Set(pwm_l,A0,0,0,1);
 		Speed_Set(pwm_r,A2,0,0,1);
