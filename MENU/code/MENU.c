@@ -11,6 +11,7 @@ int last_cursor_position=1;													//上一次指针的位置，用来消除上一次的指针
 int main_menu_position=0;														//一级菜单的层数，表面为0，PID界面为1，image界面为2
 int pid_menu_position=0;														//PID界面的层数，表面为0，kp调参界面为1，ki为2，speed为3
 int flash_menu_position=0;													//FLASH界面的层数，表面为0，保存界面为1，读取界面为2
+//int t=115;
 
 #define len_main 3																	//主菜单可进入界面的数量
 #define len_pid 4																		//同理
@@ -152,24 +153,24 @@ void print_menu(){
 //		ips200_draw_point(x3,y3,RGB565_RED);
 //		ips200_draw_point(x4,y4,RGB565_RED);
 		
-//		ips200_show_uint(0,128+16*4,cross_point.x1,3);
-//		ips200_show_uint(8*5,128+16*4,cross_point.y1,3);
-//		ips200_show_uint(8*10,128+16*4,cross_point.x2,3);
-//		ips200_show_uint(8*15,128+16*4,cross_point.y2,3);
-//		ips200_show_uint(8*20,128+16*4,cross_point.x3,3);
-//		ips200_show_uint(8*25,128+16*4,cross_point.y3,3);
-//		ips200_show_uint(0,128+16*5,cross_point.x4,3);
-//		ips200_show_uint(8*5,128+16*5,cross_point.y4,3);
-//		ips200_show_uint(8*10,128+16*5,circle_point.x5,3);
-//		ips200_show_uint(8*15,128+16*5,circle_point.y5,3);
-//		ips200_show_uint(8*20,128+16*5,circle_point.x6,3);
-//		ips200_show_uint(8*25,128+16*5,circle_point.y6,3);
-//		ips200_show_uint(0,128+16*6,circle_point.x7,3);
-//		ips200_show_uint(8*5,128+16*6,circle_point.y7,3);
-//		ips200_show_uint(8*10,128+16*6,circle_point.x8,3);
-//		ips200_show_uint(8*15,128+16*6,circle_point.y8,3);
-//		ips200_show_uint(8*20,128+16*6,circle_point.x9,3);
-//		ips200_show_uint(8*25,128+16*6,circle_point.y9,3);
+		ips200_show_uint(0,128+16*4,cross_point.x1,3);
+		ips200_show_uint(8*5,128+16*4,cross_point.y1,3);
+		ips200_show_uint(8*10,128+16*4,cross_point.x2,3);
+		ips200_show_uint(8*15,128+16*4,cross_point.y2,3);
+		ips200_show_uint(8*20,128+16*4,cross_point.x3,3);
+		ips200_show_uint(8*25,128+16*4,cross_point.y3,3);
+		ips200_show_uint(0,128+16*5,cross_point.x4,3);
+		ips200_show_uint(8*5,128+16*5,cross_point.y4,3);
+		ips200_show_uint(8*10,128+16*5,circle_point.x5,3);
+		ips200_show_uint(8*15,128+16*5,circle_point.y5,3);
+		ips200_show_uint(8*20,128+16*5,circle_point.x6,3);
+		ips200_show_uint(8*25,128+16*5,circle_point.y6,3);
+		ips200_show_uint(0,128+16*6,circle_point.x7,3);
+		ips200_show_uint(8*5,128+16*6,circle_point.y7,3);
+		ips200_show_uint(8*10,128+16*6,circle_point.x8,3);
+		ips200_show_uint(8*15,128+16*6,circle_point.y8,3);
+		ips200_show_uint(8*20,128+16*6,circle_point.x9,3);
+		ips200_show_uint(8*25,128+16*6,circle_point.y9,3);
 //		ips200_show_float(0,128+16*7,cross_point.kl,2,2);
 //		ips200_show_float(8*10,128+16*7,cross_point.kr,2,2);
 //		ips200_show_float(8*10,128+16*6,circle_point.k1,2,2);
@@ -185,15 +186,19 @@ void print_menu(){
 		ips200_show_string(0,128+16*3,"m_value");
 		ips200_show_uint(8*10,128+16*3,final_mid_value,3);
 		
-		ips200_show_uint(0,128+16*6,mid_line[100],3);
-		ips200_show_uint(8*5,128+16*6,mid_line[90],3);
-		ips200_show_uint(8*10,128+16*6,mid_line[50],3);
-		ips200_show_uint(8*15,128+16*6,mid_line[30],3);
+//		ips200_show_uint(0,128+16*6,t,3);
 		
-		ips200_show_uint(0,128+16*7,left_line[100],3);
-		ips200_show_uint(8*5,128+16*7,left_line[90],3);
-		ips200_show_uint(8*10,128+16*7,left_line[50],3);
-		ips200_show_uint(8*15,128+16*7,left_line[30],3);		
+//		ips200_show_uint(0,128+16*6,mid_line[100],3);
+//		ips200_show_uint(8*5,128+16*6,mid_line[90],3);
+//		ips200_show_uint(8*10,128+16*6,mid_line[50],3);
+//		ips200_show_uint(8*15,128+16*6,mid_line[30],3);
+		
+//		ips200_show_uint(0,128+16*7,right_line[t]-left_line[t],3);
+//		ips200_show_uint(8*5,128+16*7,right_line[t-1]-left_line[t-1],3);
+//		ips200_show_uint(8*10,128+16*7,right_line[t]-left_line[t-2],3);
+//		ips200_show_uint(8*15,128+16*7,right_line[t]-left_line[t-3],3);
+//		ips200_show_uint(8*20,128+16*7,right_line[t]-left_line[t-4],3);		
+//		ips200_show_uint(8*25,128+16*7,right_line[t]-left_line[t-5],3);		
 
 	}
 	
@@ -257,12 +262,17 @@ void handle(){
 					high_speed+=10;
 					
 				}
+				
 				else if(pid_menu_position==4){
 					
 					low_speed+=10;
 					
 				}
 
+			}
+			
+			else if(main_menu_position==2){
+				circle_flag+=1;
 			}
 			
 			else if(main_menu_position==3){												//选择flash界面
@@ -314,6 +324,10 @@ void handle(){
 					
 				}
 				
+			}
+			
+			else if(main_menu_position==2){
+				circle_flag-=1;
 			}
 			
 			else if(main_menu_position==3){												//选择flash界面

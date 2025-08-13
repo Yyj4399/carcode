@@ -49,6 +49,8 @@ int main (void){
 			
 			car_start();																//发车
 			
+
+			
 //			num2++;
     }
 		
