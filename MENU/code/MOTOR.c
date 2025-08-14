@@ -12,6 +12,7 @@ float p=350;							//方向环kp     //240（+10），520，120（12.2V，满电也可）；250
 float d=400;							//方向环kd
 int32 high_speed=200;			//高速度
 int32 low_speed=100;			//低速度
+int32 circle_speed=80;		//圆环速度
 int32 speed;							//目标速度
 
 

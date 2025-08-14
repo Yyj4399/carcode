@@ -117,7 +117,20 @@ void TIM6_IRQHandler (void)
 //				d=440;
 			}
 			else{
-				speed=low_speed;
+				
+				if(circle_flag!=0){
+					
+					speed=circle_speed;
+					
+				}
+				
+				else{
+					
+					speed=low_speed;
+				
+				}
+				
+				
 //				p=405;
 //				d=440;
 			}

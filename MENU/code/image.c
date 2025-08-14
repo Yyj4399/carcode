@@ -605,21 +605,21 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 	for(uint8 i=bottom_line;i>find_end_line;i--){
 		
 		//计算两边丢线数量
-		if(left_line[i]<=5&&right_line[i]>=MT9V03X_W-7){
+		if(left_line[i]<=5&&right_line[i]>=MT9V03X_W-5){
 			
 			loss_num.num_loss++;
 			
 		}		
 		
-		//计算左边未丢线右边丢线数量
-		if(left_line[i]>=5&&right_line[i]>=MT9V03X_W-7){
+		//计算右边丢线数量
+		if(right_line[i]>=MT9V03X_W-5){
 			
 			loss_num.num_lossr++;
 			
 		}
 		
-		//计算右边未丢线左边丢线数量
-		if(left_line[i]<=5&&right_line[i]<=MT9V03X_W-7){
+		//计算左边丢线数量
+		if(left_line[i]<=5){
 			
 			loss_num.num_lossl++;
 			
@@ -628,20 +628,20 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 	}
 	
 	//拐点清零
-	if(loss_num.num_loss+loss_num.num_lossr+loss_num.num_lossl<=5){
+	if(loss_num.num_loss+loss_num.num_lossr+loss_num.num_lossl<=3){
 		
 		cross_point=cross_zero_point;
 		
 	}
 	
-	//拐点清零
-	if(loss_num.num_loss+loss_num.num_lossr+loss_num.num_lossl<=5){
-		
-		circle_point=circle_zero_point;
-		
-		circle_flag = 0;
-		
-	}	
+//	//拐点清零
+//	if(loss_num.num_loss+loss_num.num_lossr+loss_num.num_lossl<=3){
+//		
+//		circle_point=circle_zero_point;
+//		
+//		circle_flag = 0;
+//		
+//	}	
 	
 	switch (circle_flag){
 		
@@ -661,9 +661,6 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 							circle_point.y6=i;
 							
 							circle_flag = 1;
-							
-							//计数清零
-							loss_num=loss_zeronum;
 							
 							//蜂鸣器计数
 							count_beep=5;
@@ -726,7 +723,7 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 					circle_point.x7=right_line[i];
 					circle_point.y7=i;
 					
-					circle_flag = 2;		
+					circle_flag = 3;		
 					
 				}
 			
@@ -752,20 +749,6 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			
 			break;
 			
-		case 2:
-			
-			if(find_end_line<=30&&abs_subtact_uint8(final_mid_value,MID_W)<=25){
-				
-				circle_flag=3;
-				
-			}
-			else{
-				
-				circle_point=circle_zero_point;
-				circle_flag=0;
-				
-			}
-			
 		case 3:
 			
 			for(uint8 i=circle_point.y6;i>40;i--){
@@ -780,18 +763,26 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			}
 			
 			//将左边底角边界点作为补线起始点
-			circle_point.x8=left_line[119];
-			circle_point.y8=119;
+			circle_point.x8=left_line[80];
+			circle_point.y8=80;
 			
 			//计算斜率
 			circle_point.k3=((float)(circle_point.y7-circle_point.y8))/(float)(circle_point.x7-circle_point.x8);
 			
 			//状态3进行补线		
-			for(uint8 i=circle_point.y8;i>30;i--){
+			for(uint8 i=circle_point.y8;i>35;i--){
 						
 				left_line[i]=circle_point.x8+(i-circle_point.y8)/circle_point.k3;
+				
+				if(left_line[i]>=186){
+					
+					left_line[i]=186;
+					
+				}
 				if(right_line[i]<=160){
+					
 					right_line[i]=186;
+					
 				}
 				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
 						
@@ -800,18 +791,46 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			//编码器清状态
 			motor_l.total_encoder+=motor_l.encoder_speed;
 			
-			if(motor_l.total_encoder>=300){
+			if(motor_l.total_encoder>=480){
 				
-				circle_flag = 5;
+				circle_flag = 4;
 				motor_l.total_encoder = 0;
 				
-				//蜂鸣器计数
-				count_beep=5;	
+//				//蜂鸣器计数
+//				count_beep=5;	
 				
 			}
 			
 			break;
-		
+			
+		case 4:
+			
+		//蜂鸣器
+			if(count_beep)
+			{
+					gpio_set_level(BEEP, GPIO_HIGH);
+					count_beep --;
+			}
+			else
+			{
+					gpio_set_level(BEEP, GPIO_LOW);
+			}
+			
+			motor_l.total_encoder+=motor_l.encoder_speed;
+			
+			if(motor_l.total_encoder>=320){
+				
+				circle_flag=5;
+				
+				motor_l.total_encoder=0;
+				
+//				//蜂鸣器计数
+//				count_beep=5;
+				
+			}
+			
+			break;
+			
 		case 5:
 			
 			//蜂鸣器
@@ -825,17 +844,25 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 					gpio_set_level(BEEP, GPIO_LOW);
 			}
 			
-			if(loss_num.num_loss+loss_num.num_lossl>=10||find_end_line<=40){
+//			if(loss_num.num_loss+loss_num.num_lossl>=10){
+
+////				circle_point.x9=left_line[110];
+////				circle_point.y9=110;
+//				
+//				
+
+//			}	
+
+			
+			if(loss_num.num_lossl>=10&&loss_num.num_lossr>=10){
 				
 				circle_point.x9=left_line[110];
 				circle_point.y9=110;
 				
-			}	
-
-//			for(uint8 i=bottom_line;i>60;i--){
+//				for(uint8 i=bottom_line;i>80;i--){
 //				
 //					//判断左下方是否出现拐点作为是否进入圆环状态5的依据之一
-//					if(left_line[i]-left_line[i+1]>=1&&left_line[i]-left_line[i-1]>=1&&left_line[i]>=3&&left_line[i]>=10){
+//					if(left_line[i]-left_line[i+1]>=1&&left_line[i]-left_line[i-1]>=1&&left_line[i]>=10){
 //							
 //						circle_point.x9=left_line[i];
 //						circle_point.y9=i;
@@ -843,6 +870,10 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 //					}
 //					
 //				}
+				
+			}
+			
+			
 		
 			if(circle_point.x9!=0){
 				
@@ -861,16 +892,11 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 //					
 //				}
 				
-//				circle_point.x9=left_line[110];
-//				circle_point.y9=110;	
-//				
-				if(circle_point.k5==0){
-					
-					//计算斜率
-					circle_point.k5=((float)(circle_point.y9-40))/(float)(circle_point.x9-186);
-					
-				}
+				circle_point.x9=left_line[110];
+				circle_point.y9=110;	
 				
+				//计算斜率
+				circle_point.k5=((float)(circle_point.y9-40))/(float)(circle_point.x9-186);
 				
 				//状态5补线
 				for(uint8 i=circle_point.y9;i>find_end_line;i--){
@@ -891,7 +917,7 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 				//编码器清状态
 				motor_l.total_encoder+=motor_l.encoder_speed;
 					
-				if(motor_l.total_encoder>=600||find_end_line<=26){
+				if(motor_l.total_encoder>=240||find_end_line<=40){
 						
 					circle_flag = 8;
 					motor_l.total_encoder = 0;
@@ -947,8 +973,27 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 							
 				}
 				
+				motor_l.total_encoder+=motor_l.encoder_speed;
+				
+				if(motor_l.total_encoder>=200){
+					
+					circle_flag=9;
+					
+				}
+				
 			}
 			
+			
+			
+			break;
+			
+		case 9:
+			
+			gpio_set_level(BEEP, GPIO_LOW);
+			
+			circle_point=circle_zero_point;
+		
+			circle_flag=0;
 			
 			break;
 		
@@ -1034,9 +1079,6 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 			cross_point=cross_zero_point;
 			
 		}
-		
-		//计数清零
-		loss_num=loss_zeronum;
 		
 		//计算左边斜率
 		if(cross_point.x3!=0&&cross_point.x1!=0){

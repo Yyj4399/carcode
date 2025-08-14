@@ -64,6 +64,7 @@ extern float p;										//方向环kp
 extern float d;										//方向环kd
 extern int32 high_speed;					//高速度
 extern int32 low_speed;						//低速度
+extern int32 circle_speed;				//圆环速度
 extern int32 speed;								//目标速度
 
 #endif

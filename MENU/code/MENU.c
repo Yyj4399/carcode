@@ -14,7 +14,7 @@ int flash_menu_position=0;													//FLASH界面的层数，表面为0，保存界面为1，
 //int t=115;
 
 #define len_main 3																	//主菜单可进入界面的数量
-#define len_pid 4																		//同理
+#define len_pid 5																		//同理
 #define len_image 1
 #define len_flash 2
 //int32 num2=0;
@@ -60,7 +60,7 @@ void print_menu(){
 		ips200_show_string(16,0,"pid");
 		ips200_show_string(16,16,"image");
 		ips200_show_string(16,32,"flash");
-//		ips200_show_int(48,64,num2,6);
+		ips200_show_int(48,64,circle_flag,6);
 	
 		ips200_show_string(0,cursor_position*16,">");
 		ips200_show_string(0,last_cursor_position*16," ");
@@ -75,13 +75,13 @@ void print_menu(){
 			ips200_show_string(16,16,"d");
 			ips200_show_string(16,32,"h_s");
 			ips200_show_string(16,32+16,"l_s");
-			ips200_show_string(16,32+16*2,"s");
+			ips200_show_string(16,32+16*2,"c_s");
 			
 			ips200_show_float(48,0,p,4,3);
 			ips200_show_float(48,16,d,4,3);
 			ips200_show_int(48,32,high_speed,4);
 			ips200_show_int(48,32+16,low_speed,4);
-			ips200_show_int(48,32+16*2,speed,4);
+			ips200_show_int(48,32+16*2,circle_speed,4);
 			
 //			ips200_show_uint(8*15,32+16,car_num,2);
 			
@@ -115,9 +115,16 @@ void print_menu(){
 			ips200_show_int(0,0,high_speed,4);
 			
 		}
+		
 		else if(pid_menu_position==4){				//调节low_speed的数值显示
 			
 			ips200_show_int(0,0,low_speed,4);
+			
+		}
+		
+		else if(pid_menu_position==5){				//调节circle_speed的数值显示
+			
+			ips200_show_int(0,0,circle_speed,4);
 			
 		}
 		
@@ -268,6 +275,12 @@ void handle(){
 					low_speed+=10;
 					
 				}
+				
+				else if(pid_menu_position==5){
+					
+					circle_speed+=10;
+					
+				}
 
 			}
 			
@@ -321,6 +334,12 @@ void handle(){
 				else if(pid_menu_position==4){
 					
 					low_speed-=10;
+					
+				}
+				
+				else if(pid_menu_position==5){
+					
+					circle_speed-=10;
 					
 				}
 				
@@ -396,13 +415,22 @@ void handle(){
 					rest_cursor();
 					
 				}
+				
 				else if(cursor_position == 3){
 					
 					pid_menu_position=4;
 					ips200_clear();
 					rest_cursor();
 					
-				}					
+				}
+					
+				else if(cursor_position == 4){
+					
+					pid_menu_position=5;
+					ips200_clear();
+					rest_cursor();
+					
+				}
 
 			}
 			else if(main_menu_position==3){
