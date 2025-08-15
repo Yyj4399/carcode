@@ -22,6 +22,7 @@ void save_pid(void){
 	
 	flash_union_buffer[2].int32_type=high_speed;
 	flash_union_buffer[3].int32_type=low_speed;
+	flash_union_buffer[4].int32_type=circle_speed;
 	
 	//缓存区保存
 	flash_write_page_from_buffer(flash_sector,flash_page);
@@ -41,6 +42,7 @@ void read_pid(void){
 	
 	high_speed=flash_union_buffer[2].int32_type;
 	low_speed=flash_union_buffer[3].int32_type;
+	circle_speed=flash_union_buffer[4].int32_type;
 	
 	//清除缓存区
 	flash_buffer_clear();
