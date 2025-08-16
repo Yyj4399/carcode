@@ -6,7 +6,7 @@ void Encoder_Init();																																					//编码器初始化
 
 void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]);																			//出界保护
 void Encoder_Get();																																						//编码器值获取
-void Speed_Set(pwm_channel_enum pin1,gpio_pin_enum pin2,int Speed,uint8 just,uint8 lose);			//设置电机速度
+void Speed_Set(pwm_channel_enum pin1,pwm_channel_enum pin2,int Speed);			//设置电机速度
 
 void Motor_Control(int Speed_L,int Speed_R);																									//电机控制
 void Final_Motor_Control(float k,float d,int limit);																					//差速控制
@@ -21,8 +21,11 @@ int32 limit_int(int32 a,int32 b,int32 c);																											//整形限幅函
 
 
 
-#define pwm_l TIM5_PWM_CH2_A1									//左电机PWM引脚定义
-#define pwm_r TIM5_PWM_CH4_A3									//右电机PWM引脚定义
+#define pwm_l1 (TIM5_PWM_CH4_A3)									//左电机PWM引脚定义
+#define pwm_l2 (TIM5_PWM_CH2_A1)									//左电机PWM引脚定义
+
+#define pwm_r1 (TIM5_PWM_CH1_A0)									//右电机PWM引脚定义
+#define pwm_r2 (TIM5_PWM_CH3_A2)									//右电机PWM引脚定义
 
 
 

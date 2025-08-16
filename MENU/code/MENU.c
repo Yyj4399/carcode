@@ -60,7 +60,7 @@ void print_menu(){
 		ips200_show_string(16,0,"pid");
 		ips200_show_string(16,16,"image");
 		ips200_show_string(16,32,"flash");
-//		ips200_show_int(48,64,circle_flag,6);
+		ips200_show_int(48,64,circle_flag,6);
 	
 		ips200_show_string(0,cursor_position*16,">");
 		ips200_show_string(0,last_cursor_position*16," ");

@@ -137,14 +137,16 @@ void TIM6_IRQHandler (void)
 			Motor_Control(speed,speed);
 			Final_Motor_Control(p,d,9000);
 			car_protect(image);
-//			Speed_Set(pwm_l,A0,0,1,0);
-//			Speed_Set(pwm_r,A2,1000,1,0);
+//			Speed_Set(pwm_l1,pwm_l2,1000);
+//			Speed_Set(pwm_r1,pwm_r2,1000);
 		}
 		
 		else{
 //			Motor_Control(110,110);
-			Speed_Set(pwm_l,A0,0,1,0);
-			Speed_Set(pwm_r,A2,0,1,0);
+			pwm_set_duty(pwm_l1,0);
+			pwm_set_duty(pwm_l2,0);
+			pwm_set_duty(pwm_r1,0);
+			pwm_set_duty(pwm_r2,0);
 			
 		}
 		

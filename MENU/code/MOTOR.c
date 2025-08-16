@@ -19,11 +19,11 @@ int32 speed;							//目标速度
 //PWM初始化
 void PWM_Init(){
 	
-	gpio_init(A0,GPO,GPIO_HIGH,GPO_PUSH_PULL);
-	pwm_init(pwm_l,17000,0);
+	pwm_init(pwm_l1,17000,0);
+	pwm_init(pwm_l2,17000,0);
 	
-	gpio_init(A2,GPO,GPIO_HIGH,GPO_PUSH_PULL);
-	pwm_init(pwm_r,17000,0);
+	pwm_init(pwm_r1,17000,0);
+	pwm_init(pwm_r2,17000,0);
 	
 }
 
@@ -47,7 +47,7 @@ void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
 	for(uint8 i=3;i<MT9V03X_W-2;i++){
 		
 		//扫描底线黑色像素
-		if(bio_image[bottom_line-10][i]==255){
+		if(image[bottom_line][i]==255){
 			
 				num++;
 			
@@ -72,8 +72,10 @@ void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
 	//若出界或者斑马线数达到一定数量则停车
 	if(num<=30||car_protect_flag>=16){ //30
 		
-		Speed_Set(pwm_l,A0,0,1,0);
-		Speed_Set(pwm_r,A2,0,1,0);
+		pwm_set_duty(pwm_l1,0);
+		pwm_set_duty(pwm_l2,0);
+		pwm_set_duty(pwm_r1,0);
+		pwm_set_duty(pwm_r2,0);
 		
 		while(1){
 		}
@@ -125,19 +127,19 @@ int32 limit_int(int32 a,int32 b,int32 c){
 }
 
 //设置电机速度
-void Speed_Set(pwm_channel_enum pin1,gpio_pin_enum pin2,int Speed,uint8 just,uint8 lose){
+void Speed_Set(pwm_channel_enum pin1,pwm_channel_enum pin2,int Speed){
 	
-	if(Speed>0){
+	if(Speed>=0){
 		
 		pwm_set_duty(pin1,Speed);
-		gpio_set_level(pin2,just);
+		pwm_set_duty(pin2,0);
 		
 	}
 	
 	else {
 		
-		pwm_set_duty(pin1,-Speed);
-		gpio_set_level(pin2,lose);
+		pwm_set_duty(pin1,0);
+		pwm_set_duty(pin2,-Speed);
 		
 	}
 	
@@ -155,8 +157,8 @@ void Motor_Control(int Speed_L,int Speed_R){
 	motor_r.duty = PID_r(motor_pid_r[0],motor_pid_r[1],(float)motor_r.encoder_speed,(float)motor_r.target_speed);
 	
 //	//输出速度
-//	Speed_Set(pwm_l,A2,motor_l.duty,1,0);
-//	Speed_Set(pwm_r,A0,motor_r.duty,1,0);
+//	Speed_Set(pwm_l1,pwm_l2,motor_l.duty);
+//	Speed_Set(pwm_r1,pwm_r2,motor_r.duty);
 
 	
 }
@@ -179,8 +181,8 @@ void Final_Motor_Control(float k,float d,int32 limit){
 //	motorr=limit_int(-pwm_limit,motor_r.duty+PD,pwm_limit);
 	
 	//给电机PWM	
-	Speed_Set(pwm_l,A0,motor_l.motor_v,1,0);
-	Speed_Set(pwm_r,A2,motor_r.motor_v,1,0);
+	Speed_Set(pwm_l1,pwm_l2,motor_l.motor_v);
+	Speed_Set(pwm_r1,pwm_r2,motor_r.motor_v);
 	
 	//更新上一次误差
 	pd.last_error=pd.error;
@@ -225,8 +227,10 @@ void car_start(){
 		else{
 //			Motor_Control(20,20);
 			
-			Speed_Set(pwm_l,A0,0,1,0);
-			Speed_Set(pwm_r,A2,0,1,0);
+			pwm_set_duty(pwm_l1,0);
+			pwm_set_duty(pwm_l2,0);
+			pwm_set_duty(pwm_r1,0);
+			pwm_set_duty(pwm_r2,0);
 			
 		}
 		
