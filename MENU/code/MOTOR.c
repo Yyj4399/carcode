@@ -36,13 +36,13 @@ void Encoder_Init(){
 	
 }
 
-uint8 car_protect_flag=0;
+uint8 car_protect_flag=0;					//°ßÂíÏß±êÖ¾Î»
 
 //³ö½ç±£»¤
 void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
 	
 	uint8 num=0;
-	uint8 num1=0;
+	uint8 banma_num=0;
 
 	for(uint8 i=3;i<MT9V03X_W-2;i++){
 		
@@ -53,24 +53,55 @@ void car_protect(uint8 bio_image[MT9V03X_H][MT9V03X_W]){
 			
 		}
 		
-		//É¨Ãèµ×ÏßºÚ°×Ìø±äµã
-		if(bio_image[bottom_line][i-1]==255&&bio_image[bottom_line][i]==255&&bio_image[bottom_line][i+1]==0){
+		//É¨Ãèµ×ÏßºÚ°×Ìø±äµ
+		if(image[bottom_line][i-1]==255&&image[bottom_line][i]==255&&image[bottom_line][i+1]==0){
 			
-			num1++;
+			banma_num++;
 			
 		}
 		
 	}
 	
-	//ÈôºÚ°×Ìø±äµãÊıÁ¿´óÓÚ5Ôò¼Æ°ßÂíÏßÊı
-	if(num1>=5){
+	switch(car_protect_flag){
+	
+		case 0:
+			
+			//ÈôºÚ°×Ìø±äµãÊıÁ¿´óÓÚ5Ôò¼Æ°ßÂíÏßÊı
+			if(banma_num>=5){
 		
-		car_protect_flag++;
+				car_protect_flag=1;
 		
+			}
+			
+			break;
+			
+		case 1:
+			
+			if(banma_num<=2){
+				
+				car_protect_flag=2;
+			
+			}
+			
+			break;
+			
+		case 2:
+			
+			//ÈôºÚ°×Ìø±äµãÊıÁ¿´óÓÚ5Ôò¼Æ°ßÂíÏßÊı
+			if(banma_num>=5){
+		
+				car_protect_flag=3;
+		
+			}
+		
+			break;
+	
 	}
 	
 	//Èô³ö½ç»òÕß°ßÂíÏßÊı´ïµ½Ò»¶¨ÊıÁ¿ÔòÍ£³µ
-	if(num<=30||car_protect_flag>=16){ //30
+	if(num<=30||car_protect_flag==3){ 
+		
+		car_protect_flag=0;
 		
 		pwm_set_duty(pwm_l1,0);
 		pwm_set_duty(pwm_l2,0);

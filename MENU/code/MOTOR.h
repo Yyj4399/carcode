@@ -63,8 +63,12 @@ extern struct motor1 motor_l;			//左电机结构体
 extern struct motor1 motor_r;			//右电机结构体
 
 extern uint8 car_num;							//发车计数
+
+extern uint8 car_protect_flag;		//斑马线标志位
+
 extern float p;										//方向环kp
 extern float d;										//方向环kd
+
 extern int32 high_speed;					//高速度
 extern int32 low_speed;						//低速度
 extern int32 circle_speed;				//圆环速度

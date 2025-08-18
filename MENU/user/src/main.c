@@ -49,11 +49,13 @@ int main (void){
 			
 			car_start();																//发车
 			
-			//°´¼ü²Ù×÷
-			handle();
-		
-			//ÏÔÊ¾²Ëµ¥
-			print_menu();
+//			car_protect(image);
+			
+//			//°´¼ü²Ù×÷
+//			handle();
+//		
+//			//ÏÔÊ¾²Ëµ¥
+//			print_menu();
 			
 //			num2++;
     }

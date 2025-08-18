@@ -60,7 +60,7 @@ void print_menu(){
 		ips200_show_string(16,0,"pid");
 		ips200_show_string(16,16,"image");
 		ips200_show_string(16,32,"flash");
-		ips200_show_int(48,64,left_circle_flag,6);
+//		ips200_show_int(48,64,left_circle_flag,6);
 	
 		ips200_show_string(0,cursor_position*16,">");
 		ips200_show_string(0,last_cursor_position*16," ");
@@ -166,6 +166,7 @@ void print_menu(){
 		
 		ips200_show_uint(8*10,128+16,right_circle_flag,3);
 		ips200_show_uint(8*15,128+16,left_circle_flag,3);
+		ips200_show_uint(8*20,128+16,car_protect_flag,3);
 		
 //		//ãÐÖµÏÔÊ¾
 //		ips200_show_string(0,128,"threshold");
