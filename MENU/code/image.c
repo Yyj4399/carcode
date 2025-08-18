@@ -401,7 +401,10 @@ uint8 mid_line[MT9V03X_H]={0};				//中线存储
 
 uint16 count_beep = 0;								//蜂鸣器计数
 
-uint8 circle_flag = 0;
+int right_circle_enable = 1;					//右圆环使能
+uint8 right_circle_flag = 0;					//右圆环状态
+int left_circle_enable = 1;						//左圆环使能
+uint8 left_circle_flag = 0;						//左圆环状态
 
 cross cross_point={0};								//十字拐点初始化
 cross cross_zero_point={0};						//十字拐点清零
@@ -642,390 +645,727 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 //		circle_flag = 0;
 //		
 //	}	
-	
-	switch (circle_flag){
+	if(right_circle_enable){
 		
-		case 0:
+		switch (right_circle_flag){
 			
-			//右边丢线数超过25则判断进入圆环状态
-			if(loss_num.num_lossr>=15&&loss_num.num_loss+loss_num.num_lossl<=5&&find_end_line<=30&&abs_subtact_uint8(final_mid_value,MID_W)<=25&&abs_subtact_uint8(final_mid_value,MID_W)>=5){//&&((x5!=0&&y5!=0)||(x7!=0&&y7!=0))){
+			case 0:
 				
-				for(uint8 i=50;i>35;i--){
+				//右边丢线数超过25则判断进入圆环状态
+				if(loss_num.num_lossr>=15&&loss_num.num_loss+loss_num.num_lossl<=5&&find_end_line<=30&&abs_subtact_uint8(final_mid_value,MID_W)<=25&&abs_subtact_uint8(final_mid_value,MID_W)>=5){//&&((x5!=0&&y5!=0)||(x7!=0&&y7!=0))){
 					
-					//判断圆处是否出现切点用作判断是否进入圆环状态1的依据之一
-					if(right_line[i-1]-right_line[i]>=1&&right_line[i+1]-right_line[i]>=0&&right_line[i+2]-right_line[i]>=0&&right_line[i]>=110&&right_line[i]<=140){
+					for(uint8 i=50;i>35;i--){
 						
-						if(circle_point.x6==0&&left_line[i+15]>=5&&right_line[i+15]>=MT9V03X_W-7){
+						//判断圆处是否出现切点用作判断是否进入圆环状态1的依据之一
+						if(right_line[i-1]-right_line[i]>=1&&right_line[i+1]-right_line[i]>=0&&right_line[i+2]-right_line[i]>=0&&right_line[i]>=110&&right_line[i]<=140){
 							
-							circle_point.x6=right_line[i];
-							circle_point.y6=i;
+							if(circle_point.x6==0&&left_line[i+15]>=5&&right_line[i+15]>=MT9V03X_W-7){
+								
+								circle_point.x6=right_line[i];
+								circle_point.y6=i;
 
-							circle_flag = 1;
-							
-							//蜂鸣器计数
-							count_beep=5;
-							
-//							
-//							//蜂鸣器
-//							if(count_beep)
-//							{
-//								gpio_set_level(BEEP, GPIO_HIGH);
-//								count_beep --;
-//							}
-//							else
-//							{
-//								gpio_set_level(BEEP, GPIO_LOW);
-//							}	
+								right_circle_flag = 1;
+								
+								//蜂鸣器计数
+								count_beep=5;
+								
+	//							
+	//							//蜂鸣器
+	//							if(count_beep)
+	//							{
+	//								gpio_set_level(BEEP, GPIO_HIGH);
+	//								count_beep --;
+	//							}
+	//							else
+	//							{
+	//								gpio_set_level(BEEP, GPIO_LOW);
+	//							}	
+								
+							}
 							
 						}
 						
-					}
-					
-						
-				}
-				
-			}	
-			break;
-			
-		case 1:
-			
-			//蜂鸣器
-			if(count_beep)
-			{
-				gpio_set_level(BEEP, GPIO_HIGH);
-				count_beep --;
-			}
-			else
-			{
-				gpio_set_level(BEEP, GPIO_LOW);
-			}	
-			
-			for(uint8 i=bottom_line;i>25;i--){	
-
-				//判断圆处是否出现切点用作判断是否进入圆环状态1的依据之一
-				if(i<85&&i>35&&right_line[i-1]-right_line[i]>=1&&right_line[i+1]-right_line[i]>=0&&right_line[i+2]-right_line[i]>=0){
 							
-					circle_point.x6=right_line[i];
-					circle_point.y6=i;
-						
+					}
+					
 				}	
+				break;
 				
-				//判断右边是否出现拐点并且拐点上方右边丢线左边未丢线用作判断是否进入圆环状态1的依据之一
-				if(i>80&&left_line[i-3]>=5&&right_line[i-3]>=MT9V03X_W-7&&left_line[i-4]>=5&&right_line[i-4]>=MT9V03X_W-7&&right_line[i+1]-right_line[i]>=1&&right_line[i-1]-right_line[i]>=1){
-						
-					circle_point.x5=right_line[i];
-					circle_point.y5=i;
+			case 1:
 				
-				}
-				
-//				//判断右上方是否出现拐点并且拐点下方右边丢线左边未丢线用作判断是否进入圆环状态3的依据之一
-//				if(i<circle_point.y6&&i>40&&left_line[i+3]>=5&&right_line[i+3]>=MT9V03X_W-7&&left_line[i+4]>=5&&right_line[i+4]>=MT9V03X_W-7&&right_line[i+3]-right_line[i]>=20&&right_line[i]-right_line[i-1]<=3){
-//						
-//					circle_point.x7=right_line[i];
-//					circle_point.y7=i;
-//					
-//					circle_flag = 3;		
-//					
-//				}
-			
-			}
-			
-			if(circle_point.x5!=0){
-			
-				//计算斜率
-				circle_point.k1=((float)(circle_point.y6-circle_point.y5))/(float)(circle_point.x6-circle_point.x5);
-			
-			}
-			
-			else{
-				
-				//计算斜率
-				circle_point.k1=1.8;
-			
-			}
-			
-			
-			//状态1进行补线	
-			for(uint8 i=circle_point.y5;i>circle_point.y6;i--){
-						
-				right_line[i]=circle_point.x5+(i-circle_point.y5)/circle_point.k1;
-				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
-											
-			}
-			
-			if(circle_point.y6>=75){
-				
-				circle_flag=3;
-			
-			}
-					
-			
-			
-			break;
-			
-		case 3:
-			
-//			for(uint8 i=circle_point.y6;i>40;i--){
-//				
-//				if(left_line[i+3]>=5&&right_line[i+3]>=MT9V03X_W-7&&left_line[i+4]>=5&&right_line[i+4]>=MT9V03X_W-7&&right_line[i+3]-right_line[i]>=20&&right_line[i]-right_line[i-1]<=3){
-//						
-//					circle_point.x7=right_line[i];
-//					circle_point.y7=i;
-//					
-//				}
-//				
-//			}
-//			
-//			//将左边底角边界点作为补线起始点
-//			circle_point.x8=left_line[80];
-//			circle_point.y8=80;
-//			
-//			//计算斜率
-//			circle_point.k3=((float)(circle_point.y7-circle_point.y8))/(float)(circle_point.x7-circle_point.x8);
-//			
-//			//状态3进行补线		
-//			for(uint8 i=circle_point.y8;i>35;i--){
-//						
-//				left_line[i]=circle_point.x8+(i-circle_point.y8)/circle_point.k3;
-//				
-//				if(left_line[i]>=186){
-//					
-//					left_line[i]=186;
-//					
-//				}
-//				if(right_line[i]<=160){
-//					
-//					right_line[i]=186;
-//					
-//				}
-//				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
-//						
-//			}
-
-				//进行状态3补线
-				for(uint8 i=bottom_line;i>find_end_line;i--){
-								
-					left_line[i]=right_line[i]-(uint8)(156-1.1*(119-i));
-					
-					if(left_line[i]<1){
-						
-						left_line[i]=1;
-						
-					}
-					
-					if(right_line[i]<=160){
-					
-						right_line[i]=186;
-					
-					}
-					
-					mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
-								
-				}
-					
-			//编码器清状态
-			motor_l.total_encoder+=motor_l.encoder_speed;
-			
-			if(motor_l.total_encoder>=2000){
-				
-				circle_flag = 4;
-				motor_l.total_encoder = 0;
-				
-				//蜂鸣器计数
-				count_beep=5;	
-				
-			}
-			
-			break;
-			
-		case 4:
-			
-		//蜂鸣器
-			if(count_beep)
-			{
+				//蜂鸣器
+				if(count_beep)
+				{
 					gpio_set_level(BEEP, GPIO_HIGH);
 					count_beep --;
-			}
-			else
-			{
+				}
+				else
+				{
 					gpio_set_level(BEEP, GPIO_LOW);
-			}
-		
-			motor_l.total_encoder+=motor_l.encoder_speed;
-			
-			if(motor_l.total_encoder>=6000){
-	
-					circle_flag=5;
+				}	
 				
-					motor_l.total_encoder=0;
-					
-//					//蜂鸣器计数
-//					count_beep=5;		
-				
-			}
-			
-			break;
-			
-		case 5:
-			
-//			//蜂鸣器
-//			if(count_beep)
-//			{
-//					gpio_set_level(BEEP, GPIO_HIGH);
-//					count_beep --;
-//			}
-//			else
-//			{
-//					gpio_set_level(BEEP, GPIO_LOW);
-//			}	
-			
-			if(circle_point.x9==0&&((loss_num.num_lossl>=20&&loss_num.num_lossr>=20)||find_end_line>=45)){
-				
-				circle_point.x9=left_line[110];
-				circle_point.y9=110;
-				
-			}
-		
-			if(circle_point.x9!=0){
-				
-				
-//				//蜂鸣器计数
-//				count_beep=5;
-				
-				//进行状态5补线
-				for(uint8 i=119;i>60;i--){
+				for(uint8 i=bottom_line;i>25;i--){	
+
+					//判断圆处是否出现切点用作判断是否进入圆环状态1的依据之一
+					if(i<85&&i>35&&right_line[i-1]-right_line[i]>=1&&right_line[i+1]-right_line[i]>=0&&right_line[i+2]-right_line[i]>=0){
 								
-					left_line[i]=right_line[i]-(uint8)(154-1.1*(119-i));
+						circle_point.x6=right_line[i];
+						circle_point.y6=i;
+							
+					}	
 					
-					if(left_line[i]<1){
-						
-						left_line[i]=1;
-						
+					//判断右边是否出现拐点并且拐点上方右边丢线左边未丢线用作判断是否进入圆环状态1的依据之一
+					if(left_line[i-3]>=5&&right_line[i-3]>=MT9V03X_W-7&&left_line[i-4]>=5&&right_line[i-4]>=MT9V03X_W-7&&right_line[i+1]-right_line[i]>=1&&right_line[i-1]-right_line[i]>=1){
+							
+						circle_point.x5=right_line[i];
+						circle_point.y5=i;
+					
 					}
 					
-					mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
-								
+	//				//判断右上方是否出现拐点并且拐点下方右边丢线左边未丢线用作判断是否进入圆环状态3的依据之一
+	//				if(i<circle_point.y6&&i>40&&left_line[i+3]>=5&&right_line[i+3]>=MT9V03X_W-7&&left_line[i+4]>=5&&right_line[i+4]>=MT9V03X_W-7&&right_line[i+3]-right_line[i]>=20&&right_line[i]-right_line[i-1]<=3){
+	//						
+	//					circle_point.x7=right_line[i];
+	//					circle_point.y7=i;
+	//					
+	//					circle_flag = 3;		
+	//					
+	//				}
+				
 				}
 				
+				if(circle_point.x5!=0){
+				
+					//计算斜率
+					circle_point.k1=((float)(circle_point.y6-circle_point.y5))/(float)(circle_point.x6-circle_point.x5);
+				
+				}
+				
+				//状态1进行补线	
+				for(uint8 i=circle_point.y5;i>circle_point.y6;i--){
+							
+					right_line[i]=circle_point.x5+(i-circle_point.y5)/circle_point.k1;
+					mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
+												
+				}
+				
+				if(circle_point.y6>=75){
+					
+					right_circle_flag=3;
+				
+				}
+						
+				
+				
+				break;
+				
+			case 3:
+				
+	//			for(uint8 i=circle_point.y6;i>40;i--){
+	//				
+	//				if(left_line[i+3]>=5&&right_line[i+3]>=MT9V03X_W-7&&left_line[i+4]>=5&&right_line[i+4]>=MT9V03X_W-7&&right_line[i+3]-right_line[i]>=20&&right_line[i]-right_line[i-1]<=3){
+	//						
+	//					circle_point.x7=right_line[i];
+	//					circle_point.y7=i;
+	//					
+	//				}
+	//				
+	//			}
+	//			
+	//			//将左边底角边界点作为补线起始点
+	//			circle_point.x8=left_line[80];
+	//			circle_point.y8=80;
+	//			
+	//			//计算斜率
+	//			circle_point.k3=((float)(circle_point.y7-circle_point.y8))/(float)(circle_point.x7-circle_point.x8);
+	//			
+	//			//状态3进行补线		
+	//			for(uint8 i=circle_point.y8;i>35;i--){
+	//						
+	//				left_line[i]=circle_point.x8+(i-circle_point.y8)/circle_point.k3;
+	//				
+	//				if(left_line[i]>=186){
+	//					
+	//					left_line[i]=186;
+	//					
+	//				}
+	//				if(right_line[i]<=160){
+	//					
+	//					right_line[i]=186;
+	//					
+	//				}
+	//				mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
+	//						
+	//			}
+
+					//进行状态3补线
+					for(uint8 i=bottom_line;i>find_end_line;i--){
+									
+						left_line[i]=right_line[i]-(uint8)(156-1.1*(119-i));
+						
+						if(left_line[i]<1){
+							
+							left_line[i]=1;
+							
+						}
+						
+						if(right_line[i]<=160){
+						
+							right_line[i]=186;
+						
+						}
+						
+						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
+									
+					}
+						
 				//编码器清状态
 				motor_l.total_encoder+=motor_l.encoder_speed;
 				
 				if(motor_l.total_encoder>=2000){
-				
-					if(find_end_line<=26){
-						
-						circle_flag = 8;
-						motor_l.total_encoder = 0;
-						
-					}
-				
-				}
 					
-				if(motor_l.total_encoder>=3000){
-						
-					circle_flag = 8;
+					right_circle_flag = 4;
 					motor_l.total_encoder = 0;
 					
-//					//蜂鸣器计数
-//					count_beep=5;
-						
+					//蜂鸣器计数
+					count_beep=5;	
+					
 				}
 				
-			}	
-			
-			break;
-			
-		case 8:
-			
-//			//蜂鸣器
-//			if(count_beep)
-//			{
-//					gpio_set_level(BEEP, GPIO_HIGH);
-//					count_beep --;
-//			}
-//			else
-//			{
-//					gpio_set_level(BEEP, GPIO_LOW);
-//			}
-			
-//			//寻找状态8拐点	
-//			for(uint8 i=circle_point.y6;i>40;i--){
-//				
-//				if(left_line[i+3]>=5&&right_line[i+3]>=MT9V03X_W-7&&left_line[i+4]>=5&&right_line[i+4]>=MT9V03X_W-7&&right_line[i+3]-right_line[i]>=20&&right_line[i]-right_line[i-1]<=3){
-//						
-//					circle_point.x7=right_line[i];
-//					circle_point.y7=i;
-//					
-//				}
-//				
-//			}
-//			
-//			//计算状态8斜率
-//			if(circle_point.k8==0){
-//						
-//				circle_point.k8=((float)(circle_point.y7-(circle_point.y7-2)))/(float)(circle_point.x7-left_line[circle_point.y7-2]);
-//						
-//			}
-//		
-			if(loss_num.num_lossr>=5){
+				break;
 				
-				//进行状态8补线
-				for(uint8 i=bottom_line;i>50;i--){
+			case 4:
+				
+			//蜂鸣器
+				if(count_beep)
+				{
+						gpio_set_level(BEEP, GPIO_HIGH);
+						count_beep --;
+				}
+				else
+				{
+						gpio_set_level(BEEP, GPIO_LOW);
+				}
+			
+				motor_l.total_encoder+=motor_l.encoder_speed;
+				
+				if(motor_l.total_encoder>=6000){
+		
+						right_circle_flag=5;
+					
+						motor_l.total_encoder=0;
+						
+	//					//蜂鸣器计数
+	//					count_beep=5;		
+					
+				}
+				
+				break;
+				
+			case 5:
+				
+	//			//蜂鸣器
+	//			if(count_beep)
+	//			{
+	//					gpio_set_level(BEEP, GPIO_HIGH);
+	//					count_beep --;
+	//			}
+	//			else
+	//			{
+	//					gpio_set_level(BEEP, GPIO_LOW);
+	//			}	
+				
+				if(circle_point.x9==0&&((loss_num.num_lossl>=20&&loss_num.num_lossr>=20)||find_end_line>=45)){
+					
+					circle_point.x9=left_line[110];
+					circle_point.y9=110;
+					
+				}
+			
+				if(circle_point.x9!=0){
+					
+					
+	//				//蜂鸣器计数
+	//				count_beep=5;
+					
+					//进行状态5补线
+					for(uint8 i=119;i>60;i--){
+									
+						left_line[i]=right_line[i]-(uint8)(154-1.1*(119-i));
+						
+						if(left_line[i]<1){
 							
-					right_line[i]=left_line[i]+(uint8)(154-1.2*(119-i));
+							left_line[i]=1;
+							
+						}
+						
+						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
+									
+					}
 					
+					//编码器清状态
+					motor_l.total_encoder+=motor_l.encoder_speed;
+					
+					if(motor_l.total_encoder>=2000){
+					
+						if(find_end_line<=26){
+							
+							right_circle_flag = 8;
+							motor_l.total_encoder = 0;
+							
+						}
+					
+					}
+						
+					if(motor_l.total_encoder>=3000){
+							
+						right_circle_flag = 8;
+						motor_l.total_encoder = 0;
+						
+	//					//蜂鸣器计数
+	//					count_beep=5;
+							
+					}
+					
+				}	
+				
+				break;
+				
+			case 8:
+				
+	//			//蜂鸣器
+	//			if(count_beep)
+	//			{
+	//					gpio_set_level(BEEP, GPIO_HIGH);
+	//					count_beep --;
+	//			}
+	//			else
+	//			{
+	//					gpio_set_level(BEEP, GPIO_LOW);
+	//			}
+				
+	//			//寻找状态8拐点	
+	//			for(uint8 i=circle_point.y6;i>40;i--){
+	//				
+	//				if(left_line[i+3]>=5&&right_line[i+3]>=MT9V03X_W-7&&left_line[i+4]>=5&&right_line[i+4]>=MT9V03X_W-7&&right_line[i+3]-right_line[i]>=20&&right_line[i]-right_line[i-1]<=3){
+	//						
+	//					circle_point.x7=right_line[i];
+	//					circle_point.y7=i;
+	//					
+	//				}
+	//				
+	//			}
+	//			
+	//			//计算状态8斜率
+	//			if(circle_point.k8==0){
+	//						
+	//				circle_point.k8=((float)(circle_point.y7-(circle_point.y7-2)))/(float)(circle_point.x7-left_line[circle_point.y7-2]);
+	//						
+	//			}
+	//		
+				if(loss_num.num_lossr>=5){
+					
+					//进行状态8补线
+					for(uint8 i=bottom_line;i>50;i--){
+								
+						right_line[i]=left_line[i]+(uint8)(154-1.2*(119-i));
+						
+						if(right_line[i]>186){
+						
+							right_line[i]=186;
+							
+						}
+						
+						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
+								
+					}
+					
+					motor_l.total_encoder+=motor_l.encoder_speed;
+					
+					if(motor_l.total_encoder>=2500){
+						
+						right_circle_flag=9;
+						
+						motor_l.total_encoder=0;
+						
+	//					//蜂鸣器计数
+	//					count_beep=5;
+						
+					}
+					
+				}
+				
+				
+				
+				break;
+				
+			case 9:
+				
+	//			//蜂鸣器
+	//			if(count_beep)
+	//			{
+	//					gpio_set_level(BEEP, GPIO_HIGH);
+	//					count_beep --;
+	//			}
+	//			else
+	//			{
+	//					gpio_set_level(BEEP, GPIO_LOW);
+	//			}
+				
+	//			gpio_set_level(BEEP, GPIO_LOW);
+				
+				circle_point=circle_zero_point;
+			
+				right_circle_flag=0;
+				
+				break;
+			
+				
+		}
+		
+	}
+
+
+
+
+	
+	
+	
+	if(left_circle_enable){
+		
+		switch (left_circle_flag){
+			
+			case 0:
+				
+				//右边丢线数超过25则判断进入圆环状态
+				if(loss_num.num_lossl>=25&&loss_num.num_loss+loss_num.num_lossr<=5&&find_end_line<=30&&abs_subtact_uint8(final_mid_value,MID_W)<=25&&abs_subtact_uint8(final_mid_value,MID_W)>=5){//&&((x5!=0&&y5!=0)||(x7!=0&&y7!=0))){
+					
+					for(uint8 i=45;i>30;i--){
+						
+						//判断圆处是否出现切点用作判断是否进入圆环状态1的依据之一
+						if(left_line[i]-left_line[i-1]>=1&&left_line[i]-left_line[i+1]>=0&&left_line[i]-left_line[i+2]>=0&&left_line[i]>=60&&left_line[i]<=80){
+							
+							if(circle_point.x6==0&&left_line[i+15]<=5&&right_line[i+15]<=MT9V03X_W-7){
+								
+								circle_point.x6=left_line[i];
+								circle_point.y6=i;
+
+								left_circle_flag = 1;
+								
+								//蜂鸣器计数
+								count_beep=5;
+								
+	//							
+	//							//蜂鸣器
+	//							if(count_beep)
+	//							{
+	//								gpio_set_level(BEEP, GPIO_HIGH);
+	//								count_beep --;
+	//							}
+	//							else
+	//							{
+	//								gpio_set_level(BEEP, GPIO_LOW);
+	//							}	
+								
+							}
+							
+						}
+						
+							
+					}
+					
+				}	
+				break;
+				
+			case 1:
+				
+				//蜂鸣器
+				if(count_beep)
+				{
+					gpio_set_level(BEEP, GPIO_HIGH);
+					count_beep --;
+				}
+				else
+				{
+					gpio_set_level(BEEP, GPIO_LOW);
+				}	
+				
+				for(uint8 i=bottom_line;i>25;i--){	
+
+					//判断圆处是否出现切点用作判断是否进入圆环状态1的依据之一
+					if(i<85&&i>35&&left_line[i]-left_line[i-1]>=1&&left_line[i]-left_line[i+1]>=0&&left_line[i]-left_line[i+2]>=0){
+						
+						if(circle_point.y5<105&&left_line[i+15]<=5&&right_line[i+15]<=MT9V03X_W-7){
+							
+							circle_point.x6=left_line[i];
+							circle_point.y6=i;
+							
+						}
+						
+						else if(circle_point.y5>=105){
+							
+							circle_point.x6=left_line[i];
+							circle_point.y6=i;
+						
+						}
+							
+					}	
+					
+					//判断右边是否出现拐点并且拐点上方右边丢线左边未丢线用作判断是否进入圆环状态1的依据之一
+					if(i>90&&left_line[i]-left_line[i+1]>=1&&left_line[i]-left_line[i-1]>=1){
+							
+						circle_point.x5=left_line[i];
+						circle_point.y5=i;
+					
+					}
+					
+	//				//判断右上方是否出现拐点并且拐点下方右边丢线左边未丢线用作判断是否进入圆环状态3的依据之一
+	//				if(i<circle_point.y6&&i>40&&left_line[i+3]>=5&&right_line[i+3]>=MT9V03X_W-7&&left_line[i+4]>=5&&right_line[i+4]>=MT9V03X_W-7&&right_line[i+3]-right_line[i]>=20&&right_line[i]-right_line[i-1]<=3){
+	//						
+	//					circle_point.x7=right_line[i];
+	//					circle_point.y7=i;
+	//					
+	//					circle_flag = 3;		
+	//					
+	//				}
+				
+				}
+				
+				if(circle_point.x5!=0){
+				
+					//计算斜率
+					circle_point.k1=((float)(circle_point.y6-circle_point.y5))/(float)(circle_point.x6-circle_point.x5);
+				
+				}
+				
+				//状态1进行补线	
+				for(uint8 i=circle_point.y5;i>circle_point.y6;i--){
+							
+					left_line[i]=circle_point.x5+(i-circle_point.y5)/circle_point.k1;
+					mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);
+												
+				}
+				
+				if(circle_point.y6>=75){
+					
+					left_circle_flag=3;
+				
+				}
+						
+				
+				
+				break;
+				
+			case 3:
+
+				//进行状态3补线
+				for(uint8 i=bottom_line;i>find_end_line;i--){
+									
+					right_line[i]=left_line[i]+(uint8)(156-1.0*(119-i));
+						
+					if(left_line[i]>=20){
+							
+						left_line[i]=1;
+							
+					}
+						
 					if(right_line[i]>186){
-					
+						
 						right_line[i]=186;
 						
 					}
-					
+						
 					mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
-							
+									
+				}
+						
+				//编码器清状态
+				motor_r.total_encoder+=motor_r.encoder_speed;
+				
+				if(motor_r.total_encoder>=2000){
+					
+					left_circle_flag = 4;
+					motor_r.total_encoder = 0;
+					
+					//蜂鸣器计数
+					count_beep=5;	
+					
 				}
 				
-				motor_l.total_encoder+=motor_l.encoder_speed;
+				break;
 				
-				if(motor_l.total_encoder>=2500){
+			case 4:
+				
+			//蜂鸣器
+				if(count_beep)
+				{
+						gpio_set_level(BEEP, GPIO_HIGH);
+						count_beep --;
+				}
+				else
+				{
+						gpio_set_level(BEEP, GPIO_LOW);
+				}
+			
+				motor_r.total_encoder+=motor_r.encoder_speed;
+				
+				if(motor_r.total_encoder>=4000){
+		
+						left_circle_flag=5;
 					
-					circle_flag=9;
+						motor_r.total_encoder=0;
+						
+//						//蜂鸣器计数
+//						count_beep=5;		
 					
-					motor_l.total_encoder=0;
+				}
+				
+				break;
+				
+			case 5:
+				
+				//蜂鸣器
+				if(count_beep)
+				{
+						gpio_set_level(BEEP, GPIO_HIGH);
+						count_beep --;
+				}
+				else
+				{
+						gpio_set_level(BEEP, GPIO_LOW);
+				}	
+				
+				if(circle_point.x9==0&&((loss_num.num_lossl>=15&&loss_num.num_lossr>=15)||find_end_line>=45)){
+					
+					circle_point.x9=left_line[110];
+					circle_point.y9=110;
+					
+				}
+			
+				if(circle_point.x9!=0){
+					
 					
 //					//蜂鸣器计数
 //					count_beep=5;
 					
+					//进行状态5补线
+					for(uint8 i=119;i>60;i--){
+									
+						right_line[i]=left_line[i]+(uint8)(154-1.2*(119-i));
+						
+						if(right_line[i]>186){
+							
+							right_line[i]=186;
+							
+						}
+						
+						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
+									
+					}
+					
+					//编码器清状态
+					motor_r.total_encoder+=motor_r.encoder_speed;
+					
+					if(motor_r.total_encoder>=2000){
+					
+						if(find_end_line<=30){
+							
+							left_circle_flag = 8;
+							motor_r.total_encoder = 0;
+							
+						}
+					
+					}
+						
+					if(motor_r.total_encoder>=3000){
+							
+						left_circle_flag = 8;
+						motor_r.total_encoder = 0;
+						
+//						//蜂鸣器计数
+//						count_beep=5;
+							
+					}
+					
+				}	
+				
+				break;
+				
+			case 8:
+				
+				//蜂鸣器
+				if(count_beep)
+				{
+						gpio_set_level(BEEP, GPIO_HIGH);
+						count_beep --;
+				}
+				else
+				{
+						gpio_set_level(BEEP, GPIO_LOW);
+				}
+	
+				if(loss_num.num_lossl>=5){
+					
+					//进行状态8补线
+					for(uint8 i=bottom_line;i>50;i--){
+								
+						left_line[i]=right_line[i]-(uint8)(154-1.2*(119-i));
+						
+						if(left_line[i]<1){
+						
+							left_line[i]=1;
+							
+						}
+						
+						mid_line[i] = limit_uint8(1,(left_line[i]+right_line[i])/2,MT9V03X_W-2);			
+								
+					}
+					
+					motor_r.total_encoder+=motor_r.encoder_speed;
+					
+					if(motor_r.total_encoder>=1500){
+						
+						left_circle_flag=9;
+						
+						motor_r.total_encoder=0;
+						
+//						//蜂鸣器计数
+//						count_beep=5;
+						
+					}
+					
 				}
 				
-			}
+				
+				
+				break;
+				
+			case 9:
+				
+//				//蜂鸣器
+//				if(count_beep)
+//				{
+//						gpio_set_level(BEEP, GPIO_HIGH);
+//						count_beep --;
+//				}
+//				else
+//				{
+//						gpio_set_level(BEEP, GPIO_LOW);
+//				}
+				
+//				gpio_set_level(BEEP, GPIO_LOW);
+				
+				circle_point=circle_zero_point;
 			
+				left_circle_flag=0;
+				
+				break;
 			
-			
-			break;
-			
-		case 9:
-			
-//			//蜂鸣器
-//			if(count_beep)
-//			{
-//					gpio_set_level(BEEP, GPIO_HIGH);
-//					count_beep --;
-//			}
-//			else
-//			{
-//					gpio_set_level(BEEP, GPIO_LOW);
-//			}
-			
-//			gpio_set_level(BEEP, GPIO_LOW);
-			
-			circle_point=circle_zero_point;
+				
+		}
 		
-			circle_flag=0;
-			
-			break;
-		
-			
-	}
+	}	
+	
 	
 	//判断丢线数量若大于15则判断进入十字
 	if(circle_point.x6==0&&loss_num.num_loss>10){
@@ -1033,7 +1373,7 @@ void find_line(uint8 index[MT9V03X_H][MT9V03X_W]){
 		for(uint8 i=110;i>80;i--){
 			
 			//记录左下拐点
-			if(left_line[i]-left_line[i+1]>=1&&left_line[i]-left_line[i-1]>=1&&left_line[i]>=3&&left_line[i]>=10){
+			if(left_line[i]-left_line[i+1]>=1&&left_line[i]-left_line[i-1]>=1&&left_line[i]>=10){
 				
 				cross_point.x1=left_line[i];
 				cross_point.y1=i;

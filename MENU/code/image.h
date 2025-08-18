@@ -104,7 +104,10 @@ extern uint8 mid_line[MT9V03X_H];																//中线存储
 extern uint8 mid_weight[120];																		//中线权重
 extern uint8 final_mid_value;																		//最终中线值
 
-extern uint8 circle_flag;
+extern int right_circle_enable;																	//右圆环使能
+extern uint8 right_circle_flag;																	//右圆环状态
+extern int left_circle_enable;																	//左圆环使能
+extern uint8 left_circle_flag;																	//左圆环状态
 
 extern struct cross cross_point;																//圆环拐点和斜率结构体
 extern struct circle circle_point;															//十字补线的拐点和斜率结构体

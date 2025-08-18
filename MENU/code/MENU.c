@@ -14,7 +14,7 @@ int flash_menu_position=0;													//FLASH界面的层数，表面为0，保存界面为1，
 //int t=115;
 
 #define len_main 3																	//主菜单可进入界面的数量
-#define len_pid 5																		//同理
+#define len_pid 7																		//同理
 #define len_image 1
 #define len_flash 2
 //int32 num2=0;
@@ -60,7 +60,7 @@ void print_menu(){
 		ips200_show_string(16,0,"pid");
 		ips200_show_string(16,16,"image");
 		ips200_show_string(16,32,"flash");
-//		ips200_show_int(48,64,circle_point.y6,6);
+		ips200_show_int(48,64,left_circle_flag,6);
 	
 		ips200_show_string(0,cursor_position*16,">");
 		ips200_show_string(0,last_cursor_position*16," ");
@@ -77,21 +77,27 @@ void print_menu(){
 			ips200_show_string(16,32+16,"l_s");
 			ips200_show_string(16,32+16*2,"c_s");
 			
+			
 			ips200_show_float(48,0,p,4,3);
 			ips200_show_float(48,16,d,4,3);
 			ips200_show_int(48,32,high_speed,4);
 			ips200_show_int(48,32+16,low_speed,4);
 			ips200_show_int(48,32+16*2,circle_speed,4);
 			
+			
 //			ips200_show_uint(8*15,32+16,car_num,2);
 			
-			ips200_show_string(16,32+16*3,"encoder_l");
-			ips200_show_int(8*15,32+16*3,motor_l.encoder_raw,5);
+			ips200_show_string(16,32+16*5,"encoder_l");
+			ips200_show_int(8*15,32+16*5,motor_l.encoder_raw,5);
 			
-			ips200_show_string(16,32+16*4,"encoder_r");
-			ips200_show_int(8*15,32+16*4,motor_r.encoder_raw,5);
+			ips200_show_string(16,32+16*6,"encoder_r");
+			ips200_show_int(8*15,32+16*6,motor_r.encoder_raw,5);
 			
+			ips200_show_string(16,32+16*3,"r_c");
+			ips200_show_int(48,32+16*3,right_circle_enable,2);
 			
+			ips200_show_string(16,32+16*4,"l_c");
+			ips200_show_int(48,32+16*4,left_circle_enable,2);
 		
 			ips200_show_string(0,cursor_position*16,">");
 			ips200_show_string(0,last_cursor_position*16," ");
@@ -128,6 +134,18 @@ void print_menu(){
 			
 		}
 		
+		else if(pid_menu_position==6){				//调节circle_speed的数值显示
+			
+			ips200_show_int(0,0,right_circle_enable,4);
+			
+		}
+		
+		else if(pid_menu_position==7){				//调节circle_speed的数值显示
+			
+			ips200_show_int(0,0,left_circle_enable,4);
+			
+		}
+		
 	}
 	
 	else if(main_menu_position==2){					//图像界面显示
@@ -141,7 +159,13 @@ void print_menu(){
 		
 		ips200_show_uint(0,128+16,mid_line[find_end_line+5],3);
 		
-		ips200_show_uint(0,128+16*2,circle_flag,3);
+		//最终中值显示
+		ips200_show_string(0,128+16*3,"m_value");
+		ips200_show_uint(8*10,128+16*3,final_mid_value,3);
+		
+		
+		ips200_show_uint(8*10,128+16,right_circle_flag,3);
+		ips200_show_uint(8*15,128+16,left_circle_flag,3);
 		
 //		//阈值显示
 //		ips200_show_string(0,128,"threshold");
@@ -189,9 +213,6 @@ void print_menu(){
 		//画边线
 		draw_line();
 	
-		//最终中值显示
-		ips200_show_string(0,128+16*3,"m_value");
-		ips200_show_uint(8*10,128+16*3,final_mid_value,3);
 		
 //		ips200_show_uint(0,128+16*6,t,3);
 		
@@ -281,11 +302,19 @@ void handle(){
 					circle_speed+=10;
 					
 				}
+				
+				else if(pid_menu_position==6){
+				
+					right_circle_enable=1;
+				
+				}
+				
+				else if(pid_menu_position==7){
+				
+					left_circle_enable=1;
+				
+				}
 
-			}
-			
-			else if(main_menu_position==2){
-				circle_flag+=1;
 			}
 			
 			else if(main_menu_position==3){												//选择flash界面
@@ -343,10 +372,18 @@ void handle(){
 					
 				}
 				
-			}
-			
-			else if(main_menu_position==2){
-				circle_flag-=1;
+				else if(pid_menu_position==6){
+				
+					right_circle_enable=0;
+				
+				}
+				
+				else if(pid_menu_position==7){
+				
+					left_circle_enable=0;
+				
+				}
+				
 			}
 			
 			else if(main_menu_position==3){												//选择flash界面
@@ -427,6 +464,22 @@ void handle(){
 				else if(cursor_position == 4){
 					
 					pid_menu_position=5;
+					ips200_clear();
+					rest_cursor();
+					
+				}
+				
+				else if(cursor_position == 5){
+					
+					pid_menu_position=6;
+					ips200_clear();
+					rest_cursor();
+					
+				}
+				
+				else if(cursor_position == 6){
+					
+					pid_menu_position=7;
 					ips200_clear();
 					rest_cursor();
 					
