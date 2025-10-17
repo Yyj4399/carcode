@@ -152,7 +152,7 @@ def process_image_with_blur(input_path, output_path, blur_type='ghosting'):
 def main():
     """主函数"""
     # 设置输入和输出目录
-    input_base_dir = Path("./resized_128x128")
+    input_base_dir = Path("./resized_128x128")  # 从处理后的图片读取
     output_base_dir = Path("./resized_128x128_with_blur")
 
     # 检查输入目录是否存在

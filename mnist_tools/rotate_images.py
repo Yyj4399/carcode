@@ -184,15 +184,19 @@ def main():
     # 设置输入和输出目录
     # 可以根据需要修改这些路径
 
-    # 选项1: 处理原始 28x28 图像
-    # input_dir = "."
+    # 选项1: 处理原始图像 (不推荐,原始图像在 original_images 文件夹)
+    # input_dir = "./original_images"
     # output_dir = "./rotated_images"
 
     # 选项2: 处理缩放后的 128x128 图像
+    # input_dir = "./resized_128x128"
+    # output_dir = "./resized_128x128_rotated"
+
+    # 选项3: 处理缩放+反转后的图像
     # input_dir = "./resized_128x128_inverted"
     # output_dir = "./resized_128x128_rotated_inverted"
 
-    # 选项3: 处理带残影效果的图像
+    # 选项4: 处理带残影效果+反转的图像 (默认)
     input_dir = "./resized_128x128_with_blur_inverted"
     output_dir = "./resized_128x128_with_blur_inverted_rotated"
 
