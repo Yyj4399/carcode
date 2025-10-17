@@ -59,7 +59,7 @@ def process_image(input_path, output_path, label=None):
 def main():
     """主函数"""
     # 设置输入和输出目录
-    input_dir = Path(".")  # 当前目录
+    input_dir = Path("./original_images")  # 原始图片文件夹
     output_dir = Path("./resized_128x128")
 
     # 创建输出目录
