@@ -1,0 +1,52 @@
+# MNIST 原始图像文件 (70,000 张 28x28 图像)
+*.jpg
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# 虚拟环境
+venv/
+env/
+ENV/
+.venv
+
+# IDE 配置
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+
+# 处理后的图像目录 (这些是生成的文件,不需要上传)
+resized_128x128/
+resized_128x128_with_blur/
+resized_128x128_inverted/
+resized_128x128_rotated/
+resized_128x128_rotated_inverted/
+resized_128x128_with_blur_inverted/
+resized_128x128_with_blur_rotated/
+resized_128x128_with_blur_inverted_rotated/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
+
+# 日志文件
+*.log
+
+# 测试覆盖率
+.coverage
+htmlcov/
+
+# 分发/打包
+dist/
+build/
+*.egg-info/
