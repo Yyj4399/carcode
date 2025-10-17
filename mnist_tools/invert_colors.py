@@ -178,17 +178,25 @@ def main():
     # 设置输入和输出目录
     # 可以根据需要修改这些路径
 
-    # 选项1: 处理原始图像 (不推荐,原始图像在 original_images 文件夹)
+    # 选项1: 处理原始图像文件夹
     # input_dir = "./original_images"
-    # output_dir = "./inverted_images"
+    # output_dir = "./original_images_inverted"
 
     # 选项2: 处理缩放后的 128x128 图像
     # input_dir = "./resized_128x128"
     # output_dir = "./resized_128x128_inverted"
 
-    # 选项3: 处理带残影效果的图像 (默认)
+    # 选项3: 处理带残影效果的图像 (推荐,默认)
     input_dir = "./resized_128x128_with_blur"
     output_dir = "./resized_128x128_with_blur_inverted"
+
+    # 选项4: 处理旋转后的图像 (需要指定朝向)
+    # input_dir = "./resized_128x128_rotated/up"
+    # output_dir = "./resized_128x128_rotated_inverted/up"
+
+    # 选项5: 处理带残影+旋转的图像 (需要指定朝向)
+    # input_dir = "./resized_128x128_with_blur_rotated/up"
+    # output_dir = "./resized_128x128_with_blur_rotated_inverted/up"
 
     print("="*60)
     print("MNIST 图像黑白反转脚本")

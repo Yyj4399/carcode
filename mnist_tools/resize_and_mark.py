@@ -59,8 +59,15 @@ def process_image(input_path, output_path, label=None):
 def main():
     """主函数"""
     # 设置输入和输出目录
-    input_dir = Path("./original_images")  # 原始图片文件夹
+    # 可以根据需要修改这些路径
+
+    # 选项1: 处理原始图像文件夹 (推荐,默认)
+    input_dir = Path("./original_images")
     output_dir = Path("./resized_128x128")
+
+    # 选项2: 如果图片在当前目录
+    # input_dir = Path(".")
+    # output_dir = Path("./resized_128x128")
 
     # 创建输出目录
     output_dir.mkdir(exist_ok=True)

@@ -152,8 +152,23 @@ def process_image_with_blur(input_path, output_path, blur_type='ghosting'):
 def main():
     """主函数"""
     # 设置输入和输出目录
-    input_base_dir = Path("./resized_128x128")  # 从处理后的图片读取
+    # 可以根据需要修改这些路径
+
+    # 选项1: 处理缩放后的 128x128 图像 (推荐,默认)
+    input_base_dir = Path("./resized_128x128")
     output_base_dir = Path("./resized_128x128_with_blur")
+
+    # 选项2: 处理缩放+反转后的图像
+    # input_base_dir = Path("./resized_128x128_inverted")
+    # output_base_dir = Path("./resized_128x128_inverted_with_blur")
+
+    # 选项3: 处理旋转后的图像 (需要指定朝向)
+    # input_base_dir = Path("./resized_128x128_rotated/up")
+    # output_base_dir = Path("./resized_128x128_rotated_with_blur/up")
+
+    # 选项4: 处理原始图像文件夹 (不推荐,需要先缩放)
+    # input_base_dir = Path("./original_images")
+    # output_base_dir = Path("./original_images_with_blur")
 
     # 检查输入目录是否存在
     if not input_base_dir.exists():
