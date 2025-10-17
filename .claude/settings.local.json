@@ -1,18 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Read(//d/BaiduNetdiskDownload/mnist_jpg/**)",
-      "Bash(git init:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(gh repo create:*)",
-      "Bash(gh auth:*)",
-      "Bash(where:*)",
-      "Bash(git remote add:*)",
-      "Bash(git branch:*)",
-      "Bash(git push:*)",
-      "Bash(git remote:*)",
-      "Bash(git pull:*)"
+      "Bash(mv test_*.jpg training_*.jpg mnist_tools/)",
+      "Bash(mv:*)"
     ],
     "deny": [],
     "ask": []
