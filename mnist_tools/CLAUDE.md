@@ -71,6 +71,35 @@ pip install -r requirements.txt
 - numpy (数值计算)
 - tqdm (进度条显示)
 
+## 项目目录结构
+
+```
+mnist_tools/
+├── original_images/          # 70,000 张原始 28x28 JPG 图片
+│   ├── training_0_5.jpg
+│   ├── training_1_3.jpg
+│   ├── test_0_7.jpg
+│   └── ...
+├── resized_128x128/          # 缩放后的 128x128 图像(带标记横杠)
+│   ├── 0/
+│   ├── 1/
+│   └── ...
+├── resized_128x128_with_blur/           # 添加残影效果的图像
+├── resized_128x128_with_blur_inverted/  # 反转颜色的图像
+├── resized_128x128_with_blur_inverted_rotated/  # 旋转的图像
+│   ├── up/
+│   ├── down/
+│   ├── left/
+│   └── right/
+├── resize_and_mark.py        # 脚本1: 缩放和标记
+├── add_motion_blur.py        # 脚本2: 添加残影
+├── invert_colors.py          # 脚本3: 颜色反转
+├── rotate_images.py          # 脚本4: 图像旋转
+├── requirements.txt          # Python 依赖
+├── CLAUDE.md                 # 本文档
+└── README.md                 # 项目说明
+```
+
 ## 代码架构
 
 所有图像处理脚本遵循统一的设计模式:
@@ -86,8 +115,9 @@ pip install -r requirements.txt
 所有脚本的输入/输出路径配置都位于各自的 `main()` 函数中。修改配置时:
 1. 打开对应的 .py 文件
 2. 找到 `main()` 函数(通常在文件末尾)
-3. 修改 `input_dir` 和 `output_dir` 变量
-4. 某些脚本还有额外参数(如 `blur_type`, `intensity` 等)
+3. 取消注释想要使用的配置选项,注释掉当前选项
+4. 每个脚本都提供了多个预设的路径配置选项
+5. 某些脚本还有额外参数(如 `blur_type`, `intensity` 等)
 
 ## 图像处理脚本
 
@@ -108,7 +138,11 @@ pip install -r requirements.txt
 python resize_and_mark.py
 ```
 
-**配置位置**: `main()` 函数 (resize_and_mark.py:59) - 修改 `input_dir` 和 `output_dir`
+**配置位置**: `main()` 函数 (resize_and_mark.py:59)
+
+**可用的输入输出路径配置**:
+- ✓ `./original_images` → `./resized_128x128` (推荐,默认)
+- `./` (当前目录) → `./resized_128x128`
 
 **输出**: `./resized_128x128/{0-9}/`
 
@@ -132,12 +166,16 @@ python add_motion_blur.py
 ```
 
 **配置位置**: `main()` 函数 (add_motion_blur.py:152)
-- 修改 `input_base_dir` 和 `output_base_dir`
-- 修改 `blur_type` 选择残影类型 ('ghosting' 或 'motion')
+
+**可用的输入输出路径配置**:
+- ✓ `./resized_128x128` → `./resized_128x128_with_blur` (推荐,默认)
+- `./resized_128x128_inverted` → `./resized_128x128_inverted_with_blur`
+- `./resized_128x128_rotated/up` → `./resized_128x128_rotated_with_blur/up` (需要指定朝向)
+- `./original_images` → `./original_images_with_blur` (不推荐)
 
 **输出**: `./resized_128x128_with_blur/{0-9}/`
 
-**注意**: 此脚本依赖 resize_and_mark.py 的输出,需要先运行 resize_and_mark.py
+**注意**: 此脚本通常处理已缩放的图像,建议先运行 resize_and_mark.py
 
 ### 3. invert_colors.py - 图像颜色反转
 
@@ -159,16 +197,15 @@ python invert_colors.py
 ```
 
 **配置位置**: `main()` 函数 (invert_colors.py:176)
-- 修改 `input_dir` 和 `output_dir`
-- 代码中提供了多个配置选项的注释示例
+
+**可用的输入输出路径配置**:
+- `./original_images` → `./original_images_inverted`
+- `./resized_128x128` → `./resized_128x128_inverted`
+- ✓ `./resized_128x128_with_blur` → `./resized_128x128_with_blur_inverted` (推荐,默认)
+- `./resized_128x128_rotated/up` → `./resized_128x128_rotated_inverted/up` (需要指定朝向)
+- `./resized_128x128_with_blur_rotated/up` → `./resized_128x128_with_blur_rotated_inverted/up` (需要指定朝向)
 
 **输出**: `./resized_128x128_with_blur_inverted/{0-9}/` (默认配置)
-
-**配置选项** (在 main() 函数中修改):
-- 处理原始 28x28 图像
-- 处理缩放后的 128x128 图像
-- 处理带残影效果的图像
-- 处理旋转后的图像
 
 ### 4. rotate_images.py - 图像旋转
 
@@ -188,8 +225,14 @@ python rotate_images.py
 ```
 
 **配置位置**: `main()` 函数 (rotate_images.py:182)
-- 修改 `input_dir` 和 `output_dir`
-- 代码中提供了多个配置选项的注释示例
+
+**可用的输入输出路径配置**:
+- `./original_images` → `./original_images_rotated`
+- `./resized_128x128` → `./resized_128x128_rotated`
+- `./resized_128x128_inverted` → `./resized_128x128_inverted_rotated`
+- `./resized_128x128_with_blur` → `./resized_128x128_with_blur_rotated`
+- ✓ `./resized_128x128_with_blur_inverted` → `./resized_128x128_with_blur_inverted_rotated` (推荐,默认)
+- `./resized_128x128_inverted_with_blur` → `./resized_128x128_inverted_with_blur_rotated`
 
 **输出**: `./resized_128x128_with_blur_inverted_rotated/{up,down,left,right}/{0-9}/`
 
@@ -197,16 +240,18 @@ python rotate_images.py
 ```
 resized_128x128_rotated/
 ├── up/
-│   ├── 0/
-│   ├── 1/
+│   ├── 0_up/
+│   ├── 1_up/
 │   └── ...
 ├── down/
-│   ├── 0/
-│   ├── 1/
+│   ├── 0_down/
+│   ├── 1_down/
 │   └── ...
 ├── left/
+│   ├── 0_left/
 │   └── ...
 └── right/
+    ├── 0_right/
     └── ...
 ```
 
@@ -215,33 +260,62 @@ resized_128x128_rotated/
 完整的数据增强管道按以下顺序执行:
 
 1. **基础缩放**: `resize_and_mark.py`
+   - 从 `original_images/` 读取原始 28x28 图像
    - 生成 128x128 图像并添加特征标记(数字6和9的横杠)
+   - 输出到 `resized_128x128/`
 
 2. **残影效果** (可选): `add_motion_blur.py`
+   - 从 `resized_128x128/` 读取
    - 添加运动模糊或残影效果
+   - 输出到 `resized_128x128_with_blur/`
 
 3. **颜色反转** (可选): `invert_colors.py`
+   - 从 `resized_128x128_with_blur/` 读取
    - 反转黑白像素
+   - 输出到 `resized_128x128_with_blur_inverted/`
 
 4. **旋转变换** (可选): `rotate_images.py`
+   - 从 `resized_128x128_with_blur_inverted/` 读取
    - 生成4个朝向的旋转版本
+   - 输出到 `resized_128x128_with_blur_inverted_rotated/`
 
 **典型处理链示例**:
 ```bash
-# 完整管道
+# 完整管道 (推荐的默认流程)
 python resize_and_mark.py          # 步骤1: 缩放到 128x128
 python add_motion_blur.py          # 步骤2: 添加残影
 python invert_colors.py            # 步骤3: 颜色反转
 python rotate_images.py            # 步骤4: 旋转为4个方向
 ```
 
+**其他可能的处理流程**:
+```bash
+# 简单流程: 只缩放
+python resize_and_mark.py
+
+# 缩放 + 反转
+python resize_and_mark.py
+python invert_colors.py  # 需要修改配置为 resized_128x128 → resized_128x128_inverted
+
+# 缩放 + 残影 + 旋转 (跳过反转)
+python resize_and_mark.py
+python add_motion_blur.py
+python rotate_images.py  # 需要修改配置为 resized_128x128_with_blur → ...
+```
+
+**注意**: 修改处理顺序时,需要调整各脚本 `main()` 函数中的输入输出路径配置
+
 ### 输出目录结构
 
 ```
-.
+mnist_tools/
+├── original_images/                              # 原始 28x28 图像 (70,000张)
+│   ├── training_*.jpg
+│   └── test_*.jpg
 ├── resized_128x128/                              # 缩放后的图像(带横杠)
 │   ├── 0/
-│   └── ...
+│   ├── 1/
+│   └── ... (0-9)
 ├── resized_128x128_with_blur/                    # 添加残影效果
 │   ├── 0/
 │   └── ...
@@ -250,16 +324,63 @@ python rotate_images.py            # 步骤4: 旋转为4个方向
 │   └── ...
 └── resized_128x128_with_blur_inverted_rotated/   # 旋转为4个朝向
     ├── up/
-    │   ├── 0/
+    │   ├── 0_up/
+    │   ├── 1_up/
     │   └── ...
     ├── down/
+    │   ├── 0_down/
+    │   └── ...
     ├── left/
+    │   ├── 0_left/
+    │   └── ...
     └── right/
+        ├── 0_right/
+        └── ...
 ```
+
+## 路径配置快速参考
+
+### 所有可能的输入输出路径组合
+
+**resize_and_mark.py**:
+| 输入路径 | 输出路径 | 说明 |
+|---------|---------|------|
+| `./original_images` ✓ | `./resized_128x128` | 推荐,默认 |
+| `.` | `./resized_128x128` | 图片在当前目录 |
+
+**add_motion_blur.py**:
+| 输入路径 | 输出路径 | 说明 |
+|---------|---------|------|
+| `./resized_128x128` ✓ | `./resized_128x128_with_blur` | 推荐,默认 |
+| `./resized_128x128_inverted` | `./resized_128x128_inverted_with_blur` | 先反转后残影 |
+| `./resized_128x128_rotated/up` | `./resized_128x128_rotated_with_blur/up` | 对旋转图像添加残影 |
+| `./original_images` | `./original_images_with_blur` | 不推荐 |
+
+**invert_colors.py**:
+| 输入路径 | 输出路径 | 说明 |
+|---------|---------|------|
+| `./original_images` | `./original_images_inverted` | 反转原始图像 |
+| `./resized_128x128` | `./resized_128x128_inverted` | 反转缩放图像 |
+| `./resized_128x128_with_blur` ✓ | `./resized_128x128_with_blur_inverted` | 推荐,默认 |
+| `./resized_128x128_rotated/up` | `./resized_128x128_rotated_inverted/up` | 反转旋转图像 |
+| `./resized_128x128_with_blur_rotated/up` | `./resized_128x128_with_blur_rotated_inverted/up` | 反转残影+旋转 |
+
+**rotate_images.py**:
+| 输入路径 | 输出路径 | 说明 |
+|---------|---------|------|
+| `./original_images` | `./original_images_rotated` | 旋转原始图像 |
+| `./resized_128x128` | `./resized_128x128_rotated` | 旋转缩放图像 |
+| `./resized_128x128_inverted` | `./resized_128x128_inverted_rotated` | 旋转反转图像 |
+| `./resized_128x128_with_blur` | `./resized_128x128_with_blur_rotated` | 旋转残影图像 |
+| `./resized_128x128_with_blur_inverted` ✓ | `./resized_128x128_with_blur_inverted_rotated` | 推荐,默认 |
+| `./resized_128x128_inverted_with_blur` | `./resized_128x128_inverted_with_blur_rotated` | 另一种顺序 |
 
 ## 重要提示
 
-- 修改配置时,请确保输入目录与前一步的输出目录匹配
-- 每个脚本都能自动检测输入目录结构(根目录或数字分类文件夹)
-- 文件名会累积添加后缀 (如 `_inverted`, `_up` 等)
-- 所有核心函数都可以单独调用用于自定义处理流程
+- **原始图像位置**: 所有 70,000 张原始 JPG 图片现在存放在 `original_images/` 文件夹中
+- **修改配置**: 在各脚本的 `main()` 函数中取消注释相应配置选项
+- **输入输出匹配**: 确保输入目录与前一步的输出目录匹配
+- **目录结构检测**: 每个脚本都能自动检测输入目录结构(根目录或数字分类文件夹)
+- **文件名后缀**: 文件名会累积添加后缀 (如 `_inverted`, `_up` 等)
+- **独立函数调用**: 所有核心函数都可以单独调用用于自定义处理流程
+- **处理顺序灵活**: 可以跳过某些步骤或改变处理顺序,只需调整配置即可
