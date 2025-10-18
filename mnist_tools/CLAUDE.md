@@ -149,6 +149,9 @@ mnist_tools/
 
 10. **batch_invert_rotated.py** - 批量处理旋转图像的像素反转
 11. **test_invert_with_rotation.py** - 测试旋转方向后缀功能
+12. **rename_orientation_folders.py** - 批量重命名旋转文件夹的朝向后缀 (文件夹名)
+13. **rename_image_orientation_suffix.py** - 批量重命名图像文件的朝向后缀 (文件名) (2025-10-18 新增)
+14. **rename_subfolders_with_orientation.py** - 批量重命名子文件夹,添加朝向后缀 (2025-10-18 新增)
 
 ### 1. resize_and_mark.py - 图像缩放和标记
 
@@ -256,10 +259,10 @@ python invert_colors.py
 将图像旋转为4个不同的朝向(上、下、左、右)。
 
 **功能**:
-- 生成4个旋转方向: 上(0°)、下(180°)、左(270°)、右(90°)
+- 生成4个旋转方向: 向右(0°)、向左(180°)、向上(90°)、向下(270°)
 - 输出组织为 `{朝向}/{数字类别}/` 结构
 - 自动检测输入目录结构
-- 生成的文件名添加朝向后缀 (如 `_up`, `_down`, `_left`, `_right`)
+- 生成的文件名添加朝向后缀 (如 `_right`, `_left`, `_up`, `_down`)
 
 **核心函数**: `rotate_image(image, angle)` (rotate_images.py:12)
 
@@ -670,6 +673,47 @@ python test_invert_with_rotation.py
 ✓ 文件夹 2_down 存在，包含 7000 张图像
 ```
 
+### 12. rename_orientation_folders.py - 批量重命名旋转文件夹的朝向
+
+批量重命名旋转图像文件夹的朝向名称，使其与实际数字朝向一致。
+
+**功能**:
+- 自动交换文件夹名称以匹配实际朝向
+- 重命名子文件夹的朝向后缀
+- 支持批量处理多个旋转文件夹
+- 显示详细的重命名日志
+
+**核心函数**:
+- `rename_subfolders(base_dir)` - 重命名指定目录下的子文件夹 (rename_orientation_folders.py:11)
+
+**运行**:
+```bash
+python rename_orientation_folders.py
+```
+
+**配置位置**: `main()` 函数 (rename_orientation_folders.py:56)
+
+**默认配置**:
+- 处理文件夹:
+  - `./resized_128x128_rotated_inverted`
+  - `./resized_128x128_with_blur_rotated`
+  - `./resized_128x128_with_blur_inverted_rotated`
+
+**重命名映射**:
+- `down` 文件夹中: `*_left` → `*_down`
+- `left` 文件夹中: `*_down` → `*_left`
+- `up` 文件夹中: `*_right` → `*_up`
+- `right` 文件夹中: `*_up` → `*_right`
+
+**使用场景**:
+- 修正旧版本的朝向命名
+- 在更新 rotate_images.py 后批量重命名现有文件夹
+- 确保文件夹名称与实际数字朝向一致
+
+**注意事项**:
+- 运行此脚本前需要先手动交换主文件夹名称 (down ↔ up, left ↔ right)
+- 此脚本仅重命名子文件夹的后缀
+
 ### 处理流程顺序
 
 完整的数据增强管道按以下顺序执行:
@@ -805,6 +849,108 @@ mnist_tools/
 - **修改配置**: 在各脚本的 `main()` 函数中取消注释相应配置选项
 - **输入输出匹配**: 确保输入目录与前一步的输出目录匹配
 - **目录结构检测**: 每个脚本都能自动检测输入目录结构(根目录或数字分类文件夹)
-- **文件名后缀**: 文件名会累积添加后缀 (如 `_inverted`, `_up` 等)
+- **文件名后缀**: 文件名会累积添加后缀 (如 `_inverted`, `_right` 等)
 - **独立函数调用**: 所有核心函数都可以单独调用用于自定义处理流程
 - **处理顺序灵活**: 可以跳过某些步骤或改变处理顺序,只需调整配置即可
+
+## 朝向命名说明 (2025-10-18 更新)
+
+**重要**: 文件夹朝向命名已更正为与实际数字朝向一致
+
+- `right` 文件夹: 数字向右朝向 (0° 原始方向)
+- `left` 文件夹: 数字向左朝向 (180° 旋转)
+- `up` 文件夹: 数字向上朝向 (90° 顺时针旋转)
+- `down` 文件夹: 数字向下朝向 (270° 顺时针旋转)
+
+**注意**: 如果您有旧版本的旋转图像文件夹，可以使用以下脚本进行批量重命名:
+- `rename_orientation_folders.py` - 重命名主朝向文件夹
+- `rename_image_orientation_suffix.py` - 重命名图像文件的朝向后缀
+- `rename_subfolders_with_orientation.py` - 为子文件夹添加朝向后缀
+
+### 13. rename_image_orientation_suffix.py - 批量重命名图像文件的朝向后缀
+
+批量重命名图像文件中的朝向后缀,使其与所在文件夹的朝向名称一致。
+
+**功能**:
+- 自动修正图像文件名中的朝向后缀
+- 支持批量处理多个旋转文件夹
+- 保持文件夹结构不变
+- 显示详细的重命名进度和统计
+
+**核心函数**:
+- `rename_image_files(base_dir)` - 重命名指定目录下所有图片文件的朝向后缀 (rename_image_orientation_suffix.py:10)
+
+**运行**:
+```bash
+python rename_image_orientation_suffix.py
+```
+
+**配置位置**: `main()` 函数 (rename_image_orientation_suffix.py:90)
+
+**默认配置**:
+- 处理文件夹:
+  - `./resized_128x128_rotated`
+  - `./resized_128x128_rotated_inverted`
+  - `./resized_128x128_with_blur_rotated`
+  - `./resized_128x128_with_blur_inverted_rotated`
+
+**重命名映射**:
+- `down` 文件夹中: `*_right*.jpg` → `*_down*.jpg`
+- `left` 文件夹中: `*_up*.jpg` → `*_left*.jpg`
+- `up` 文件夹中: `*_left*.jpg` → `*_up*.jpg`
+- `right` 文件夹中: `*_down*.jpg` → `*_right*.jpg`
+
+**使用场景**:
+- 修正旧版本 rotate_images.py 生成的文件名
+- 确保图像文件名的朝向后缀与文件夹名称一致
+- 在更新旋转逻辑后批量更正现有文件
+
+**实际运行结果** (2025-10-18):
+- 处理了 `resized_128x128_with_blur_inverted_rotated/right` 文件夹
+- 成功重命名 64,875 张图片 (right 文件夹中的 `*_down*.jpg` → `*_right*.jpg`)
+
+**注意事项**:
+- 运行前会显示警告并要求确认
+- 仅处理包含旧朝向后缀的文件
+- 如果文件名已经正确则跳过
+
+### 14. rename_subfolders_with_orientation.py - 批量重命名子文件夹添加朝向后缀
+
+批量为旋转图像文件夹的子文件夹添加朝向后缀,使子文件夹名称与朝向一致。
+
+**功能**:
+- 为只有数字的子文件夹添加朝向后缀
+- 支持批量处理多个旋转文件夹
+- 自动跳过已有后缀的文件夹
+- 显示详细的重命名进度
+
+**核心函数**:
+- `rename_subfolders_with_orientation(base_dir)` - 重命名子文件夹添加朝向后缀 (rename_subfolders_with_orientation.py:12)
+
+**运行**:
+```bash
+python rename_subfolders_with_orientation.py
+```
+
+**配置位置**: `main()` 函数 (rename_subfolders_with_orientation.py:83)
+
+**默认配置**:
+- 处理文件夹:
+  - `./resized_128x128_rotated`
+  - `./resized_128x128_rotated_inverted`
+
+**重命名映射**:
+- `down/0/` → `down/0_down/`
+- `left/5/` → `left/5_left/`
+- `up/9/` → `up/9_up/`
+- `right/3/` → `right/3_right/`
+
+**使用场景**:
+- 为早期生成的旋转图像文件夹添加统一的命名规范
+- 使子文件夹名称与其他旋转文件夹保持一致
+- 便于识别每个子文件夹对应的朝向
+
+**注意事项**:
+- 仅处理名称为单个数字(0-9)的文件夹
+- 如果目标文件夹已存在会跳过并显示警告
+- 运行前会显示警告并要求确认
