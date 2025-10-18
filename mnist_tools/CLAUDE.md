@@ -98,6 +98,11 @@ mnist_tools/
 ├── rotate_images.py          # 脚本4: 图像旋转
 ├── merge_digits.py           # 脚本5: 数字融合
 ├── delete_unwanted_images.py # 脚本6: 删除不需要的图像
+├── combine_merged_folders.py # 脚本7: 合并多个二位数图像文件夹
+├── merge_single_digits.py    # 脚本8: 生成单个数字图像
+├── merge_and_cleanup_single_digits.py # 脚本9: 合并并清理单个数字图像
+├── batch_invert_rotated.py   # 批处理脚本: 批量反转旋转图像
+├── test_invert_with_rotation.py # 测试脚本: 测试旋转方向后缀功能
 ├── requirements.txt          # Python 依赖
 ├── CLAUDE.md                 # 本文档
 └── README.md                 # 项目说明
@@ -123,6 +128,27 @@ mnist_tools/
 5. 某些脚本还有额外参数(如 `blur_type`, `intensity` 等)
 
 ## 图像处理脚本
+
+### 核心处理脚本 (1-9)
+
+这些是主要的图像处理脚本，按照处理流程编号：
+
+1. **resize_and_mark.py** - 图像缩放和标记
+2. **add_motion_blur.py** - 添加残影效果
+3. **invert_colors.py** - 图像颜色反转
+4. **rotate_images.py** - 图像旋转
+5. **merge_digits.py** - 数字融合
+6. **delete_unwanted_images.py** - 删除不需要的图像文件
+7. **combine_merged_folders.py** - 合并多个二位数图像文件夹
+8. **merge_single_digits.py** - 生成单个数字图像
+9. **merge_and_cleanup_single_digits.py** - 合并并清理单个数字图像
+
+### 辅助工具脚本
+
+这些脚本用于批量处理和测试：
+
+10. **batch_invert_rotated.py** - 批量处理旋转图像的像素反转
+11. **test_invert_with_rotation.py** - 测试旋转方向后缀功能
 
 ### 1. resize_and_mark.py - 图像缩放和标记
 
@@ -193,6 +219,12 @@ python add_motion_blur.py
 **核心函数**:
 - `invert_image(image)` - 使用 PIL (invert_colors.py:13)
 - `invert_image_numpy(image)` - 使用 numpy (invert_colors.py:27)
+- `process_images_with_inversion(input_dir, output_dir)` - 批量处理 (invert_colors.py:47)
+
+**旋转方向自动检测** (2025-10-18 新增):
+- 自动检测输入路径中的旋转方向关键词 (up/down/left/right)
+- 输出文件夹自动添加方向后缀 (例如: 0 → 0_down, 1 → 1_up)
+- 支持处理旋转后的图像并保持方向标识
 
 **运行**:
 ```bash
@@ -204,11 +236,20 @@ python invert_colors.py
 **可用的输入输出路径配置**:
 - `./original_images` → `./original_images_inverted`
 - `./resized_128x128` → `./resized_128x128_inverted`
-- ✓ `./resized_128x128_with_blur` → `./resized_128x128_with_blur_inverted` (推荐,默认)
-- `./resized_128x128_rotated/up` → `./resized_128x128_rotated_inverted/up` (需要指定朝向)
-- `./resized_128x128_with_blur_rotated/up` → `./resized_128x128_with_blur_rotated_inverted/up` (需要指定朝向)
+- `./resized_128x128_with_blur` → `./resized_128x128_with_blur_inverted`
+- ✓ `./resized_128x128_rotated/{direction}` → `./resized_128x128_rotated_inverted/{direction}` (当前配置: right)
+- `./resized_128x128_with_blur_rotated/{direction}` → `./resized_128x128_with_blur_rotated_inverted/{direction}` (需要指定朝向)
 
-**输出**: `./resized_128x128_with_blur_inverted/{0-9}/` (默认配置)
+**输出**: `./resized_128x128_rotated_inverted/right/{0-9}_right/` (当前配置)
+
+**批量处理旋转图像**:
+对于 resized_128x128_rotated 这样包含多个方向的文件夹，可以使用 batch_invert_rotated.py 批量处理所有方向，或者手动修改 invert_colors.py 配置依次处理每个方向。
+
+处理旋转图像的结果 (2025-10-18):
+- 输入: `resized_128x128_rotated/{up,down,left,right}/{0-9}/`
+- 输出: `resized_128x128_rotated_inverted/{up,down,left,right}/{0-9}_{direction}/`
+- 每个方向: 70,000 张图像，10 个文件夹 (0_direction 到 9_direction)
+- 总计: 280,000 张反转图像 (4 个方向 × 70,000)
 
 ### 4. rotate_images.py - 图像旋转
 
@@ -441,6 +482,193 @@ output_dir = Path("./merged_combined")   # 输出文件夹
 - merged_inverted: 568,170 张 (50.0%)
 - merged_with_blur_inverted: 568,170 张 (50.0%)
 - 每个两位数: 12,626 张图像
+
+### 8. merge_and_cleanup_single_digits.py - 合并并清理单个数字图像(1-9)
+
+将 merged_inverted 和 merged_with_blur_inverted 中的单个数字图像(01-09) 合并到 merged_combined，然后删除原文件夹中的这些图像。
+
+**功能**:
+- 从两个源文件夹复制单个数字图像(01-09)到合并文件夹
+- 每个数字的数量与对应两位数的数量相同
+- 合并后删除源文件夹中的单个数字图像
+- 删除空的文件夹
+- 避免文件覆盖，添加源标识
+
+**核心函数**:
+- `merge_single_digits_to_combined(source_dirs, output_dir, delete_after_merge)` (merge_and_cleanup_single_digits.py:12) - 合并和清理
+
+**运行**:
+```bash
+python merge_and_cleanup_single_digits.py
+```
+
+**配置位置**: `main()` 函数 (merge_and_cleanup_single_digits.py:164)
+
+**默认配置**:
+- 源文件夹1: `./merged_inverted` (不带残影)
+- 源文件夹2: `./merged_with_blur_inverted` (带残影)
+- 输出文件夹: `./merged_combined`
+- 删除源文件: True
+
+**输出**: `./merged_combined/{01-09}/`
+
+**实际运行结果**:
+- 总共复制: 227,268 张图像
+- merged_inverted: 113,634 张
+- merged_with_blur_inverted: 113,634 张
+- 每个单个数字: 25,252 张图像
+
+### 9. merge_single_digits.py - 生成单个数字图像(1-9)
+
+将单个数字(1-9)的图像处理成与两位数相同的格式和数量，并放入相同的文件夹结构中。
+
+**功能**:
+- 从两个源文件夹读取单个数字图像
+- 为每个单个数字生成与对应两位数相同数量的图像
+- 数字1-9分别放入文件夹01-09
+- 每个数字的数量与对应两位数的数量相同（例如：数字1的数量=11的数量）
+- 支持多个源文件夹（只有像素反转 + 残影+像素反转）
+- 文件名包含源标识（_plain 或 _blur）
+
+**核心函数**:
+- `process_single_digit(img, output_size)` (merge_single_digits.py:18) - 处理单个数字图像
+- `get_target_count_for_digit(digit, merged_dirs)` (merge_single_digits.py:37) - 获取目标数量
+- `generate_single_digit_images(source_dirs, output_dirs, merged_dirs, output_size)` (merge_single_digits.py:103) - 生成图像
+
+**运行**:
+```bash
+python merge_single_digits.py
+```
+
+**配置位置**: `main()` 函数 (merge_single_digits.py:185)
+
+**默认配置**:
+- 源文件夹1: `./resized_128x128_inverted` (只有像素反转的单个数字)
+- 源文件夹2: `./resized_128x128_with_blur_inverted` (残影+像素反转的单个数字)
+- 输出文件夹1: `./merged_inverted` (添加到两位数所在的文件夹)
+- 输出文件夹2: `./merged_with_blur_inverted`
+- 参考两位数文件夹: `./merged_inverted` 和 `./merged_with_blur_inverted`
+
+**输出**:
+- `./merged_inverted/{01-09}/` (单个数字图像，数量与对应两位数相同)
+- `./merged_with_blur_inverted/{01-09}/`
+
+**数量对应关系**:
+- 数字1 → 文件夹01 → 数量与11相同
+- 数字2 → 文件夹02 → 数量与21相同
+- ...
+- 数字9 → 文件夹09 → 数量与91相同
+
+**文件命名格式**:
+- `single_{数字}_{索引}_plain.jpg` (不带残影)
+- `single_{数字}_{索引}_blur.jpg` (带残影)
+- 例如: `single_01_000000_plain.jpg`, `single_05_001234_blur.jpg`
+
+**使用场景**:
+- 为单个数字生成与两位数一致的训练样本
+- 确保数据集中单个数字和两位数的数量匹配
+- 支持多源混合（带残影/不带残影）
+
+**实际运行结果示例**:
+- 每个单个数字(1-9): 12,626 张图像（与对应两位数相同）
+- 总共生成: 113,634 张单个数字图像 (9个数字 × 12,626张)
+- 每个源各生成: 113,634 张图像
+
+**注意事项**:
+- 必须先运行 merge_digits.py 生成两位数图像
+- 源图像会被随机重复选择以达到目标数量
+- 输出直接添加到两位数所在的文件夹中（01-09）
+
+### 10. batch_invert_rotated.py - 批量处理旋转图像的像素反转
+
+批量处理 resized_128x128_rotated 文件夹中所有方向（up/down/left/right）的图像，对每个方向进行像素反转。
+
+**功能**:
+- 自动处理4个旋转方向的图像
+- 调用 invert_colors.py 的核心函数进行像素反转
+- 保持旋转方向的文件夹结构
+- 显示详细的处理进度和统计信息
+
+**核心函数**:
+- 导入并使用 `process_images_with_inversion()` 来自 invert_colors.py (batch_invert_rotated.py:11)
+
+**运行**:
+```bash
+python batch_invert_rotated.py
+```
+
+**配置位置**: `main()` 函数 (batch_invert_rotated.py:14)
+
+**默认配置**:
+- 源文件夹: `./resized_128x128_rotated/{up,down,left,right}/`
+- 输出文件夹: `./resized_128x128_rotated_inverted/{up,down,left,right}/`
+- 处理方向: ['up', 'down', 'left', 'right']
+
+**输出**: `./resized_128x128_rotated_inverted/{up,down,left,right}/{0-9}_{direction}/`
+
+**输出目录结构示例**:
+```
+resized_128x128_rotated_inverted/
+├── up/
+│   ├── 0_up/
+│   ├── 1_up/
+│   └── ...
+├── down/
+│   ├── 0_down/
+│   ├── 1_down/
+│   └── ...
+├── left/
+│   ├── 0_left/
+│   └── ...
+└── right/
+    ├── 0_right/
+    └── ...
+```
+
+**使用场景**:
+- 一次性处理所有旋转方向的图像
+- 避免手动修改配置并重复运行 invert_colors.py
+- 适用于需要批量处理多个方向的场景
+
+**处理结果**:
+- 每个方向: 70,000 张反转图像
+- 总计: 280,000 张反转图像 (4个方向)
+- 每个方向包含10个子文件夹 (0_direction 到 9_direction)
+
+### 11. test_invert_with_rotation.py - 测试旋转方向后缀功能
+
+测试 invert_colors.py 的旋转方向自动检测和文件夹命名功能。
+
+**功能**:
+- 验证旋转方向自动检测是否正常工作
+- 测试输出文件夹名称是否正确添加方向后缀
+- 检查处理后的图像数量和文件夹结构
+
+**核心函数**:
+- 导入并使用 `process_images_with_inversion()` 来自 invert_colors.py (test_invert_with_rotation.py:6)
+
+**运行**:
+```bash
+python test_invert_with_rotation.py
+```
+
+**测试内容**:
+- 测试输入: `./resized_128x128_with_blur_rotated/down/`
+- 测试输出: `./test_output_inverted/down/`
+- 验证输出文件夹名称格式: `{digit}_down`
+- 检查前3个数字文件夹的图像数量
+
+**使用场景**:
+- 在正式批量处理前进行测试
+- 验证新功能是否正常工作
+- 调试旋转方向检测逻辑
+
+**测试输出示例**:
+```
+✓ 文件夹 0_down 存在，包含 7000 张图像
+✓ 文件夹 1_down 存在，包含 7000 张图像
+✓ 文件夹 2_down 存在，包含 7000 张图像
+```
 
 ### 处理流程顺序
 

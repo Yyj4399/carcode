@@ -63,6 +63,18 @@ def process_images_with_inversion(input_dir, output_dir):
     # 创建输出目录
     output_path.mkdir(parents=True, exist_ok=True)
 
+    # 检测输入路径中是否包含旋转方向
+    direction_suffix = ""
+    input_dir_str = str(input_dir).lower()
+
+    # 检查路径中是否包含旋转方向关键词
+    rotation_directions = ['up', 'down', 'left', 'right']
+    for direction in rotation_directions:
+        if f"/{direction}" in input_dir_str.replace("\\", "/") or f"\\{direction}" in input_dir_str:
+            direction_suffix = f"_{direction}"
+            print(f"检测到旋转方向: {direction}")
+            break
+
     # 收集所有需要处理的图像
     # 支持两种输入目录结构:
     # 1. 直接在根目录下的图像 (training_*.jpg, test_*.jpg)
@@ -71,21 +83,36 @@ def process_images_with_inversion(input_dir, output_dir):
     all_images = []
 
     # 检查是否有数字子文件夹
-    has_digit_folders = any((input_path / str(d)).exists() for d in range(10))
+    # 支持两种命名: 纯数字(0-9) 或 带方向后缀(0_down, 1_up等)
+    digit_folders_found = []
+
+    for digit in range(10):
+        # 检查纯数字文件夹
+        if (input_path / str(digit)).exists():
+            digit_folders_found.append((digit, str(digit)))
+        # 检查带方向后缀的文件夹
+        elif direction_suffix:
+            suffixed_name = f"{digit}{direction_suffix}"
+            if (input_path / suffixed_name).exists():
+                digit_folders_found.append((digit, suffixed_name))
+
+    has_digit_folders = len(digit_folders_found) > 0
 
     if has_digit_folders:
         # 从数字子文件夹中收集图像
         print("检测到按数字分类的文件夹结构")
 
-        # 为每个数字标签(0-9)创建输出子文件夹
-        for digit in range(10):
-            digit_output_dir = output_path / str(digit)
+        # 为每个数字标签(0-9)创建输出子文件夹（带方向后缀）
+        for digit, input_folder_name in digit_folders_found:
+            # 输出文件夹名：如果有方向后缀，使用带后缀的名称
+            output_folder_name = f"{digit}{direction_suffix}" if direction_suffix else str(digit)
+            digit_output_dir = output_path / output_folder_name
             digit_output_dir.mkdir(exist_ok=True)
 
-            digit_dir = input_path / str(digit)
+            digit_dir = input_path / input_folder_name
             if digit_dir.exists():
                 images = list(digit_dir.glob("*.jpg"))
-                all_images.extend([(img, digit) for img in images])
+                all_images.extend([(img, digit, direction_suffix) for img in images])
     else:
         # 从根目录收集图像
         print("检测到根目录图像结构")
@@ -96,10 +123,10 @@ def process_images_with_inversion(input_dir, output_dir):
                 # 从文件名提取标签 (格式: training_1234_7.jpg 或 test_1234_7.jpg)
                 parts = filename.replace('.jpg', '').split('_')
                 label = int(parts[-1])
-                all_images.append((img_path, label))
+                all_images.append((img_path, label, direction_suffix))
             except (IndexError, ValueError):
                 # 如果无法提取标签,使用 None
-                all_images.append((img_path, None))
+                all_images.append((img_path, None, direction_suffix))
 
     if not all_images:
         print("未找到任何图像文件!")
@@ -108,6 +135,8 @@ def process_images_with_inversion(input_dir, output_dir):
     print(f"\n找到 {len(all_images)} 张图像")
     print(f"输入目录: {input_path.absolute()}")
     print(f"输出目录: {output_path.absolute()}")
+    if direction_suffix:
+        print(f"方向后缀: {direction_suffix}")
     print("开始反转黑白像素...\n")
 
     # 统计信息
@@ -119,7 +148,7 @@ def process_images_with_inversion(input_dir, output_dir):
     }
 
     # 处理每张图像
-    for img_path, label in tqdm(all_images, desc="处理进度"):
+    for img_path, label, dir_suffix in tqdm(all_images, desc="处理进度"):
         filename = img_path.name
 
         # 生成新的文件名
@@ -128,7 +157,9 @@ def process_images_with_inversion(input_dir, output_dir):
 
         # 设置输出路径
         if has_digit_folders and label is not None:
-            output_file = output_path / str(label) / new_filename
+            # 使用带方向后缀的文件夹名
+            digit_folder_name = f"{label}{dir_suffix}"
+            output_file = output_path / digit_folder_name / new_filename
         else:
             output_file = output_path / new_filename
 
@@ -167,7 +198,8 @@ def process_images_with_inversion(input_dir, output_dir):
         for digit in range(10):
             count = stats['by_digit'][digit]
             if count > 0:
-                print(f"  数字 {digit}: {count:6d} 张 -> {output_path / str(digit)}")
+                digit_folder_name = f"{digit}{direction_suffix}"
+                print(f"  数字 {digit}: {count:6d} 张 -> {output_path / digit_folder_name}")
 
     print(f"\n输出目录: {output_path.absolute()}")
     print("="*60)
@@ -187,12 +219,12 @@ def main():
     # output_dir = "./resized_128x128_inverted"
 
     # 选项3: 处理带残影效果的图像 (推荐,默认)
-    input_dir = "./resized_128x128_with_blur"
-    output_dir = "./resized_128x128_with_blur_inverted"
+    # input_dir = "./resized_128x128_with_blur"
+    # output_dir = "./resized_128x128_with_blur_inverted"
 
     # 选项4: 处理旋转后的图像 (需要指定朝向)
-    # input_dir = "./resized_128x128_rotated/up"
-    # output_dir = "./resized_128x128_rotated_inverted/up"
+    input_dir = "./resized_128x128_rotated/right"
+    output_dir = "./resized_128x128_rotated_inverted/right"
 
     # 选项5: 处理带残影+旋转的图像 (需要指定朝向)
     # input_dir = "./resized_128x128_with_blur_rotated/up"
