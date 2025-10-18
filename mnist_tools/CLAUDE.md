@@ -91,10 +91,13 @@ mnist_tools/
 │   ├── down/
 │   ├── left/
 │   └── right/
+├── merged_digits_128x128/    # 融合后的两位数图像
 ├── resize_and_mark.py        # 脚本1: 缩放和标记
 ├── add_motion_blur.py        # 脚本2: 添加残影
 ├── invert_colors.py          # 脚本3: 颜色反转
 ├── rotate_images.py          # 脚本4: 图像旋转
+├── merge_digits.py           # 脚本5: 数字融合
+├── delete_unwanted_images.py # 脚本6: 删除不需要的图像
 ├── requirements.txt          # Python 依赖
 ├── CLAUDE.md                 # 本文档
 └── README.md                 # 项目说明
@@ -255,6 +258,136 @@ resized_128x128_rotated/
     └── ...
 ```
 
+### 5. merge_digits.py - 数字融合
+
+将两个单独的数字图像水平拼接成一个包含两位数的 128x128 图像。
+
+**功能**:
+- 将两张单独的数字图像拼接成两位数
+- **自动裁剪白边**: 去除数字周围多余空白,保留主体（5像素安全边距）
+- **优化间距**: 根据数字宽度自动计算合理间距(3-6%),更自然紧凑
+- **居中对齐**: 两个数字在画布中水平和垂直居中,确保视觉平衡
+- **完整显示**: 数字占画布80%高度,保证不被裁剪
+- **避免白线**: 直接在目标尺寸画布上粘贴,无需二次缩放
+- 支持随机生成模式和顺序生成模式
+- 输出尺寸统一为 128x128 像素
+
+**融合规则**:
+- **0不能为个位**: 避免生成 10, 20, 30... 等
+- **自动排除00**: 由于0不能为个位，00自然被排除
+- **有效范围**: 01-09, 11-19, 21-29, ..., 91-99 (共90个两位数)
+
+**核心函数**:
+- `crop_whitespace(img, threshold)` (merge_digits.py:14) - 裁剪白边，保留5像素安全边距
+- `merge_two_digits(img1, img2, output_size)` (merge_digits.py:53) - 融合两个数字
+
+**运行**:
+```bash
+python merge_digits.py
+```
+
+**配置位置**: `main()` 函数 (merge_digits.py:286)
+
+**可用的输入输出路径配置**:
+- ✓ `./resized_128x128` → `./merged_digits_128x128` (推荐,默认)
+- `./resized_128x128_with_blur` → `./merged_digits_128x128`
+- `./resized_128x128_inverted` → `./merged_digits_128x128`
+- `./resized_128x128_rotated/up` → `./merged_digits_128x128` (需要指定朝向)
+- `./original_images` → `./merged_digits_128x128` (不推荐,图像太小)
+
+**生成模式**:
+
+**模式1: 随机生成** (默认)
+- 随机选择两个数字进行融合
+- 可设置生成数量 (默认1000张)
+- 输出文件名: `merged_{索引:06d}_{两位数:02d}.jpg`
+- 示例: `merged_000000_87.jpg` (索引0,数字87)
+
+**模式2: 顺序生成**
+- 生成所有有效两位数 (01-09, 11-19, ..., 91-99)
+- 共90个两位数（排除个位为0的情况）
+- 每个两位数可生成多张不同组合
+- 自动创建子文件夹按两位数分类
+- 输出文件名: `merged_{两位数:02d}_{索引:04d}.jpg`
+
+**输出**: `./merged_digits_128x128/`
+
+**技术细节**:
+- **白边裁剪**: 使用numpy检测非白色区域边界,保留5像素安全边距
+- **高度统一**: 两个数字缩放到相同高度(输出尺寸的80%)
+- **优化间距**: 间距为较小数字宽度的3-6%,更紧凑自然
+- **居中布局**: 整体内容在128x128画布中水平和垂直居中
+- **无二次缩放**: 直接在目标尺寸画布上操作,避免缩放失真和白线
+- **LANCZOS重采样**: 使用高质量重采样算法,避免锯齿和白线
+
+**改进说明** (2025-10-18):
+- 新增 `crop_whitespace()` 函数自动裁剪白边，增加5像素安全边距
+- 优化间距算法，从8-12%缩小到3-6%，更自然紧凑
+- 采用居中布局，替代之前的直接拼接+缩放
+- 数字占画布80%高度，确保完整显示不被裁剪
+- 优化生成规则，0不能为个位，共90个有效两位数
+- 简化随机生成逻辑，直接从1-9生成个位数
+- 避免中间出现白线问题
+
+**使用示例**:
+```python
+# 修改 main() 函数中的配置
+mode = "random"              # 随机模式
+num_random_images = 1000    # 生成1000张
+
+# 或者使用顺序模式
+mode = "sequential"          # 顺序模式
+images_per_number = 100     # 每个两位数生成100张
+```
+
+### 6. delete_unwanted_images.py - 删除不需要的图像文件
+
+删除文件名中包含特定字符的图像文件(如"副本"或"_")。
+
+**功能**:
+- 扫描指定文件夹及其子文件夹中的所有图像文件
+- 删除文件名包含指定模式的图像(默认: "副本", "_")
+- 支持常见图像格式: .jpg, .jpeg, .png, .bmp, .gif
+- 提供预览模式,安全确认后再删除
+- 显示详细统计信息
+
+**核心函数**:
+- `should_delete(filename)` (delete_unwanted_images.py:20) - 判断是否删除
+- `delete_unwanted_images(input_dir, dry_run)` (delete_unwanted_images.py:35) - 删除处理
+
+**运行**:
+```bash
+python delete_unwanted_images.py
+```
+
+**配置位置**: `main()` 函数 (delete_unwanted_images.py:95)
+
+**可配置参数**:
+- `INPUT_DIR`: 要处理的文件夹路径 (默认: 当前目录)
+- `DELETE_PATTERNS`: 要删除的文件名特征列表 (默认: ['副本', '_'])
+- `dry_run`: 是否为预览模式 (默认: True)
+
+**安全特性**:
+- 默认开启预览模式,不会直接删除文件
+- 显示所有将要删除的文件列表
+- 需要用户输入 'yes' 确认后才会执行删除
+- 显示删除前后的统计对比
+
+**使用场景**:
+- 清理重复的副本文件
+- 删除包含特殊字符的临时文件
+- 批量清理不符合命名规范的图像
+
+**使用示例**:
+```python
+# 修改配置删除特定模式的文件
+INPUT_DIR = r"D:\your\folder\path"
+DELETE_PATTERNS = ['副本', '_', 'temp']  # 自定义删除模式
+
+# 实际删除(关闭预览模式)
+delete_unwanted_images(INPUT_DIR, dry_run=False)
+```
+
 ### 处理流程顺序
 
 完整的数据增强管道按以下顺序执行:
@@ -322,6 +455,7 @@ mnist_tools/
 ├── resized_128x128_with_blur_inverted/           # 反转颜色
 │   ├── 0/
 │   └── ...
+├── merged_digits_128x128/                        # 融合后的两位数图像
 └── resized_128x128_with_blur_inverted_rotated/   # 旋转为4个朝向
     ├── up/
     │   ├── 0_up/
@@ -374,6 +508,14 @@ mnist_tools/
 | `./resized_128x128_with_blur` | `./resized_128x128_with_blur_rotated` | 旋转残影图像 |
 | `./resized_128x128_with_blur_inverted` ✓ | `./resized_128x128_with_blur_inverted_rotated` | 推荐,默认 |
 | `./resized_128x128_inverted_with_blur` | `./resized_128x128_inverted_with_blur_rotated` | 另一种顺序 |
+
+**merge_digits.py**:
+| 输入路径 | 输出路径 | 说明 |
+|---------|---------|------|
+| `./resized_128x128` ✓ | `./merged_digits_128x128` | 推荐,默认 |
+| `./resized_128x128_with_blur` | `./merged_digits_128x128` | 使用带残影的图像 |
+| `./resized_128x128_inverted` | `./merged_digits_128x128` | 使用反转图像 |
+| `./resized_128x128_rotated/up` | `./merged_digits_128x128` | 使用旋转图像 |
 
 ## 重要提示
 
