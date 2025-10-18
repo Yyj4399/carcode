@@ -32,7 +32,8 @@
       "Bash(powershell -Command:*)",
       "Bash(python merge_single_digits.py:*)",
       "Bash(python merge_and_cleanup_single_digits.py:*)",
-      "Bash(python invert_colors.py:*)"
+      "Bash(python invert_colors.py:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []

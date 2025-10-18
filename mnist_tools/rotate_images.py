@@ -49,11 +49,12 @@ def process_images_with_rotation(input_dir, output_base_dir):
         filename_suffix = "_blur"
 
     # 定义4个旋转角度和对应的文件夹名称(上下左右四个朝向)
+    # 根据数字的实际朝向命名:
     rotations = {
-        0: "up",        # 上(原始方向)
-        180: "down",    # 下(旋转180度)
-        90: "right",    # 右(顺时针旋转90度)
-        270: "left"     # 左(顺时针旋转270度)
+        0: "right",     # 向右(原始方向)
+        180: "left",    # 向左(旋转180度)
+        90: "up",       # 向上(顺时针旋转90度)
+        270: "down"     # 向下(顺时针旋转270度)
     }
 
     # 创建输出目录结构
@@ -214,7 +215,7 @@ def main():
     print(f"\n配置:")
     print(f"  输入目录: {input_dir}")
     print(f"  输出目录: {output_dir}")
-    print(f"  朝向: 上(0°), 下(180°), 左(270°), 右(90°)")
+    print(f"  朝向: 向右(0°), 向左(180°), 向上(90°), 向下(270°)")
     print()
 
     # 开始处理
