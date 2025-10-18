@@ -440,7 +440,15 @@ def generate_from_single_source(input_dir, output_dir, output_size=(128, 128)):
     print("\n正在加载图像...")
     digit_images = get_images_by_digit(input_dir)
 
+    # 确定源类型标识
+    source_tag = ""
+    if "blur" in input_dir.name.lower():
+        source_tag = "_blur"  # 有残影
+    else:
+        source_tag = "_plain"  # 无残影
+
     print(f"\n目录: {input_dir.name}")
+    print(f"文件名标识: {source_tag}")
     for digit in range(10):
         count = len(digit_images[digit])
         print(f"  数字 {digit}: {count} 张图像")
@@ -515,8 +523,8 @@ def generate_from_single_source(input_dir, output_dir, output_size=(128, 128)):
                     # 融合图像
                     merged_img = merge_two_digits(img1, img2, output_size)
 
-                    # 生成输出文件名
-                    output_filename = f"merged_{two_digit_number:02d}_{idx:06d}.jpg"
+                    # 生成输出文件名 - 添加源类型标识
+                    output_filename = f"merged_{two_digit_number:02d}_{idx:06d}{source_tag}.jpg"
                     output_filepath = number_dir / output_filename
 
                     # 保存图像

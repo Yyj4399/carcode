@@ -388,6 +388,60 @@ DELETE_PATTERNS = ['副本', '_', 'temp']  # 自定义删除模式
 delete_unwanted_images(INPUT_DIR, dry_run=False)
 ```
 
+### 7. combine_merged_folders.py - 合并多个二位数图像文件夹
+
+将多个包含二位数图像的文件夹(如带残影和不带残影)合并到一个新文件夹中。
+
+**功能**:
+- 合并多个源文件夹到一个新的输出文件夹
+- 保持原有的文件夹结构(按两位数10-99分类)
+- 原始文件夹不受影响(所有文件都是复制而非移动)
+- 自动处理同名文件,添加源标识避免覆盖
+- 显示详细的合并统计信息
+
+**核心函数**:
+- `combine_merged_folders(source_dirs, output_dir)` (combine_merged_folders.py:14) - 合并文件夹
+
+**运行**:
+```bash
+python combine_merged_folders.py
+```
+
+**配置位置**: `main()` 函数 (combine_merged_folders.py:93)
+
+**默认配置**:
+- 源文件夹1: `./merged_inverted` (不带残影的二位数)
+- 源文件夹2: `./merged_with_blur_inverted` (带残影的二位数)
+- 输出文件夹: `./merged_combined` (合并后的结果)
+
+**输出**: `./merged_combined/{10-99}/` (每个子文件夹包含来自所有源的图像)
+
+**统计信息**:
+- 显示总共复制的文件数
+- 按源文件夹分类的统计和百分比
+- 每个两位数的图像数量
+
+**使用场景**:
+- 将带残影和不带残影的二位数图像合并到一起
+- 创建包含多种风格图像的统一数据集
+- 合并不同处理管道生成的图像
+
+**使用示例**:
+```python
+# 修改配置合并不同的源文件夹
+source_dirs = [
+    Path("./merged_inverted"),           # 源1: 不带残影
+    Path("./merged_with_blur_inverted")  # 源2: 带残影
+]
+output_dir = Path("./merged_combined")   # 输出文件夹
+```
+
+**实际运行结果示例**:
+- 总共复制: 1,136,340 张图像
+- merged_inverted: 568,170 张 (50.0%)
+- merged_with_blur_inverted: 568,170 张 (50.0%)
+- 每个两位数: 12,626 张图像
+
 ### 处理流程顺序
 
 完整的数据增强管道按以下顺序执行:
