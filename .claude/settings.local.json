@@ -25,7 +25,14 @@
       "Bash(if exist \"mnist_tools\\merged_inverted\" rmdir /s /q \"mnist_tools\\merged_inverted\")",
       "Bash(if exist \"mnist_tools\\merged_with_blur_inverted\" rmdir /s /q \"mnist_tools\\merged_with_blur_inverted\")",
       "Bash(python combine_merged_folders.py:*)",
-      "Bash(wait)"
+      "Bash(wait)",
+      "Bash(del nul)",
+      "Bash(rm:*)",
+      "Bash(powershell -Command \"(Get-ChildItem ''mnist_tools\\merged_inverted\\10\\*.jpg'' | Measure-Object).Count\")",
+      "Bash(powershell -Command:*)",
+      "Bash(python merge_single_digits.py:*)",
+      "Bash(python merge_and_cleanup_single_digits.py:*)",
+      "Bash(python invert_colors.py:*)"
     ],
     "deny": [],
     "ask": []
