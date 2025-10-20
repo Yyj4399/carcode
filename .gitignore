@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# 训练产生的文件
+*.h5
+*.tflite
+*.png
+*.jpg
+*.jpeg
+classification_report.txt
+
+# 数据集
+num/
+train/
+test/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# PDF文件
+*.pdf
+
+# Claude
+.claude/
