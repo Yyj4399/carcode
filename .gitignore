@@ -1,12 +1,27 @@
-# Python
+# ===========================================
+# Python 项目通用
+# ===========================================
+
+# Python 缓存
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+
+# 虚拟环境
 env/
 venv/
 ENV/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+*.ipynb
+
+# ===========================================
+# MobileNetV2 训练项目
+# ===========================================
 
 # 训练产生的文件
 *.h5
@@ -21,18 +36,121 @@ num/
 train/
 test/
 
-# IDE
+# PDF文件
+*.pdf
+
+# ===========================================
+# MNIST 图像处理项目
+# ===========================================
+
+# 处理后的图像目录
+resized_128x128/
+resized_128x128_with_blur/
+resized_128x128_inverted/
+resized_128x128_rotated/
+resized_128x128_rotated_inverted/
+resized_128x128_with_blur_inverted/
+resized_128x128_with_blur_rotated/
+resized_128x128_with_blur_inverted_rotated/
+
+# ===========================================
+# C/C++ 项目
+# ===========================================
+
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
+
+# Debug information files
+*.dwo
+*.bat
+*.dep
+*.axf
+*.htm
+*.uvoptx
+*.ssshhh
+*.uvguix.ssshhh
+*.uvprojx
+
+# ===========================================
+# IDE 配置
+# ===========================================
+
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
-# 系统文件
+# ===========================================
+# 操作系统文件
+# ===========================================
+
 .DS_Store
 Thumbs.db
 
-# PDF文件
-*.pdf
+# ===========================================
+# 其他
+# ===========================================
+
+# 日志文件
+*.log
+
+# 测试覆盖率
+.coverage
+htmlcov/
+
+# 分发/打包
+dist/
+build/
+*.egg-info/
 
 # Claude
 .claude/
