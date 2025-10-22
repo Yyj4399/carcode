@@ -33,7 +33,9 @@
       "Bash(python merge_single_digits.py:*)",
       "Bash(python merge_and_cleanup_single_digits.py:*)",
       "Bash(python invert_colors.py:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(mount:*)",
+      "Read(//c/Users/Lenovo/.claude/**)"
     ],
     "deny": [],
     "ask": []

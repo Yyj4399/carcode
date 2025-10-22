@@ -32,12 +32,15 @@ num/
 推荐使用 Miniconda 或 Anaconda：
 
 ```bash
-# 激活环境（如果使用 conda）
+# Windows 系统
 conda activate myconda
 
+# Linux/Mac 系统
+# conda activate your_env_name
 # 或使用项目特定的虚拟环境
-# 路径: /root/miniconda3/envs/myconda
 ```
+
+**当前运行环境**: Windows (win32)
 
 ### 安装依赖
 
@@ -168,10 +171,11 @@ python train_mobilenetv2.py --help
 
 ## Git 工作流
 
-### 当前分支
+### 仓库信息
 
-- 主分支: `main`
-- 当前分支: `main`
+- **远程仓库**: `git@github.com:Yyj4399/carcode.git`
+- **主分支**: `main`
+- **当前分支**: `main`
 
 ### 提交规范
 
@@ -182,12 +186,25 @@ python train_mobilenetv2.py --help
 - `重构`: 代码重构
 - `文档`: 文档更新
 - `合并`: 分支合并
+- `优化`: 性能优化或代码改进
 
-示例：
+### 常用 Git 命令
+
 ```bash
+# 查看状态
+git status
+
+# 添加所有修改的文件
 git add .
+
+# 提交更改（使用中文提交信息）
 git commit -m "添加MobileNetV2训练项目"
+
+# 推送到远程仓库
 git push
+
+# 拉取最新代码
+git pull
 ```
 
 ## 代码架构模式
@@ -216,14 +233,48 @@ git push
 - 原始图像: `./mnist_tools/original_images/` (70,000 张 28x28 JPG)
 - 处理后图像: 各种 `resized_*` 和 `merged_*` 文件夹
 
+**注意**: mnist_tools 的路径都是相对于 `mnist_tools/` 目录的相对路径
+
 ### mobilenetv2_training
 
-在 `train_mobilenetv2.py` 的 `Config` 类中修改：
+在 `train_mobilenetv2.py` 的 `Config` 类中修改 (train_mobilenetv2.py:30)：
 
 ```python
 class Config:
+    # Linux/Mac 路径示例
     TRAIN_DIR = '/mnt/image/train'  # 训练集路径
     TEST_DIR = '/mnt/image/test'    # 测试集路径
+
+    # Windows 路径示例（使用原始字符串）
+    # TRAIN_DIR = r'D:\ACS image photos\num\num\train'
+    # TEST_DIR = r'D:\ACS image photos\num\num\test'
+```
+
+### 数据集目录结构示例
+
+**Linux/Mac 路径示例**:
+```
+/mnt/image/
+├── train/              # 训练集
+│   ├── class_1/
+│   ├── class_2/
+│   └── class_n/
+└── test/               # 测试集
+    ├── class_1/
+    ├── class_2/
+    └── class_n/
+```
+
+**Windows 路径示例（当前环境）**:
+```
+D:\ACS image photos\num\num\
+├── train\              # 训练集
+│   ├── 0_right\        # 数字0向右
+│   ├── 0_up\           # 数字0向上
+│   └── ...
+└── test\               # 测试集
+    ├── 0_right\
+    └── ...
 ```
 
 ## GPU 配置
@@ -279,13 +330,16 @@ python merge_digits.py  # 在 main() 中设置 mode = "sequential"
 
 ## 注意事项
 
-1. **大文件**: 所有图像文件（原始和处理后）都在 `.gitignore` 中，不提交到版本控制
-2. **路径格式**: Windows 路径使用原始字符串（`r"D:\path"`）或双反斜杠（`"D:\\path"`）
+1. **大文件**: 所有图像文件（原始和处理后）、训练模型文件都在 `.gitignore` 中，不提交到版本控制
+2. **路径格式**:
+   - Windows 路径使用原始字符串（`r"D:\path"`）或双反斜杠（`"D:\\path"`）
+   - 路径中包含空格（如 `ACS image photos`）时必须使用正确的引号格式
 3. **内存占用**:
    - mnist_tools: 图像处理内存占用较小
    - mobilenetv2_training: 训练时根据 batch_size 调整内存（可用 `--batch_size` 减小）
 4. **数据完整性**: mobilenetv2_training 会在训练前自动验证和清理损坏的图像文件
 5. **文档更新**: 每次修改代码后，更新对应的 md 文档
+6. **Claude Code 配置**: `.claude/settings.local.json` 包含项目特定的自动批准命令配置
 
 ## 详细文档
 
