@@ -28,8 +28,8 @@ import pathlib
 # ==================== 配置参数 ====================
 class Config:
     # 数据集路径
-    TRAIN_DIR = '/mnt/num/train'
-    TEST_DIR = '/mnt/num/test'
+    TRAIN_DIR = '/mnt/image/train'
+    TEST_DIR = '/mnt/image/test'
 
     # 模型参数
     ALPHA = 0.5  # MobileNetV2 的宽度乘数（可调节：0.35, 0.5, 0.75, 1.0）
@@ -39,13 +39,60 @@ class Config:
     BATCH_SIZE = 32
     EPOCHS = 50
     EPOCHS_PER_ROUND = 10  # 每轮训练的epoch数（训练后会询问是否继续）
-    LEARNING_RATE = 0.001
+    LEARNING_RATE = 0.0001
 
     # 模型保存路径
     MODEL_SAVE_PATH = 'mobilenetv2_model.h5'
     TFLITE_MODEL_PATH = 'mobilenetv2_int8.tflite'
     CONFUSION_MATRIX_PATH = 'confusion_matrix.png'
     CHECKPOINT_PATH = 'mobilenetv2_checkpoint.h5'  # 训练中间检查点
+
+
+# ==================== GPU配置 ====================
+def setup_gpu():
+    """
+    配置GPU设置
+    - 检测可用GPU
+    - 设置内存增长以避免显存不足
+    - 显示GPU信息
+    """
+    print("\n[GPU配置]")
+
+    # 获取所有可用的GPU
+    gpus = tf.config.list_physical_devices('GPU')
+
+    if not gpus:
+        print("  ⚠ 未检测到GPU，将使用CPU训练")
+        print("  提示: 如果您已安装GPU版本的TensorFlow，请检查CUDA和cuDNN配置")
+        return False
+
+    print(f"  ✓ 检测到 {len(gpus)} 个GPU:")
+
+    try:
+        # 设置GPU内存增长
+        for i, gpu in enumerate(gpus):
+            tf.config.experimental.set_memory_growth(gpu, True)
+
+            # 获取GPU详细信息
+            gpu_details = tf.config.experimental.get_device_details(gpu)
+            gpu_name = gpu_details.get('device_name', 'Unknown GPU')
+
+            print(f"    GPU {i}: {gpu_name}")
+            print(f"    设备: {gpu.name}")
+
+        print(f"\n  GPU内存增长已启用（动态分配显存）")
+
+        # 设置默认使用的GPU（如果有多个）
+        if len(gpus) > 1:
+            print(f"  使用GPU 0进行训练")
+            tf.config.set_visible_devices(gpus[0], 'GPU')
+
+        return True
+
+    except RuntimeError as e:
+        print(f"  ✗ GPU配置失败: {e}")
+        print(f"  将使用CPU训练")
+        return False
 
 
 # ==================== 自动检测类别数 ====================
@@ -62,6 +109,121 @@ def get_num_classes(data_dir):
     return num_classes, classes
 
 
+# ==================== 验证和清理数据集 ====================
+def validate_and_clean_dataset(data_dir, target_size=(128, 128)):
+    """
+    验证数据集中的所有图像文件，删除损坏的图像
+    完全模拟 ImageDataGenerator 的加载流程，包括 resize 和转换
+
+    参数：
+        data_dir: 数据集根目录
+        target_size: 目标图像尺寸，用于测试 resize 操作
+
+    返回：
+        (valid_count, corrupted_count): 有效图像数量和损坏图像数量
+    """
+    from PIL import Image
+    import numpy as np
+
+    print(f"\n[验证数据集] {data_dir}")
+    print(f"  目标尺寸: {target_size}")
+
+    valid_count = 0
+    corrupted_count = 0
+    corrupted_files = []
+
+    # 支持的图像格式
+    valid_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff', '.webp'}
+
+    # 遍历所有类别文件夹
+    if not os.path.exists(data_dir):
+        print(f"  警告: 路径不存在 {data_dir}")
+        return 0, 0
+
+    for class_name in os.listdir(data_dir):
+        class_path = os.path.join(data_dir, class_name)
+
+        if not os.path.isdir(class_path):
+            continue
+
+        print(f"  检查类别: {class_name}")
+        class_valid = 0
+        class_corrupted = 0
+
+        # 遍历该类别下的所有文件
+        for filename in os.listdir(class_path):
+            file_path = os.path.join(class_path, filename)
+
+            # 跳过子目录
+            if os.path.isdir(file_path):
+                continue
+
+            # 检查文件扩展名
+            _, ext = os.path.splitext(filename.lower())
+            if ext not in valid_extensions:
+                continue
+
+            # 尝试完整的图像加载流程（模拟 ImageDataGenerator）
+            try:
+                # 1. 打开图像文件
+                img = Image.open(file_path)
+
+                # 2. 转换为 RGB（ImageDataGenerator 默认行为）
+                if img.mode != 'RGB':
+                    img = img.convert('RGB')
+
+                # 3. Resize 到目标尺寸（这是最容易出错的步骤）
+                img_resized = img.resize(target_size, Image.BILINEAR)
+
+                # 4. 转换为 numpy 数组（模拟实际使用）
+                img_array = np.array(img_resized, dtype=np.float32)
+
+                # 5. 检查数组形状是否正确
+                if img_array.shape != (target_size[0], target_size[1], 3):
+                    raise ValueError(f"Invalid image shape: {img_array.shape}")
+
+                # 6. 检查是否有无效值（NaN 或 Inf）
+                if np.isnan(img_array).any() or np.isinf(img_array).any():
+                    raise ValueError("Image contains NaN or Inf values")
+
+                # 关闭图像
+                img.close()
+
+                valid_count += 1
+                class_valid += 1
+
+            except Exception as e:
+                corrupted_count += 1
+                class_corrupted += 1
+                corrupted_files.append(file_path)
+
+                # 删除损坏的文件
+                try:
+                    os.remove(file_path)
+                    print(f"    ✗ 已删除损坏文件: {filename}")
+                    print(f"      错误类型: {type(e).__name__}")
+                    print(f"      错误信息: {str(e)[:100]}")
+                except Exception as delete_error:
+                    print(f"    ✗ 无法删除损坏文件: {filename}")
+                    print(f"      删除错误: {delete_error}")
+
+        if class_valid > 0 or class_corrupted > 0:
+            print(f"    类别 {class_name}: 有效 {class_valid}, 损坏 {class_corrupted}")
+
+    print(f"\n  验证完成:")
+    print(f"    有效图像: {valid_count}")
+    print(f"    损坏图像: {corrupted_count} (已删除)")
+
+    if corrupted_files:
+        print(f"\n  损坏文件列表:")
+        for f in corrupted_files[:10]:  # 只显示前10个
+            print(f"    - {f}")
+        if len(corrupted_files) > 10:
+            print(f"    ... 还有 {len(corrupted_files) - 10} 个文件")
+
+    return valid_count, corrupted_count
+
+
 # ==================== 数据加载 ====================
 def load_data(config, use_augmentation=False):
     """
@@ -73,16 +235,14 @@ def load_data(config, use_augmentation=False):
     """
 
     if use_augmentation:
-        # 使用数据增强
-        print("  使用数据增强")
+        # 使用数据增强（全方位旋转、水平垂直翻转、随机曝光）
+        print("  使用数据增强（全方位旋转、水平垂直翻转、随机曝光）")
         train_datagen = ImageDataGenerator(
             rescale=1./255,
-            rotation_range=20,
-            width_shift_range=0.2,
-            height_shift_range=0.2,
-            horizontal_flip=True,
-            zoom_range=0.2,
-            fill_mode='nearest'
+            rotation_range=360,      # 全方位旋转覆盖
+            horizontal_flip=True,    # 水平翻转
+            vertical_flip=True,      # 垂直翻转
+            brightness_range=[0.5, 1.5]  # 随机曝光，模拟光线不均匀环境
         )
     else:
         # 无数据增强，仅归一化
@@ -604,6 +764,9 @@ def main():
     print("MobileNet V2 分类模型训练 (交互式)")
     print("=" * 60)
 
+    # 配置GPU
+    gpu_available = setup_gpu()
+
     # 创建配置
     config = Config()
 
@@ -617,18 +780,39 @@ def main():
     if args.input_size is not None:
         config.INPUT_SHAPE = (args.input_size, args.input_size, 3)
 
+    # 验证和清理数据集
+    print("\n[1] 验证和清理数据集...")
+    print("  检查训练集...")
+    train_valid, train_corrupted = validate_and_clean_dataset(
+        config.TRAIN_DIR,
+        target_size=config.INPUT_SHAPE[:2]
+    )
+    print("  检查测试集...")
+    test_valid, test_corrupted = validate_and_clean_dataset(
+        config.TEST_DIR,
+        target_size=config.INPUT_SHAPE[:2]
+    )
+
+    total_corrupted = train_corrupted + test_corrupted
+    if total_corrupted > 0:
+        print(f"\n  ⚠ 发现并删除了 {total_corrupted} 个损坏的图像文件")
+        print(f"    训练集: {train_corrupted} 个")
+        print(f"    测试集: {test_corrupted} 个")
+    else:
+        print(f"\n  ✓ 所有图像文件都有效")
+
     # 自动检测类别数
-    print("\n[1] 检测数据集类别...")
+    print("\n[2] 检测数据集类别...")
     num_classes, class_names = get_num_classes(config.TRAIN_DIR)
 
     # 加载数据
-    print("\n[2] 加载数据集...")
+    print("\n[3] 加载数据集...")
     # 使用命令行参数的数据增强选项
     initial_augmentation = args.augmentation
     train_generator, test_generator = load_data(config, initial_augmentation)
 
     # 构建模型
-    print("\n[3] 构建模型...")
+    print("\n[4] 构建模型...")
     print(f"    - Alpha: {config.ALPHA}")
     print(f"    - 输入尺寸: {config.INPUT_SHAPE}")
     print(f"    - 类别数: {num_classes}")
@@ -643,7 +827,7 @@ def main():
     )
 
     # 交互式训练
-    print("\n[4] 开始交互式训练...")
+    print("\n[5] 开始交互式训练...")
     print(f"    - 初始学习率: {config.LEARNING_RATE}")
     print(f"    - 批次大小: {config.BATCH_SIZE}")
     print(f"    - 数据增强: {'开启' if initial_augmentation else '关闭'}")
@@ -772,25 +956,25 @@ def main():
 
     # 加载最佳模型
     if os.path.exists(config.CHECKPOINT_PATH):
-        print(f"\n[5] 加载最佳模型...")
+        print(f"\n[6] 加载最佳模型...")
         model = keras.models.load_model(config.CHECKPOINT_PATH)
         print(f"  已从检查点加载: {config.CHECKPOINT_PATH}")
 
     # 评估模型
-    print("\n[6] 评估模型...")
+    print("\n[7] 评估模型...")
     evaluate_model(model, test_generator)
 
     # 生成混淆矩阵
-    print("\n[7] 生成混淆矩阵...")
+    print("\n[8] 生成混淆矩阵...")
     cm, y_true, y_pred = generate_confusion_matrix(model, test_generator, class_names, config)
 
     # 保存最终模型
-    print(f"\n[8] 保存最终模型...")
+    print(f"\n[9] 保存最终模型...")
     model.save(config.MODEL_SAVE_PATH)
     print(f"  模型已保存到: {config.MODEL_SAVE_PATH}")
 
     # Int8 量化转换
-    print("\n[9] 转换为 Int8 量化模型...")
+    print("\n[10] 转换为 Int8 量化模型...")
     tflite_model = convert_to_int8_tflite(model, train_generator, config)
 
     print("\n" + "=" * 60)
