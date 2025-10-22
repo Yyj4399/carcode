@@ -894,6 +894,15 @@ print(f"预测类别: {predicted_class}")
 
 ## 更新日志
 
+- **2025-10-22**：v1.10
+  - **优化Int8量化转换**：
+    - 改进代表性数据集收集策略，提前收集并缓存校准样本
+    - 添加量化进度提示信息
+    - 启用 `experimental_new_quantizer` 选项减少转换警告
+    - 添加量化失败的备用策略（自动回退到 float32 输入输出）
+    - 优化输出信息显示，更清晰地展示量化过程
+    - 修复"Statistics for quantized inputs were expected"警告
+
 - **2025-10-21**：v1.9
   - **新增功能**：添加GPU自动检测和配置
     - 自动检测可用GPU设备

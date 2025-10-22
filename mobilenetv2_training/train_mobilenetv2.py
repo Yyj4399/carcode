@@ -302,30 +302,73 @@ def build_model(num_classes, config):
 
 # ==================== Int8 量化 ====================
 def convert_to_int8_tflite(model, train_generator, config):
-    """将模型转换为 int8 量化的 TFLite 格式"""
+    """
+    将模型转换为 int8 量化的 TFLite 格式
+
+    使用完整的 int8 量化策略，包括：
+    - 权重和激活值的 int8 量化
+    - 代表性数据集校准
+    - 输入输出量化设置
+    """
+
+    print("\n[Int8 量化转换]")
+    print("  收集代表性数据集用于量化校准...")
+
+    # 收集代表性数据集（用于量化校准）
+    representative_data = []
+    num_calibration_steps = min(100, len(train_generator))  # 最多100批或全部训练数据
+
+    for i in range(num_calibration_steps):
+        data, _ = next(train_generator)
+        # 只取每批的前几个样本以节省时间
+        for sample in data[:min(5, len(data))]:
+            representative_data.append(sample.astype(np.float32))
+            if len(representative_data) >= 100:  # 收集100个样本即可
+                break
+        if len(representative_data) >= 100:
+            break
+
+    print(f"  已收集 {len(representative_data)} 个校准样本")
 
     # 创建转换器
     converter = tf.lite.TFLiteConverter.from_keras_model(model)
 
-    # 设置优化选项为 int8 量化
+    # 设置优化选项为默认量化
     converter.optimizations = [tf.lite.Optimize.DEFAULT]
 
-    # 提供代表性数据集用于量化
+    # 提供代表性数据集用于量化校准
     def representative_dataset():
-        for i in range(100):  # 使用100个样本进行量化校准
-            data, _ = next(train_generator)
-            for sample in data:
-                yield [np.expand_dims(sample, axis=0).astype(np.float32)]
+        for sample in representative_data:
+            yield [np.expand_dims(sample, axis=0)]
 
     converter.representative_dataset = representative_dataset
 
-    # 确保输入和输出都是 int8
+    # 设置完整的 int8 量化
+    # 1. 支持的操作集合
     converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS_INT8]
+
+    # 2. 强制执行完整的整数量化（包括输入输出）
     converter.inference_input_type = tf.int8
     converter.inference_output_type = tf.int8
 
+    # 3. 实验性选项：启用 MLIR 量化器（减少警告）
+    converter.experimental_new_quantizer = True
+
+    print("  开始量化转换...")
+
     # 执行转换
-    tflite_model = converter.convert()
+    try:
+        tflite_model = converter.convert()
+        print("  ✓ 量化转换成功")
+    except Exception as e:
+        print(f"  ✗ 量化转换失败: {e}")
+        print("  尝试使用备用量化策略...")
+
+        # 备用策略：不强制 int8 输入输出
+        converter.inference_input_type = tf.float32
+        converter.inference_output_type = tf.float32
+        tflite_model = converter.convert()
+        print("  ✓ 使用备用策略转换成功（输入输出为 float32）")
 
     # 保存模型
     with open(config.TFLITE_MODEL_PATH, 'wb') as f:
@@ -333,7 +376,8 @@ def convert_to_int8_tflite(model, train_generator, config):
 
     # 显示模型大小
     model_size_kb = len(tflite_model) / 1024
-    print(f"\n量化后的模型大小: {model_size_kb:.2f} KB")
+    print(f"\n  量化后的模型大小: {model_size_kb:.2f} KB")
+    print(f"  模型已保存到: {config.TFLITE_MODEL_PATH}")
 
     return tflite_model
 
