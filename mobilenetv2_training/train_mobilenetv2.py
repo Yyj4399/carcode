@@ -235,15 +235,24 @@ def load_data(config, use_augmentation=False):
     """
 
     if use_augmentation:
-        # 使用数据增强（全方位旋转、水平垂直翻转、随机曝光）
-        print("  使用数据增强（全方位旋转、水平垂直翻转、随机曝光）")
-        train_datagen = ImageDataGenerator(
-            rescale=1./255,
-            rotation_range=360,      # 全方位旋转覆盖
-            horizontal_flip=True,    # 水平翻转
-            vertical_flip=True,      # 垂直翻转
-            brightness_range=[0.5, 1.5]  # 随机曝光，模拟光线不均匀环境
-        )
+        # 检查路径是否包含 "num"，如果包含则只使用随机曝光
+        if 'num' in config.TRAIN_DIR.lower():
+            # 路径包含 "num"，只使用随机曝光增强
+            print("  使用数据增强（仅随机曝光）")
+            train_datagen = ImageDataGenerator(
+                rescale=1./255,
+                brightness_range=[0.5, 1.5]  # 仅随机曝光，模拟光线不均匀环境
+            )
+        else:
+            # 使用数据增强（全方位旋转、水平垂直翻转、随机曝光）
+            print("  使用数据增强（全方位旋转、水平垂直翻转、随机曝光）")
+            train_datagen = ImageDataGenerator(
+                rescale=1./255,
+                rotation_range=360,      # 全方位旋转覆盖
+                horizontal_flip=True,    # 水平翻转
+                vertical_flip=True,      # 垂直翻转
+                brightness_range=[0.5, 1.5]  # 随机曝光，模拟光线不均匀环境
+            )
     else:
         # 无数据增强，仅归一化
         print("  不使用数据增强")
