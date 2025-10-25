@@ -2,6 +2,51 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 快速开始
+
+```bash
+# 环境配置（仅需一次）
+conda activate myconda
+
+# mnist_tools 依赖
+cd mnist_tools
+pip install -r requirements.txt
+
+# mobilenetv2_training 依赖（GPU推荐）
+cd ../mobilenetv2_training
+pip install tensorflow[and-cuda] numpy matplotlib seaborn scikit-learn
+```
+
+**常用命令速查**:
+```bash
+# 图像处理管道（4个步骤）
+cd mnist_tools
+python resize_and_mark.py && python add_motion_blur.py && python invert_colors.py && python rotate_images.py
+
+# 模型训练（交互式）
+cd mobilenetv2_training
+python train_mobilenetv2.py
+
+# 数据集清理和分割
+python clean_and_split_dataset.py
+
+# 查看帮助
+python train_mobilenetv2.py --help
+```
+
+## 文档索引
+
+- [项目概述](#项目概述)
+- [仓库结构](#仓库结构)
+- [环境配置](#环境配置)
+- [mnist_tools 项目](#mnist_tools-项目)
+- [mobilenetv2_training 项目](#mobilenetv2_training-项目)
+- [数据集管理工具](#数据集管理工具)
+- [常见任务](#常见任务)
+- [Git 工作流](#git-工作流)
+- [代码架构模式](#代码架构模式)
+- [详细文档](#详细文档)
+
 ## 项目概述
 
 这是一个多项目代码仓库，包含用于图像处理和深度学习模型训练的工具。主要包括两个子项目：
@@ -22,6 +67,10 @@ num/
 ├── mobilenetv2_training/     # MobileNetV2 训练项目
 │   ├── train_mobilenetv2.py  # 主训练脚本
 │   └── MobileNetV2训练说明.md  # 训练文档
+├── clean_and_split_dataset.py     # 数据集清理与分割工具
+├── delete_excess_files.py         # 删除超额文件工具
+├── reorganize_dataset.py          # 数据集重组工具
+├── .gitignore               # Git 忽略配置（排除大文件）
 └── CLAUDE.md                 # 本文档（项目根目录）
 ```
 
@@ -628,6 +677,89 @@ MobileNetV2 训练脚本会自动检测和配置 GPU：
 python -c "import tensorflow as tf; print('GPU可用:', len(tf.config.list_physical_devices('GPU')) > 0)"
 ```
 
+## 数据集管理工具
+
+本项目提供了三个专门的数据集管理工具，用于清理、重组和验证数据集。
+
+### clean_and_split_dataset.py - 数据集清理与分割
+
+**目的**: 清理损坏的图像并将数据集分割为平衡的训练集和测试集
+
+**功能特性**:
+- 自动检测和删除损坏的 JPEG 图像
+- 可选模糊检测（使用 Laplacian 方差）
+- 平衡的 train/test 分割（目标：1200/类训练，300/类测试）
+- 详细的处理统计和日志
+
+**使用方法**:
+```bash
+python clean_and_split_dataset.py
+
+# 脚本会提示选择选项：
+# 1. 进行模糊检测（检测和删除模糊图像）
+# 2. 跳过模糊检测（仅删除损坏图像）
+```
+
+**输出**:
+- `num/train/`: 清理后的平衡训练集
+- `num/test/`: 清理后的平衡测试集
+- 处理统计信息显示在控制台
+
+### delete_excess_files.py - 删除超额文件
+
+**目的**: 简单的清理工具，删除每个类别中超过目标数量的文件
+
+**功能特性**:
+- 快速删除每个类别的超额文件
+- 支持自定义目标数量
+- 随机选择删除的文件（避免偏差）
+
+**使用方法**:
+```bash
+python delete_excess_files.py
+
+# 脚本会询问：
+# 1. 数据集根目录位置
+# 2. 每个类别的目标文件数量
+# 3. 删除超额文件前的确认
+```
+
+**典型场景**: 快速清理数据集大小
+
+### reorganize_dataset.py - 数据集重组
+
+**目的**: 从混合的数据目录中提取和重组数据到 train/test 文件夹结构
+
+**功能特性**:
+- 扫描混合数据目录
+- 自动识别类别
+- 可选的模糊检测和平衡分割
+- 完整的备份和恢复机制
+
+**使用方法**:
+```bash
+python reorganize_dataset.py
+
+# 交互式选择：
+# 1. 源数据目录位置
+# 2. 目标输出目录
+# 3. train/test 分割比例
+# 4. 是否进行模糊检测
+```
+
+**输出结构**:
+```
+target_directory/
+├── train/
+│   ├── class_0/
+│   ├── class_1/
+│   └── ...
+└── test/
+    ├── class_0/
+    ├── class_1/
+    └── ...
+```
+
 ## 常见任务
 
 ### 处理新的 MNIST 数据集
@@ -665,6 +797,19 @@ python merge_digits.py  # 在 main() 中设置 mode = "random"
 
 # 顺序模式（生成所有有效两位数 01-99）
 python merge_digits.py  # 在 main() 中设置 mode = "sequential"
+```
+
+### 清理和重组数据集工作流
+
+```bash
+# 步骤 1：清理损坏图像并分割为 train/test
+python clean_and_split_dataset.py
+
+# 或者步骤 2：如果已有数据需要重组
+python reorganize_dataset.py
+
+# 或者步骤 3：快速删除超额文件
+python delete_excess_files.py
 ```
 
 ## 注意事项

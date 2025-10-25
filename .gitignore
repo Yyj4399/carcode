@@ -43,7 +43,8 @@ test/
 # MNIST 图像处理项目
 # ===========================================
 
-# 处理后的图像目录
+# 原始图像和处理后的图像目录
+mnist_tools/original_images/
 resized_128x128/
 resized_128x128_with_blur/
 resized_128x128_inverted/
@@ -52,6 +53,18 @@ resized_128x128_rotated_inverted/
 resized_128x128_with_blur_inverted/
 resized_128x128_with_blur_rotated/
 resized_128x128_with_blur_inverted_rotated/
+merged_digits_*/
+merged_single_*/
+mnist_tools/merged_*/
+
+# ===========================================
+# 数据集管理工具输出
+# ===========================================
+
+# 临时工作目录
+cleaned_dataset/
+reorganized_dataset/
+backup_dataset/
 
 # ===========================================
 # C/C++ 项目
