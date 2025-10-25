@@ -225,38 +225,27 @@ def validate_and_clean_dataset(data_dir, target_size=(128, 128)):
 
 
 # ==================== 数据加载 ====================
-def load_data(config, use_augmentation=False):
+def load_data(config, use_augmentation=False, augmentation_type="full"):
     """
     加载训练和测试数据集
 
     参数：
         config: 配置对象
         use_augmentation: 是否使用数据增强（默认False）
+        augmentation_type: 增强类型（"full" 完整增强，"brightness" 仅随机曝光）
     """
 
     if use_augmentation:
-        # 检查路径第二级目录名是否为 "num"
-        path_parts = pathlib.Path(config.TRAIN_DIR).parts
-        second_level_dir = path_parts[1].lower() if len(path_parts) > 1 else ""
-
-        # 如果路径第二级为 "num"，则默认仅使用随机曝光（避免重复旋转）
-        # 但用户可以通过设置环境变量 FULL_AUGMENTATION=1 来强制使用完整增强
-        use_full_augmentation = os.environ.get('FULL_AUGMENTATION', '0') == '1'
-
-        if second_level_dir == "num" and not use_full_augmentation:
-            # 路径第二级为 "num"，只使用随机曝光增强
+        if augmentation_type == "brightness":
+            # 仅随机曝光增强
             print("  使用数据增强（仅随机曝光）")
-            print("  提示: 可设置环境变量 FULL_AUGMENTATION=1 来使用完整增强")
             train_datagen = ImageDataGenerator(
                 rescale=1./255,
                 brightness_range=[0.5, 1.5]  # 仅随机曝光，模拟光线不均匀环境
             )
         else:
-            # 使用数据增强（全方位旋转、水平垂直翻转、随机曝光）
-            if second_level_dir == "num":
-                print("  使用数据增强（完整增强 - 检测到用户强制设置）")
-            else:
-                print("  使用数据增强（全方位旋转、水平垂直翻转、随机曝光）")
+            # 完整增强（全方位旋转、水平垂直翻转、随机曝光）
+            print("  使用数据增强（旋转+翻转+曝光）")
             train_datagen = ImageDataGenerator(
                 rescale=1./255,
                 rotation_range=360,      # 全方位旋转覆盖
@@ -270,6 +259,7 @@ def load_data(config, use_augmentation=False):
         train_datagen = ImageDataGenerator(rescale=1./255)
 
     # 测试数据始终不使用数据增强
+    print("  测试集数据不使用增强")
     test_datagen = ImageDataGenerator(rescale=1./255)
 
     # 加载训练数据
@@ -512,7 +502,7 @@ def ask_continue_training():
 
 
 # ==================== 用户交互：询问继续训练的参数 ====================
-def ask_next_training_parameters(current_lr, current_batch_size, current_use_augmentation, train_dir=""):
+def ask_next_training_parameters(current_lr, current_batch_size, current_use_augmentation, current_augmentation_type="full"):
     """
     询问用户下一轮训练的参数
 
@@ -520,10 +510,10 @@ def ask_next_training_parameters(current_lr, current_batch_size, current_use_aug
         current_lr: 当前学习率
         current_batch_size: 当前批次大小
         current_use_augmentation: 当前是否使用数据增强
-        train_dir: 训练集路径（用于检查第二级目录）
+        current_augmentation_type: 当前增强类型（"full" 完整增强，"brightness" 仅随机曝光）
 
     返回：
-        (new_lr, new_epochs, new_batch_size, new_use_augmentation): 新的学习率、轮数、批次大小和是否使用数据增强
+        (new_lr, new_epochs, new_batch_size, new_use_augmentation, new_augmentation_type): 新参数
     """
     print("\n" + "-" * 60)
     print("【继续训练参数设置】")
@@ -598,7 +588,12 @@ def ask_next_training_parameters(current_lr, current_batch_size, current_use_aug
 
     # 询问是否开启/关闭数据增强
     augmentation_status = "已开启" if current_use_augmentation else "未开启"
-    print(f"\n  当前数据增强: {augmentation_status}")
+    current_type_display = "旋转+翻转+曝光" if current_augmentation_type == "full" else "仅随机曝光"
+    print(f"\n  当前数据增强: {augmentation_status} ({current_type_display})")
+
+    new_use_augmentation = current_use_augmentation
+    new_augmentation_type = current_augmentation_type
+
     while True:
         if current_use_augmentation:
             choice = input("是否关闭数据增强？(y/n): ").strip().lower()
@@ -607,6 +602,20 @@ def ask_next_training_parameters(current_lr, current_batch_size, current_use_aug
                 break
             elif choice in ['n', 'no', '否', 'N']:
                 new_use_augmentation = True
+                # 询问是否改变增强类型
+                while True:
+                    print("\n  增强类型选择:")
+                    print("    1. 完整增强 (旋转+翻转+曝光)")
+                    print("    2. 仅随机曝光")
+                    choice_type = input("  选择增强类型 (1/2): ").strip()
+                    if choice_type == "1":
+                        new_augmentation_type = "full"
+                        break
+                    elif choice_type == "2":
+                        new_augmentation_type = "brightness"
+                        break
+                    else:
+                        print("  无效输入，请输入 1 或 2")
                 break
             else:
                 print("  无效输入，请输入 y 或 n")
@@ -614,17 +623,20 @@ def ask_next_training_parameters(current_lr, current_batch_size, current_use_aug
             choice = input("是否开启数据增强？(y/n): ").strip().lower()
             if choice in ['y', 'yes', '是', 'Y']:
                 new_use_augmentation = True
-                # 扫描路径第二级目录，提示用户增强类型
-                if train_dir:
-                    path_parts = pathlib.Path(train_dir).parts
-                    second_level_dir = path_parts[1].lower() if len(path_parts) > 1 else ""
-                    if second_level_dir == "num":
-                        print("\n  ⚠ 检测到路径第二级为 'num'")
-                        print("  默认将使用【随机曝光增强】（避免重复旋转）")
-                        print("  若想使用完整增强（旋转+翻转+曝光），请在本轮完成后重新启动训练并添加 --full_augmentation 参数")
+                # 询问增强类型
+                while True:
+                    print("\n  增强类型选择:")
+                    print("    1. 完整增强 (旋转+翻转+曝光)")
+                    print("    2. 仅随机曝光")
+                    choice_type = input("  选择增强类型 (1/2): ").strip()
+                    if choice_type == "1":
+                        new_augmentation_type = "full"
+                        break
+                    elif choice_type == "2":
+                        new_augmentation_type = "brightness"
+                        break
                     else:
-                        print(f"\n  ✓ 检测到路径第二级为 '{second_level_dir}'")
-                        print("  将使用【完整增强】（旋转+翻转+曝光）")
+                        print("  无效输入，请输入 1 或 2")
                 break
             elif choice in ['n', 'no', '否', 'N']:
                 new_use_augmentation = False
@@ -636,9 +648,13 @@ def ask_next_training_parameters(current_lr, current_batch_size, current_use_aug
     print(f"    训练轮数: {new_epochs}")
     print(f"    学习率: {new_lr}")
     print(f"    批次大小: {new_batch_size}")
-    print(f"    数据增强: {'开启' if new_use_augmentation else '关闭'}")
+    if new_use_augmentation:
+        aug_type_display = "旋转+翻转+曝光" if new_augmentation_type == "full" else "仅随机曝光"
+        print(f"    数据增强: 开启 ({aug_type_display})")
+    else:
+        print(f"    数据增强: 关闭")
 
-    return new_lr, new_epochs, new_batch_size, new_use_augmentation
+    return new_lr, new_epochs, new_batch_size, new_use_augmentation, new_augmentation_type
 
 
 # ==================== 显示训练历史摘要 ====================
@@ -897,7 +913,8 @@ def main():
     print("\n[3] 加载数据集...")
     # 使用命令行参数的数据增强选项
     initial_augmentation = args.augmentation
-    train_generator, test_generator = load_data(config, initial_augmentation)
+    augmentation_type = "full"  # 初始增强类型（默认完整增强）
+    train_generator, test_generator = load_data(config, initial_augmentation, augmentation_type)
 
     # 构建模型
     print("\n[4] 构建模型...")
@@ -926,6 +943,7 @@ def main():
     current_lr = config.LEARNING_RATE
     current_batch_size = config.BATCH_SIZE
     use_augmentation = initial_augmentation  # 使用命令行参数的初始值
+    augmentation_type = "full"  # 默认为完整增强
     epochs_this_round = args.epoch  # 使用命令行参数
     round_num = 1
 
@@ -1016,23 +1034,24 @@ def main():
 
             # 交互式模式下，忽略命令行参数，完全通过交互来设置
             # 询问用户下一轮训练的参数
-            new_lr, new_epochs, new_batch_size, new_use_augmentation = ask_next_training_parameters(
-                current_lr, current_batch_size, use_augmentation, config.TRAIN_DIR
+            new_lr, new_epochs, new_batch_size, new_use_augmentation, new_augmentation_type = ask_next_training_parameters(
+                current_lr, current_batch_size, use_augmentation, augmentation_type
             )
 
-            # 检查batch_size或数据增强是否改变
-            if new_batch_size != current_batch_size or new_use_augmentation != use_augmentation:
-                print("\n  检测到批次大小或数据增强设置改变，重新加载数据...")
+            # 检查batch_size、数据增强或增强类型是否改变
+            if new_batch_size != current_batch_size or new_use_augmentation != use_augmentation or new_augmentation_type != augmentation_type:
+                print("\n  检测到批次大小、数据增强或增强类型改变，重新加载数据...")
 
                 # 更新配置
                 config.BATCH_SIZE = new_batch_size
 
                 # 重新加载数据
-                train_generator, test_generator = load_data(config, new_use_augmentation)
+                train_generator, test_generator = load_data(config, new_use_augmentation, new_augmentation_type)
 
                 # 更新当前设置
                 current_batch_size = new_batch_size
                 use_augmentation = new_use_augmentation
+                augmentation_type = new_augmentation_type
 
             current_lr = new_lr
             epochs_this_round = new_epochs
