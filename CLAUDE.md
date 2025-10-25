@@ -24,10 +24,11 @@ cd mnist_tools
 python resize_and_mark.py && python add_motion_blur.py && python invert_colors.py && python rotate_images.py
 
 # 模型训练（交互式）
-cd mobilenetv2_training
+cd ../mobilenetv2_training
 python train_mobilenetv2.py
 
 # 数据集清理和分割
+cd ../mnist_tools
 python clean_and_split_dataset.py
 
 # 查看帮助
@@ -61,15 +62,15 @@ num/
 ├── mnist_tools/              # MNIST 图像处理工具集
 │   ├── original_images/      # 原始 28x28 MNIST 图像 (70,000张，不在版本控制中)
 │   ├── *.py                  # 各种图像处理脚本
+│   ├── clean_and_split_dataset.py     # 数据集清理与分割工具
+│   ├── delete_excess_files.py         # 删除超额文件工具
+│   ├── reorganize_dataset.py          # 数据集重组工具
 │   ├── CLAUDE.md             # mnist_tools 详细文档
 │   ├── README.md             # 用户文档
 │   └── requirements.txt      # Python 依赖
 ├── mobilenetv2_training/     # MobileNetV2 训练项目
 │   ├── train_mobilenetv2.py  # 主训练脚本
 │   └── MobileNetV2训练说明.md  # 训练文档
-├── clean_and_split_dataset.py     # 数据集清理与分割工具
-├── delete_excess_files.py         # 删除超额文件工具
-├── reorganize_dataset.py          # 数据集重组工具
 ├── .gitignore               # Git 忽略配置（排除大文件）
 └── CLAUDE.md                 # 本文档（项目根目录）
 ```
@@ -693,6 +694,8 @@ python -c "import tensorflow as tf; print('GPU可用:', len(tf.config.list_physi
 
 **使用方法**:
 ```bash
+cd mnist_tools
+
 python clean_and_split_dataset.py
 
 # 脚本会提示选择选项：
@@ -716,6 +719,8 @@ python clean_and_split_dataset.py
 
 **使用方法**:
 ```bash
+cd mnist_tools
+
 python delete_excess_files.py
 
 # 脚本会询问：
@@ -738,6 +743,8 @@ python delete_excess_files.py
 
 **使用方法**:
 ```bash
+cd mnist_tools
+
 python reorganize_dataset.py
 
 # 交互式选择：
@@ -802,6 +809,8 @@ python merge_digits.py  # 在 main() 中设置 mode = "sequential"
 ### 清理和重组数据集工作流
 
 ```bash
+cd mnist_tools
+
 # 步骤 1：清理损坏图像并分割为 train/test
 python clean_and_split_dataset.py
 
