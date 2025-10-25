@@ -235,21 +235,28 @@ def load_data(config, use_augmentation=False):
     """
 
     if use_augmentation:
-        # 检查路径第二级目录名是否为 "num"，如果是则只使用随机曝光
-        # 例如：/mnt/num/train 中的 "num" 是第二级，/mnt/image/train 中的 "image" 是第二级
+        # 检查路径第二级目录名是否为 "num"
         path_parts = pathlib.Path(config.TRAIN_DIR).parts
         second_level_dir = path_parts[1].lower() if len(path_parts) > 1 else ""
 
-        if second_level_dir == "num":
+        # 如果路径第二级为 "num"，则默认仅使用随机曝光（避免重复旋转）
+        # 但用户可以通过设置环境变量 FULL_AUGMENTATION=1 来强制使用完整增强
+        use_full_augmentation = os.environ.get('FULL_AUGMENTATION', '0') == '1'
+
+        if second_level_dir == "num" and not use_full_augmentation:
             # 路径第二级为 "num"，只使用随机曝光增强
             print("  使用数据增强（仅随机曝光）")
+            print("  提示: 可设置环境变量 FULL_AUGMENTATION=1 来使用完整增强")
             train_datagen = ImageDataGenerator(
                 rescale=1./255,
                 brightness_range=[0.5, 1.5]  # 仅随机曝光，模拟光线不均匀环境
             )
         else:
             # 使用数据增强（全方位旋转、水平垂直翻转、随机曝光）
-            print("  使用数据增强（全方位旋转、水平垂直翻转、随机曝光）")
+            if second_level_dir == "num":
+                print("  使用数据增强（完整增强 - 检测到用户强制设置）")
+            else:
+                print("  使用数据增强（全方位旋转、水平垂直翻转、随机曝光）")
             train_datagen = ImageDataGenerator(
                 rescale=1./255,
                 rotation_range=360,      # 全方位旋转覆盖
@@ -815,6 +822,8 @@ def main():
                         help='继续训练时是否启用数据增强 (0=关闭, 1=开启, 仅在--auto_continue模式下生效)')
     parser.add_argument('--auto_continue', action='store_true',
                         help='自动继续训练模式 (不询问，直接使用--continue_epochs和--continue_lr)')
+    parser.add_argument('--full_augmentation', action='store_true',
+                        help='强制使用完整增强（旋转+翻转+曝光），即使路径第二级为"num"')
     args = parser.parse_args()
 
     print("=" * 60)
@@ -836,6 +845,11 @@ def main():
         config.ALPHA = args.alpha
     if args.input_size is not None:
         config.INPUT_SHAPE = (args.input_size, args.input_size, 3)
+
+    # 处理完整增强选项
+    if args.full_augmentation:
+        os.environ['FULL_AUGMENTATION'] = '1'
+        print("\n[提示] 已启用完整增强模式（旋转+翻转+曝光）")
 
     # 验证和清理数据集
     print("\n[1] 验证和清理数据集...")

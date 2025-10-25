@@ -119,13 +119,25 @@ mnist_tools 使用编号系统组织脚本：
 ### 智能数据增强
 
 脚本会根据数据集路径**第二级**目录名自动选择合适的数据增强策略：
-- **第二级目录为 "num"**（如 `/mnt/num/train`）：仅使用随机曝光增强（避免重复旋转）
-- **第二级目录不是 "num"**（如 `/mnt/image/train`）：使用完整增强（旋转、翻转、曝光）
+- **第二级目录为 "num"**（如 `/mnt/num/train`）：**默认仅使用随机曝光增强**（避免重复旋转）
+- **第二级目录不是 "num"**（如 `/mnt/image/train`）：使用**完整增强**（旋转、翻转、曝光）
 
 判断逻辑只检查路径的第二级目录名，例如：
-- `/mnt/num/train` → 检查 `num`（第二级）
-- `/mnt/image/train` → 检查 `image`（第二级）
+- `/mnt/num/train` → 检查 `num`（第二级）→ 仅随机曝光
+- `/mnt/image/train` → 检查 `image`（第二级）→ 完整增强
 - `D:\ACS image photos\num\train` → 检查 `ACS image photos`（第二级）
+
+**强制使用完整增强**：
+如果路径第二级为 "num"，但想要使用完整增强（旋转+翻转+曝光），可以：
+1. 使用命令行参数 `--full_augmentation`，例如：
+   ```bash
+   python train_mobilenetv2.py --augmentation --full_augmentation
+   ```
+2. 或设置环境变量：
+   ```bash
+   set FULL_AUGMENTATION=1
+   python train_mobilenetv2.py --augmentation
+   ```
 
 ### 数据集要求
 
@@ -154,6 +166,9 @@ python train_mobilenetv2.py --epoch 20 --lr 0.001 --batch_size 16
 
 # 启用数据增强
 python train_mobilenetv2.py --epoch 20 --augmentation
+
+# 启用完整增强（即使路径第二级为"num"也使用旋转+翻转+曝光）
+python train_mobilenetv2.py --epoch 20 --augmentation --full_augmentation
 
 # 自动继续训练模式（无需交互）
 python train_mobilenetv2.py --epoch 20 --continue_epochs 10 --continue_lr 0.0005 --auto_continue
