@@ -939,6 +939,7 @@ def main():
     print(f"    - 首轮训练epoch数: {args.epoch}")
 
     all_histories = []
+    augmentation_records = []  # 记录每一轮的增强状态和最佳精度
     total_epochs = 0
     current_lr = config.LEARNING_RATE
     current_batch_size = config.BATCH_SIZE
@@ -970,10 +971,18 @@ def main():
         final_val_acc = history.history['val_accuracy'][-1]
         final_train_loss = history.history['loss'][-1]
         final_val_loss = history.history['val_loss'][-1]
+        best_val_acc = max(history.history['val_accuracy'])
 
         print(f"\n  本轮训练结果:")
         print(f"    训练准确率: {final_train_acc:.4f}, 验证准确率: {final_val_acc:.4f}")
         print(f"    训练损失: {final_train_loss:.4f}, 验证损失: {final_val_loss:.4f}")
+
+        # 记录本轮的增强状态和最佳精度
+        augmentation_records.append({
+            'round': round_num,
+            'use_augmentation': use_augmentation,
+            'best_val_acc': best_val_acc
+        })
 
         # 决定是否继续训练
         if args.auto_continue:
@@ -1080,8 +1089,35 @@ def main():
     model.save(config.MODEL_SAVE_PATH)
     print(f"  模型已保存到: {config.MODEL_SAVE_PATH}")
 
+    # 选择量化模型
+    print("\n[10] 选择用于量化的模型...")
+
+    # 检查是否有增强的训练轮次
+    augmented_rounds = [r for r in augmentation_records if r['use_augmentation']]
+
+    if augmented_rounds:
+        # 如果有增强的训练轮次，只从这些轮次中选择最佳模型
+        best_augmented_record = max(augmented_rounds, key=lambda x: x['best_val_acc'])
+        best_round = best_augmented_record['round']
+        best_acc = best_augmented_record['best_val_acc']
+
+        print(f"  检测到训练中有数据增强的轮次")
+        print(f"  从有增强的轮次中选择最佳模型")
+        print(f"  最佳模型来自: 第 {best_round} 轮 (验证精度: {best_acc:.4f})")
+    else:
+        # 如果没有增强的训练轮次，则使用所有轮次中的最佳模型
+        if augmentation_records:
+            best_record = max(augmentation_records, key=lambda x: x['best_val_acc'])
+            best_round = best_record['round']
+            best_acc = best_record['best_val_acc']
+            print(f"  整个训练过程中未使用数据增强")
+            print(f"  使用所有轮次中的最佳模型")
+            print(f"  最佳模型来自: 第 {best_round} 轮 (验证精度: {best_acc:.4f})")
+
+    print(f"  使用 {config.CHECKPOINT_PATH} 进行量化转换")
+
     # Int8 量化转换
-    print("\n[10] 转换为 Int8 量化模型...")
+    print("\n[11] 转换为 Int8 量化模型...")
     tflite_model = convert_to_int8_tflite(model, train_generator, config)
 
     print("\n" + "=" * 60)
