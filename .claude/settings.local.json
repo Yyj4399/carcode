@@ -35,7 +35,11 @@
       "Bash(python invert_colors.py:*)",
       "Bash(python:*)",
       "Bash(mount:*)",
-      "Read(//c/Users/Lenovo/.claude/**)"
+      "Read(//c/Users/Lenovo/.claude/**)",
+      "WebFetch(domain:zhuanlan.zhihu.com)",
+      "Bash(npm install)",
+      "Bash(npm start)",
+      "Bash(npm install:*)"
     ],
     "deny": [],
     "ask": []

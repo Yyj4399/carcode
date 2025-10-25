@@ -235,9 +235,13 @@ def load_data(config, use_augmentation=False):
     """
 
     if use_augmentation:
-        # 检查路径是否包含 "num"，如果包含则只使用随机曝光
-        if 'num' in config.TRAIN_DIR.lower():
-            # 路径包含 "num"，只使用随机曝光增强
+        # 检查路径第二级目录名是否为 "num"，如果是则只使用随机曝光
+        # 例如：/mnt/num/train 中的 "num" 是第二级，/mnt/image/train 中的 "image" 是第二级
+        path_parts = pathlib.Path(config.TRAIN_DIR).parts
+        second_level_dir = path_parts[1].lower() if len(path_parts) > 1 else ""
+
+        if second_level_dir == "num":
+            # 路径第二级为 "num"，只使用随机曝光增强
             print("  使用数据增强（仅随机曝光）")
             train_datagen = ImageDataGenerator(
                 rescale=1./255,
