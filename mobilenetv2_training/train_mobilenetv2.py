@@ -512,9 +512,15 @@ def ask_continue_training():
 
 
 # ==================== 用户交互：询问继续训练的参数 ====================
-def ask_next_training_parameters(current_lr, current_batch_size, current_use_augmentation):
+def ask_next_training_parameters(current_lr, current_batch_size, current_use_augmentation, train_dir=""):
     """
     询问用户下一轮训练的参数
+
+    参数：
+        current_lr: 当前学习率
+        current_batch_size: 当前批次大小
+        current_use_augmentation: 当前是否使用数据增强
+        train_dir: 训练集路径（用于检查第二级目录）
 
     返回：
         (new_lr, new_epochs, new_batch_size, new_use_augmentation): 新的学习率、轮数、批次大小和是否使用数据增强
@@ -608,6 +614,17 @@ def ask_next_training_parameters(current_lr, current_batch_size, current_use_aug
             choice = input("是否开启数据增强？(y/n): ").strip().lower()
             if choice in ['y', 'yes', '是', 'Y']:
                 new_use_augmentation = True
+                # 扫描路径第二级目录，提示用户增强类型
+                if train_dir:
+                    path_parts = pathlib.Path(train_dir).parts
+                    second_level_dir = path_parts[1].lower() if len(path_parts) > 1 else ""
+                    if second_level_dir == "num":
+                        print("\n  ⚠ 检测到路径第二级为 'num'")
+                        print("  默认将使用【随机曝光增强】（避免重复旋转）")
+                        print("  若想使用完整增强（旋转+翻转+曝光），请在本轮完成后重新启动训练并添加 --full_augmentation 参数")
+                    else:
+                        print(f"\n  ✓ 检测到路径第二级为 '{second_level_dir}'")
+                        print("  将使用【完整增强】（旋转+翻转+曝光）")
                 break
             elif choice in ['n', 'no', '否', 'N']:
                 new_use_augmentation = False
@@ -1000,7 +1017,7 @@ def main():
             # 交互式模式下，忽略命令行参数，完全通过交互来设置
             # 询问用户下一轮训练的参数
             new_lr, new_epochs, new_batch_size, new_use_augmentation = ask_next_training_parameters(
-                current_lr, current_batch_size, use_augmentation
+                current_lr, current_batch_size, use_augmentation, config.TRAIN_DIR
             )
 
             # 检查batch_size或数据增强是否改变
