@@ -916,13 +916,35 @@ def main():
     augmentation_type = "full"  # 初始增强类型（默认完整增强）
     train_generator, test_generator = load_data(config, initial_augmentation, augmentation_type)
 
-    # 构建模型
+    # 构建或加载模型
     print("\n[4] 构建模型...")
     print(f"    - Alpha: {config.ALPHA}")
     print(f"    - 输入尺寸: {config.INPUT_SHAPE}")
     print(f"    - 类别数: {num_classes}")
-    model = build_model(num_classes, config)
-    model.summary()
+
+    # 检查是否存在之前的最佳模型（checkpoint）
+    checkpoint_exists = os.path.exists(config.CHECKPOINT_PATH)
+    if checkpoint_exists:
+        print(f"\n  检测到之前的训练checkpoint: {config.CHECKPOINT_PATH}")
+        while True:
+            choice = input("  是否从上次最好的模型继续训练？(y/n): ").strip().lower()
+            if choice in ['y', 'yes', '是', 'Y']:
+                print(f"  正在加载上次最好的模型...")
+                model = keras.models.load_model(config.CHECKPOINT_PATH)
+                print(f"  ✓ 已加载checkpoint模型")
+                model.summary()
+                break
+            elif choice in ['n', 'no', '否', 'N']:
+                print(f"  将重新训练新模型...")
+                model = build_model(num_classes, config)
+                model.summary()
+                break
+            else:
+                print("  无效输入，请输入 y 或 n")
+    else:
+        print(f"  未检测到之前的训练记录，创建新模型...")
+        model = build_model(num_classes, config)
+        model.summary()
 
     # 编译模型（初始化优化器）
     model.compile(
