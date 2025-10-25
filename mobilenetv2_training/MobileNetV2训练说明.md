@@ -22,6 +22,16 @@
 
 ## 数据集要求
 
+### 数据准备
+
+在开始训练之前，需要准备好训练和测试数据集。可以使用 `mnist_tools` 中的数据集管理工具：
+
+- **clean_and_split_dataset.py** - 清理损坏图像并分割为 train/test
+- **reorganize_dataset.py** - 从混合数据目录重组为标准 train/test 结构
+- **delete_excess_files.py** - 删除超额文件，保持数据平衡
+
+具体用法请参考项目根目录的 CLAUDE.md 文件中的"数据集管理工具"部分。
+
 ### 目录结构
 
 ```

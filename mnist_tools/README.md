@@ -16,6 +16,7 @@ MNIST 数据集包含 70,000 张 28x28 像素的灰度手写数字图像(60,000 
 - **残影效果**: 添加双向运动模糊或残影效果
 - **颜色反转**: 黑白像素反转
 - **图像旋转**: 生成上、下、左、右四个朝向的旋转版本
+- **数据集管理**: 数据清理、分割、重组等工具集
 
 ### 环境要求
 
@@ -89,6 +90,42 @@ python rotate_images.py
 - 生成 4 个旋转方向: 上(0°)、下(180°)、左(270°)、右(90°)
 - 输出: `./resized_128x128_with_blur_inverted_rotated/{up,down,left,right}/{0-9}/`
 
+### 数据集管理工具
+
+本项目还提供了一套数据集管理工具，用于数据清理、分割和组织:
+
+#### clean_and_split_dataset.py - 数据集清理与分割
+
+```bash
+python clean_and_split_dataset.py
+```
+
+- 自动检测和删除损坏的 JPEG 图像
+- 可选模糊检测(使用 Laplacian 方差)
+- 平衡的 train/test 分割(目标: 1200/类训练, 300/类测试)
+- 输出: `../num/train/` 和 `../num/test/`
+
+#### delete_excess_files.py - 删除超额文件
+
+```bash
+python delete_excess_files.py
+```
+
+- 快速删除每个类别的超额文件
+- 支持自定义目标数量
+- 随机选择删除的文件(避免偏差)
+
+#### reorganize_dataset.py - 数据集重组
+
+```bash
+python reorganize_dataset.py
+```
+
+- 从混合的数据目录中提取和重组数据
+- 自动识别类别
+- 可选的模糊检测和平衡分割
+- 输出标准的 train/test 目录结构
+
 ### 配置修改
 
 所有脚本的输入/输出路径都在各自的 `main()` 函数中配置。修改方法:
@@ -102,14 +139,24 @@ python rotate_images.py
 
 ```
 .
-├── README.md                    # 项目说明
-├── CLAUDE.md                    # Claude Code 开发指南
-├── requirements.txt             # Python 依赖
-├── .gitignore                   # Git 忽略文件
-├── resize_and_mark.py          # 图像缩放和标记
-├── add_motion_blur.py          # 添加残影效果
-├── invert_colors.py            # 图像颜色反转
-└── rotate_images.py            # 图像旋转
+├── README.md                       # 项目说明
+├── CLAUDE.md                       # Claude Code 开发指南
+├── requirements.txt                # Python 依赖
+├── .gitignore                      # Git 忽略文件
+├── resize_and_mark.py             # 脚本1: 图像缩放和标记
+├── add_motion_blur.py             # 脚本2: 添加残影效果
+├── invert_colors.py               # 脚本3: 图像颜色反转
+├── rotate_images.py               # 脚本4: 图像旋转
+├── merge_digits.py                # 脚本5: 数字融合
+├── delete_unwanted_images.py      # 脚本6: 删除不需要的图像
+├── combine_merged_folders.py      # 脚本7: 合并多个二位数图像文件夹
+├── merge_single_digits.py         # 脚本8: 生成单个数字图像
+├── merge_and_cleanup_single_digits.py # 脚本9: 合并并清理单个数字图像
+├── clean_and_split_dataset.py     # 数据集清理与分割工具
+├── delete_excess_files.py         # 删除超额文件工具
+├── reorganize_dataset.py          # 数据集重组工具
+├── batch_invert_rotated.py        # 批量处理旋转图像
+└── test_invert_with_rotation.py   # 测试旋转方向功能
 ```
 
 ### 输出目录结构

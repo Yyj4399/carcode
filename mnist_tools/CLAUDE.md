@@ -101,6 +101,9 @@ mnist_tools/
 ├── combine_merged_folders.py # 脚本7: 合并多个二位数图像文件夹
 ├── merge_single_digits.py    # 脚本8: 生成单个数字图像
 ├── merge_and_cleanup_single_digits.py # 脚本9: 合并并清理单个数字图像
+├── clean_and_split_dataset.py     # 数据集清理与分割
+├── delete_excess_files.py         # 删除超额文件
+├── reorganize_dataset.py          # 数据集重组
 ├── batch_invert_rotated.py   # 批处理脚本: 批量反转旋转图像
 ├── test_invert_with_rotation.py # 测试脚本: 测试旋转方向后缀功能
 ├── requirements.txt          # Python 依赖
@@ -142,6 +145,14 @@ mnist_tools/
 7. **combine_merged_folders.py** - 合并多个二位数图像文件夹
 8. **merge_single_digits.py** - 生成单个数字图像
 9. **merge_and_cleanup_single_digits.py** - 合并并清理单个数字图像
+
+### 数据集管理工具
+
+这些脚本用于数据集的清理、组织和分割：
+
+- **clean_and_split_dataset.py** - 数据集清理与分割
+- **delete_excess_files.py** - 删除超额文件
+- **reorganize_dataset.py** - 数据集重组
 
 ### 辅助工具脚本
 
@@ -954,3 +965,96 @@ python rename_subfolders_with_orientation.py
 - 仅处理名称为单个数字(0-9)的文件夹
 - 如果目标文件夹已存在会跳过并显示警告
 - 运行前会显示警告并要求确认
+
+## 数据集管理工具详细说明
+
+### clean_and_split_dataset.py - 数据集清理与分割
+
+**目的**: 清理损坏的图像并将数据集分割为平衡的训练集和测试集
+
+**功能特性**:
+- 自动检测和删除损坏的 JPEG 图像
+- 可选模糊检测（使用 Laplacian 方差）
+- 平衡的 train/test 分割（目标：1200/类训练，300/类测试）
+- 详细的处理统计和日志
+
+**核心函数**: 见 clean_and_split_dataset.py
+
+**运行**:
+```bash
+python clean_and_split_dataset.py
+
+# 脚本会提示选择选项：
+# 1. 进行模糊检测（检测和删除模糊图像）
+# 2. 跳过模糊检测（仅删除损坏图像）
+```
+
+**输出**:
+- `../num/train/`: 清理后的平衡训练集
+- `../num/test/`: 清理后的平衡测试集
+- 处理统计信息显示在控制台
+
+### delete_excess_files.py - 删除超额文件
+
+**目的**: 简单的清理工具，删除每个类别中超过目标数量的文件
+
+**功能特性**:
+- 快速删除每个类别的超额文件
+- 支持自定义目标数量
+- 随机选择删除的文件（避免偏差）
+
+**核心函数**: 见 delete_excess_files.py
+
+**运行**:
+```bash
+python delete_excess_files.py
+
+# 脚本会询问：
+# 1. 数据集根目录位置
+# 2. 每个类别的目标文件数量
+# 3. 删除超额文件前的确认
+```
+
+**典型场景**: 快速清理数据集大小
+
+### reorganize_dataset.py - 数据集重组
+
+**目的**: 从混合的数据目录中提取和重组数据到 train/test 文件夹结构
+
+**功能特性**:
+- 扫描混合数据目录
+- 自动识别类别
+- 可选的模糊检测和平衡分割
+- 完整的备份和恢复机制
+
+**核心函数**: 见 reorganize_dataset.py
+
+**运行**:
+```bash
+python reorganize_dataset.py
+
+# 交互式选择：
+# 1. 源数据目录位置
+# 2. 目标输出目录
+# 3. train/test 分割比例
+# 4. 是否进行模糊检测
+```
+
+**输出结构**:
+```
+target_directory/
+├── train/
+│   ├── class_0/
+│   ├── class_1/
+│   └── ...
+└── test/
+    ├── class_0/
+    ├── class_1/
+    └── ...
+```
+
+**使用场景**:
+- 从原始混合数据目录组织成标准的 train/test 结构
+- 进行数据集清理和平衡分割
+- 为模型训练准备数据集
+
